@@ -1,0 +1,113 @@
+name: CI
+
+# Public repo: GitHub-hosted runners are free. Android is the only v1 target
+# (iOS is deferred), so every PR runs the checks and an Android build.
+# No path filters, so required status checks never hang.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: '3.44.8'
+
+jobs:
+  check:
+    name: Format, analyze, test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      # Flutter only: no hand-written Kotlin or Java in the repo. Allowed: Gradle's
+      # *.gradle.kts build scripts, GeneratedPluginRegistrant.java, and the generated
+      # MainActivity.kt left exactly as `flutter create` wrote it.
+      - name: Flutter-only guard
+        run: |
+          code=$(git ls-files '*.kt' '*.kts' '*.java' \
+            | grep -vE '(^|/)[^/]+\.gradle\.kts$|(^|/)GeneratedPluginRegistrant\.java$|^android/app/src/main/kotlin/.+/MainActivity\.kt$' || true)
+          if [ -n "$code" ]; then
+            echo "::error::Hand-written Kotlin or Java isn't allowed (Flutter only): $code"
+            exit 1
+          fi
+          for f in $(git ls-files 'android/app/src/main/kotlin/*MainActivity.kt'); do
+            extra=$(grep -vE '^[[:space:]]*$|^package [a-z0-9_.]+$|^import io\.flutter\.embedding\.android\.Flutter(Fragment)?Activity$|^class MainActivity ?: ?Flutter(Fragment)?Activity\(\)$' "$f" || true)
+            if [ -n "$extra" ]; then
+              echo "::error file=$f::MainActivity.kt must stay as generated: $extra"
+              exit 1
+            fi
+          done
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed lib test
+
+      # The generated lib/l10n/app_localizations*.dart files are committed;
+      # they must match the ARB files (LANG-2).
+      - name: Check generated localizations
+        if: hashFiles('l10n.yaml') != ''
+        run: |
+          flutter gen-l10n
+          git diff --exit-code -- lib/l10n
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test --coverage
+
+      - name: Upload coverage
+        if: always() && hashFiles('coverage/lcov.info') != ''
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage
+          path: coverage/lcov.info
+          retention-days: 7
+
+      # Every merged PR is a release (release.yml), so the version in pubspec.yaml
+      # must be above the latest vX.Y.Z tag and have a CHANGELOG.md entry.
+      # Dependabot PRs ship with the next release instead.
+      - name: Check version bump
+        if: ${{ !cancelled() && github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]' }}
+        run: bash scripts/version.sh check
+
+  android:
+    name: Android build (debug)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --debug
