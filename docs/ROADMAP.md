@@ -30,13 +30,9 @@ If Phase 0 or 1 runs long, the test harnesses and spikes S3, S11 and S13 can sli
 Set up before the first feature, while it's cheap.
 - [x] Kit applied: `CLAUDE.md`, `.claude/` settings, format hook, `/spec` `/verify` `/release` `/ship` `/handoff` skills, `build-doctor` agent; placeholders filled; Android-only CI with the Flutter-only guard (2026-09-15)
 - [x] Competitor research (`docs/research/competitor-analysis.md`), technical constraints, product rules and privacy policy draft (2026-09-15/16)
-- [ ] Git history: this folder's leftover `.git` holds the deleted first scaffold (2 commits, remote deleted). Start a fresh history before the first commit (confirm with the user).
-- [ ] Flutter pin: the local SDK is 3.44.8; the newest stable was 3.47.4 on 2026-09-15. Pick one, then match the local SDK, `FLUTTER_VERSION` in `ci.yml`, `release.yml` and `claude.yml`, and `STACK` in `CLAUDE.md`.
-- [ ] Finish `/kickoff` steps 4–9:
-  - scaffold with `flutter create --org com.oasisforge --project-name qrscanner --platforms android .` (gives `com.oasisforge.qrscanner` directly)
-  - set version `0.1.0+1`, merge `.gitignore`, add strict lints, run `/verify`
-  - delete the kickoff skill, make the first commit
-  - `gh repo create Oasis-Forge/qr-scanner-generator --public --source=. --push`
+- [x] Git history: fresh, starting at the kit commit; the old scaffold's history is gone (checked 2026-09-16)
+- [x] Flutter pin: 3.47.4 / Dart 3.13.3, matched in the local SDK, `ci.yml`, `release.yml`, `claude.yml` and `CLAUDE.md` (decided 2026-09-16)
+- [x] Finish `/kickoff`: Android scaffold as `com.oasisforge.qrscanner`, version `0.1.0+1`, merged `.gitignore`, strict lints, `/verify` green, kickoff skill deleted; repo `Oasis-Forge/qr-scanner-generator` (public) (2026-09-16)
 - [ ] GitHub repo, Dependabot, CI (checks, Flutter-only guard, Android build) green on a first PR
 - [ ] `main` ruleset: PR required, the CI checks required, no force pushes or deletion (`docs/RELEASING.md`)
 - [ ] Every merged PR is a release: the CI version check, then a tag and a draft GitHub Release on merge. `v0.1.0` is the first.

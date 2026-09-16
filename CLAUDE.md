@@ -1,6 +1,6 @@
 # QR Scanner + Generator
 
-Scan any QR code or barcode and see exactly where it leads before anything opens, then create clean, styled codes that are checked to scan, without ads covering the camera or the result. Built with Flutter 3.44.8 / Dart 3.12.2. Targets Android (iOS is deferred).
+Scan any QR code or barcode and see exactly where it leads before anything opens, then create clean, styled codes that are checked to scan, without ads covering the camera or the result. Built with Flutter 3.47.4 / Dart 3.13.3. Targets Android (iOS is deferred).
 
 ## Commands (use the quiet forms)
 - `flutter pub get > $null`
