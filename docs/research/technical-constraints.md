@@ -18,7 +18,7 @@ Every rule in `docs/PRODUCT_RULES.md` has to be buildable within these limits. V
 - Use the **bundled** ML Kit model (one `gradle.properties` flag). The Play-services model downloads on first use and returns nothing until it has.
 - Light-on-dark codes need `invertImage`; ML Kit doesn't read inverted codes by itself.
 - Weak spots: dense multi-code grids and very small codes (issue #1364). `flutter_zxing` 3.0.1 (FFI, no Kotlin) is the fallback decoder for images ML Kit misses.
-- `analyzeImage` has had platform bugs (PNG rejection on Android, #665). Smoke-test it on the target API before relying on it for the generator's self-check or for tests.
+- `analyzeImage` has had platform bugs (PNG rejection on Android, #665). S2 (2026-09-16) found none on API 37: PNG, JPEG, an inverted code and a phone-sized screenshot all decoded (see Spike results).
 - The torch toggle silently does nothing on devices without a torch. Pinch-to-zoom is wired by the app (`setZoomScale`). Haptics come from Flutter's built-in `HapticFeedback`; no plugin needed.
 - The emulator's back camera is a virtual scene. Codes are fed through Extended Controls → Camera → virtual scene images, by hand only.
 
@@ -47,7 +47,7 @@ Every rule in `docs/PRODUCT_RULES.md` has to be buildable within these limits. V
 - `pdf` 3.13.0 + `printing` 5.15.0 for PDFs and label sheets. No label-template package exists, so label grids are hand-coded.
 - `csv` 8.0.0 for CSV.
 - XLSX is a later decision: `excel` 4.0.6 is free but unreleased for about 2 years; `syncfusion_flutter_xlsio` 34.2.7 is maintained but needs a Community Licence with revenue and team-size caps.
-- Licences not yet checked: `barcode`, `pdf`, `printing`, `mobile_scanner`, `quick_actions`, `dynamic_color`, `flutter_custom_tabs`, `super_clipboard`.
+- Licences checked 2026-09-16 (S7): all permissive except `enough_icalendar` (MPL-2.0, fine unmodified). See Spike results.
 
 ### History and data
 - The kit's proven setup is `sqflite` with an ordered list of migration steps (`docs/STACK_NOTES.md`); the earlier plan named `drift` 2.35.0. Neither was researched for QR specifically.
@@ -113,12 +113,41 @@ Run each before the feature that depends on it.
 
 S8–S14 were added on 16 September 2026, when the product rules were written and reviewed.
 
+## Spike results
+
+Run 16 September 2026 on Flutter 3.47.4 / Dart 3.13.3, the `Medium_Phone` emulator (API 37), with a throwaway app built from a OneDrive path with spaces.
+
+**S1, virtual-scene scanning: partly answered.** `mobile_scanner` 7.4.2 opens the emulator's back camera and streams the virtual scene with no errors. Codes load as posters with `emulator -virtualscene-poster wall=<png> -virtualscene-poster table=<png>` (or `adb emu virtualscene-image wall <png>` while running), so no Extended Controls clicks are needed. The posters aren't in view from the scene's start pose, and the scene camera moves only with the keyboard and mouse in the emulator window: `adb emu sensor set` doesn't move it. Still open: walk the camera to a poster by hand and confirm it scans.
+
+**S2, `analyzeImage` on API 37: yes.** Bundled ML Kit decoded every test image from a file path: a QR code as PNG (313 ms on the first call, which loads the model), as JPEG at quality 80 (131 ms), as a light-on-dark PNG (125 ms, so `invertImage` isn't needed for still images), a 360 px QR code inside a 1080×2400 screenshot-style PNG (89 ms), and an EAN-13 (87 ms). `analyzeImage` works on a controller that was never started.
+
+**S3, `flutter_zxing` 3.0.1 FFI from the OneDrive path: yes.** The debug APK built with no path workaround, and `readBarcodeImagePathString` with `tryInverted` and `tryHarder` decoded the same five images in 28–135 ms.
+
+**S7, versions and licences: done.** Nothing listed above changed since 14 September. All licences are permissive (MIT, BSD, Apache-2.0) except `enough_icalendar` (MPL-2.0: fine as an unmodified dependency, don't edit its source). New since then: `sqflite` 2.4.4, `sqflite_common_ffi` 2.4.3, `provider` 6.1.5+1, `intl` 0.20.3, `image` 4.10.1, `permission_handler` 13.0.2, `in_app_review` 2.0.12, `firebase_core` 4.15.0, `shared_preferences` 2.5.5, `url_launcher` 6.3.2, `zxing2` 0.2.4 (pure Dart, but QR only: no 1D decoding). No release for 18+ months: `barcode` 2.2.9, `barcode_widget` 2.0.4, `barcode_image` 2.0.3. Still pre-1.0: `share_handler` 0.0.25, `super_clipboard` 0.9.1. Versions are pinned in `pubspec.yaml` as each feature adds its package.
+
+**S8, camera permission states: yes, with one limit.** `permission_handler` 13.0.2 needs no Kotlin, but its Android side (`permission_handler_android` 14.x) requires **compileSdk 37**: set `compileSdk = 37` in `android/app/build.gradle.kts` (AGP 9.1.0 warns but builds). `targetSdk` stays 36. What it reports on API 37:
+
+| Situation | `status` | `shouldShowRequestRationale` | `request()` returns |
+|---|---|---|---|
+| Never asked | denied | false | shows the dialog |
+| Denied once | denied | true | shows the dialog again |
+| Denied twice (Android stops asking) | denied | false | permanentlyDenied, no dialog |
+| Revoked after a denial (`pm revoke`) | denied | false | not tested |
+| Granted, or "Only this time" | granted | false | granted |
+
+`status` alone can't tell "never asked" from "permanently denied". So RUN-4 to RUN-6 need a stored "asked before" flag, or they call `request()` and read its result. `openAppSettings()` covers the Settings route.
+
+**S11, Public Suffix List: bundle it.** No usable package: `public_suffix` 3.0.0 (2021) requires Dart below 3.0 and doesn't resolve, and `tldts` is a single 0.0.1 beta. Bundle `public_suffix_list.dat` (about 330 KB, MPL-2.0: keep its header, don't edit it) as an asset, with a small pure-Dart matcher for the `*` wildcard and `!` exception rules, ICANN section only, on the punycode host. Refresh the file as a data-only change.
+
+**S13, sharp barcode PNGs Flutter-only: yes, both ways.** EAN-13, UPC-A, Code 128 and Code 39 rendered with no grey pixels and decoded back to their data. The key is integer module widths: `Barcode1D` gives the module count (EAN-13 and UPC-A 95, Code 39 13 per character), so call `make()` with `width = modules × pixels per module` and every bar lands on whole pixels. Neither approach adds a quiet zone: draw it yourself. `barcode` computes the EAN/UPC check digit and adds Code 39's `*`. With `drawText: true`, the text height comes out of the `height` you pass.
+- Drawing `barcode`'s elements on a `dart:ui` canvas: exact quiet zones on both sides. Human-readable text needs a separate `TextPainter` pass. **Use this.**
+- `barcode_image` 2.0.3: every bar comes out 1 px wider on its right, because `fillRect` corners are inclusive, so the right quiet zone loses 1 px. It still decodes at 3 px per module, and it can draw text with `image`'s bitmap fonts.
+
+
 ## Not researched yet
 
 These came up while writing the rules. Check pub.dev (maintenance, licence, the permissions they add) before relying on them.
 - `in_app_review` for the review prompt (SET-9).
-- `permission_handler` for permission states (S8).
 - `local_auth` and a recent-apps preview-hiding plugin for app lock (S9).
 - A location package such as `geolocator` (S10).
 - Whether `pretty_qr_code` 3.6.0 shapes the finder "eyes" independently of the other modules (STY-4).
-- A Public Suffix List source (S11).

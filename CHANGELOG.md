@@ -4,6 +4,11 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-09-16
+
+### Changed
+- Nothing you can see in the app yet: this release records the technical checks that shape scanning, image decoding and camera permissions.
+
 ## [0.1.0] - 2026-09-16
 
 ### Added

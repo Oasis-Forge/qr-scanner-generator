@@ -59,6 +59,7 @@ Add `windows,macos,linux` to `--platforms` if desktop is a target. Then:
 - Windows and Linux need `sqflite_common_ffi` set up in `main.dart`, with the database in the app support folder. Web has no sqflite.
 - `local_auth`: Android's `MainActivity` must be a `FlutterFragmentActivity` with an AppCompat launch theme, and iOS needs `NSFaceIDUsageDescription`.
 - Some plugins need the MSVC ATL component on Windows, so CI installs it.
+- `permission_handler` 13.x pulls in `permission_handler_android` 14.x, which fails `checkDebugAarMetadata` unless `compileSdk = 37` is set in `android/app/build.gradle.kts` (found 2026-09-16). Keep `targetSdk` at Flutter's default.
 - Plugins add permissions silently. Check the release APK with `aapt2 dump permissions`, and prefer ~100 lines of platform-channel glue over a package that brings in WorkManager or boot receivers.
 - `pdf` package: use static TTF fonts (variable fonts lose their weights), and set text direction per run on right-to-left pages. Test a PDF by reading its text back, not by byte count.
 - Writing `\u` escapes has put literal invisible characters in files. Use `String.fromCharCode` instead.
@@ -73,6 +74,8 @@ adb install -r dist/<slug>-X.Y.Z.apk
 adb shell am start -S -n <APP_ID>/.MainActivity
 ```
 
+- Put codes in front of the virtual-scene camera with `emulator -avd Medium_Phone -virtualscene-poster wall=<png> -virtualscene-poster table=<png>`, or `adb emu virtualscene-image wall <png>` while it runs. The camera itself moves only with the keyboard and mouse in the emulator window.
+- With `MSYS_NO_PATHCONV=1`, give `adb install` a Windows path (`C:/...`), not `/c/...`.
 - Screenshots need `MSYS_NO_PATHCONV=1` on both halves: `adb shell "screencap -p /sdcard/s.png"`, then `adb pull /sdcard/s.png <local>`. Without it, Git Bash rewrites `/sdcard`.
 - A long press or drag needs `input motionevent DOWN x y`, a sleep, `MOVE`s, and `UP` as separate calls. `input swipe` is too smooth for the launcher.
 - Screenshot coordinates are in the displayed image's frame; scale them before tapping.

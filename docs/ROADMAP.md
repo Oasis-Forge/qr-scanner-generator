@@ -35,11 +35,11 @@ Set up before the first feature, while it's cheap.
 - [x] Finish `/kickoff`: Android scaffold as `com.oasisforge.qrscanner`, version `0.1.0+1`, merged `.gitignore`, strict lints, `/verify` green, kickoff skill deleted; repo `Oasis-Forge/qr-scanner-generator` (public) (2026-09-16)
 - [ ] GitHub repo, Dependabot, CI (checks, Flutter-only guard, Android build) green on a first PR
 - [ ] `main` ruleset: PR required, the CI checks required, no force pushes or deletion (`docs/RELEASING.md`)
-- [ ] Every merged PR is a release: the CI version check, then a tag and a draft GitHub Release on merge. `v0.1.0` is the first.
-- [ ] The release workflow runs once by hand without secrets (unsigned artifacts, nothing published)
+- [x] Every merged PR is a release: the CI version check, then a tag and a draft GitHub Release on merge. `v0.1.0` is the first (tagged 2026-09-16).
+- [x] The release workflow runs once without secrets (unsigned artifacts, nothing published): it ran on the `v0.1.0` merge, 2026-09-16
 - [ ] Privacy policy served by GitHub Pages (draft in `docs/privacy-policy.md`)
-- [ ] Re-check package versions on pub.dev, pin them, and run the licence check (S7) (`docs/research/technical-constraints.md`)
-- [ ] Spikes S1 (virtual-scene scanning), S2 (`analyzeImage` on API 36/37), S3 (`flutter_zxing` from the OneDrive path) and S8 (camera permission states), plus the desk spikes S11 (Public Suffix List source) and S13 (barcode PNG rendering). Book real phones for S5 and S6 on Sep 28 – Oct 2.
+- [x] Re-check package versions on pub.dev and run the licence check (S7); each version is pinned when its feature adds it (`docs/research/technical-constraints.md` → Spike results, 2026-09-16)
+- [ ] Spikes S1 (virtual-scene scanning; partly answered, a hand check is left), S2 (`analyzeImage` on API 36/37), S3 (`flutter_zxing` from the OneDrive path) and S8 (camera permission states), plus the desk spikes S11 (Public Suffix List source) and S13 (barcode PNG rendering). Book real phones for S5 and S6 on Sep 28 – Oct 2. S2, S3, S8, S11 and S13 answered 2026-09-16 (`docs/research/technical-constraints.md` → Spike results).
 - [ ] Accounts:
   - Play Console app `com.oasisforge.qrscanner` with Play App Signing and the upload keystore
   - the upload keystore backed up and its secrets set in GitHub (`docs/RELEASING.md`), so every testing upload is signed with the upload key
