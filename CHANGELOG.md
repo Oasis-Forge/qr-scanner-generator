@@ -4,7 +4,8 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
-## [0.1.0] - 2026-09-15
+## [0.1.0] - 2026-09-16
 
 ### Added
 - Project setup: docs, Claude Code tooling, CI, and the release workflow.
+- A first Android build that opens to a placeholder screen with the app's name.

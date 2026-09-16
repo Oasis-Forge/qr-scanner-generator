@@ -1,0 +1,18 @@
+# Lints for QR Scanner + Generator: flutter_lints plus the strict set from docs/STACK_NOTES.md.
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+  errors:
+    unawaited_futures: warning
+
+linter:
+  rules:
+    - unawaited_futures
+    - prefer_single_quotes
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - prefer_const_literals_to_create_immutables
+    - always_declare_return_types
