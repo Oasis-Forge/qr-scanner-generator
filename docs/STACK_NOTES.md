@@ -74,7 +74,9 @@ adb install -r dist/<slug>-X.Y.Z.apk
 adb shell am start -S -n <APP_ID>/.MainActivity
 ```
 
-- Put codes in front of the virtual-scene camera with `emulator -avd Medium_Phone -virtualscene-poster wall=<png> -virtualscene-poster table=<png>`, or `adb emu virtualscene-image wall <png>` while it runs. The camera itself moves only with the keyboard and mouse in the emulator window.
+- Put codes in front of the virtual-scene camera with `emulator -avd Medium_Phone -virtualscene-poster wall=<png> -virtualscene-poster table=<png>`. The path must have **no spaces**, so copy the images to a temp folder first; the emulator log line `Found poster wall at <path>` confirms it loaded. `adb emu virtualscene-image` is accepted while it runs but the camera keeps the old image.
+- Aim the scene camera over the emulator's gRPC port, which is exact and repeatable; mouse drags mix yaw with pitch and drift. Start the emulator with `-grpc 8554` (otherwise gRPC demands a signed token), generate stubs from `emulator/lib/emulator_controller.proto` with `grpcio-tools`, then `setPhysicalModel` POSITION `[x, y, z]` in metres and ROTATION `[pitch, yaw, roll]` in degrees. The wall poster sits at (-0.807, 0.320, 5.316) facing -150°, so position (-2.06, 0.32, 3.15) with rotation (0, -150, 0) looks straight at it from 2.5 m, which decodes in about 0.2 s. Codes stop decoding past about 3 m: the scene texture is too soft.
+- The scene camera keeps its pose across an app restart, and a cold boot can start it facing the ceiling, so set the pose explicitly instead of assuming the start view.
 - With `MSYS_NO_PATHCONV=1`, give `adb install` a Windows path (`C:/...`), not `/c/...`.
 - Screenshots need `MSYS_NO_PATHCONV=1` on both halves: `adb shell "screencap -p /sdcard/s.png"`, then `adb pull /sdcard/s.png <local>`. Without it, Git Bash rewrites `/sdcard`.
 - A long press or drag needs `input motionevent DOWN x y`, a sleep, `MOVE`s, and `UP` as separate calls. `input swipe` is too smooth for the launcher.
