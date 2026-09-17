@@ -4,6 +4,11 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-09-17
+
+### Changed
+- Still nothing to see in the app: this release records that scanning works on the test emulator, and how far from a code the camera has to be.
+
 ## [0.1.1] - 2026-09-16
 
 ### Changed
