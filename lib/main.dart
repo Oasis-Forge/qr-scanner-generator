@@ -1,23 +1,272 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
-void main() {
-  runApp(const QrScannerApp());
+import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:qrscanner/core/db/app_database.dart';
+import 'package:qrscanner/core/db/migration.dart';
+import 'package:qrscanner/core/store/key_value_store.dart';
+import 'package:qrscanner/core/store/sqflite_key_value_store.dart';
+import 'package:qrscanner/core/theme/app_theme.dart';
+import 'package:qrscanner/db/migrations/migrations.dart';
+import 'package:qrscanner/db/record_dao.dart';
+import 'package:qrscanner/l10n/app_localizations.dart';
+import 'package:qrscanner/screens/home_screen.dart';
+import 'package:qrscanner/services/app_services.dart';
+import 'package:qrscanner/state/settings_state.dart';
+import 'package:qrscanner/state/success_counts.dart';
+
+/// The app's entry point, and the only place a real device service or a real
+/// database is ever built (`CLAUDE.md`).
+///
+/// It opens the database, brings the schema up to date, loads the settings and
+/// the success counts, and only then draws the first frame, so no screen ever
+/// shows a default the user has already changed. If the database cannot be
+/// opened the app shows [DatabaseUnavailableApp] instead of crashing.
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await _layOutUnderTheSystemBars();
+
+  final AppServices services = _deviceServices();
+
+  try {
+    final Directory supportDirectory = await getApplicationSupportDirectory();
+    final AppDatabase database = AppDatabase(
+      directory: supportDirectory.path,
+      runner: MigrationRunner(migrationSteps),
+      // The entry point is the only place the real sqflite plugin is built;
+      // tests pass the in-memory factory instead.
+      databaseFactory: databaseFactorySqflitePlugin,
+    );
+    await database.open();
+
+    final KeyValueStore store = SqfliteKeyValueStore(database.database);
+    final SettingsState settings = SettingsState(store);
+    final SuccessCounts successCounts = SuccessCounts(store);
+    // Loaded together, not one after the other: the two read disjoint keys
+    // (`settings.*` against `counts.*` and `prompts.*`), neither writes
+    // anything, and sqflite runs the reads on its own queue, so the outcome is
+    // the one sequential loads gave — the first frame just waits for both sets
+    // of reads to interleave instead of for one set after the other.
+    await Future.wait<void>(<Future<void>>[
+      settings.load(),
+      successCounts.load(),
+    ]);
+
+    runApp(
+      QrScannerApp(
+        settings: settings,
+        successCounts: successCounts,
+        records: RecordDao(database),
+        services: services,
+      ),
+    );
+  } on Object catch (error, stackTrace) {
+    // Nothing is sent anywhere: the crash-report opt-in (PRIV-3) lives in the
+    // database that just failed to open, so the failure only goes to the log.
+    FlutterError.reportError(
+      FlutterErrorDetails(
+        exception: error,
+        stack: stackTrace,
+        library: 'qrscanner',
+        context: ErrorDescription('opening the app database'),
+      ),
+    );
+    runApp(const DatabaseUnavailableApp());
+  }
 }
 
-/// Placeholder shell until Phase 1 adds the theme, state layer and services.
+/// Every device capability the app will use, built once (`CLAUDE.md`).
+///
+/// Each one is still the no-op fake: Phase 1 wires the layers, and the real
+/// plugin arrives with the PR that needs it — the camera scanner, image decoder
+/// and permissions with **Scanner and permissions** (RUN-1, SCAN-1); the
+/// clipboard and system intents with **Result screens and parsers** (RES-1,
+/// RES-4); the link opener with **Link safety** (LINK-8); share with
+/// **Generator and save** (SAVE-1); ads, consent, billing and crash reports
+/// with **Ads, consent, Pro, crash reports, settings** (ADS-1, PRIV-1, PRO-1,
+/// PRIV-3); and Wi-Fi with RES-5 in Phase 2b. Until then the app runs end to
+/// end and no plugin does any I/O.
+AppServices _deviceServices() => AppServices.fakes();
+
+/// Lays the app out under the status and navigation bars.
+///
+/// Every screen then sees the real insets and keeps its own content clear of
+/// them with `SafeArea`, which is what lets the scanner's viewfinder fill the
+/// screen later without an ad or a control ever sitting under a system bar.
+Future<void> _layOutUnderTheSystemBars() async {
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+      systemStatusBarContrastEnforced: false,
+      systemNavigationBarContrastEnforced: false,
+    ),
+  );
+}
+
+/// The language the app draws in when the device asks for one the message files
+/// don't have (LANG-1). It is the template message file's language, so it is
+/// always one of `AppLocalizations.supportedLocales`.
+const Locale fallbackLocale = Locale('en');
+
+/// The locale the app draws in, given the languages the device asks for
+/// (LANG-1).
+///
+/// [preferred] is the device's language list, most wanted first, or the single
+/// language the user chose in Settings: `MaterialApp` passes an explicit
+/// `locale` through this same callback as a one-entry list, which is what makes
+/// the Settings choice win over the device list. The first entry the app has
+/// messages for wins — language and country first, then the language alone, so
+/// a device set to `ar-EG` gets Arabic.
+///
+/// When nothing matches, or the device reports no language at all, the app
+/// falls back to [fallbackLocale]. Flutter's own default would hand back
+/// `supportedLocales.first`, which is Arabic here, so a phone set to French
+/// would open a right-to-left Arabic app — LANG-1 says English.
+Locale _resolveAppLocale(
+  List<Locale>? preferred,
+  Iterable<Locale> supportedLocales,
+) {
+  for (final Locale wanted in preferred ?? const <Locale>[]) {
+    for (final Locale supported in supportedLocales) {
+      if (supported.languageCode == wanted.languageCode &&
+          supported.countryCode == wanted.countryCode) {
+        return supported;
+      }
+    }
+    for (final Locale supported in supportedLocales) {
+      if (supported.languageCode == wanted.languageCode) {
+        return supported;
+      }
+    }
+  }
+  return fallbackLocale;
+}
+
+/// The app shell: the state and services every screen reads, the themes
+/// (SET-1), and the message files with the chosen language (LANG-1, LANG-2).
+///
+/// It builds nothing itself. [main] hands it the state layer and the service
+/// container, and a test hands it an in-memory store and the no-op fakes, so the
+/// shell under test is the one that ships.
 class QrScannerApp extends StatelessWidget {
-  const QrScannerApp({super.key});
+  const QrScannerApp({
+    required this.settings,
+    required this.successCounts,
+    required this.records,
+    required this.services,
+    super.key,
+  });
+
+  /// Every user setting, already loaded (SET-1, LANG-1).
+  final SettingsState settings;
+
+  /// The success counters behind ads and prompts (DATA-8).
+  final SuccessCounts successCounts;
+
+  /// Reads and writes for History and created codes.
+  final RecordDao records;
+
+  /// Every device capability, behind its interface (`CLAUDE.md`).
+  final AppServices services;
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<SettingsState>.value(value: settings),
+        ChangeNotifierProvider<SuccessCounts>.value(value: successCounts),
+        Provider<RecordDao>.value(value: records),
+        Provider<AppServices>.value(value: services),
+      ],
+      // The device's own palette, where Android offers one (SET-1). The schemes
+      // are null until the platform answers, and on any device below Android 12,
+      // and the theme falls back to the app's seed colour.
+      child: DynamicColorBuilder(
+        builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) =>
+            _MaterialShell(
+              lightDynamic: lightDynamic,
+              darkDynamic: darkDynamic,
+            ),
+      ),
+    );
+  }
+}
+
+/// The [MaterialApp] itself, below the providers so it can watch the settings:
+/// a theme or language change repaints without a restart (SET-1, LANG-1).
+class _MaterialShell extends StatelessWidget {
+  const _MaterialShell({this.lightDynamic, this.darkDynamic});
+
+  final ColorScheme? lightDynamic;
+  final ColorScheme? darkDynamic;
+
+  @override
+  Widget build(BuildContext context) {
+    final SettingsState settings = context.watch<SettingsState>();
+    return MaterialApp(
+      // The task switcher's label, from the message files (LANG-2), rebuilt
+      // when the language changes.
+      onGenerateTitle: (BuildContext context) =>
+          AppLocalizations.of(context).appTitle,
+      // AppLocalizations.delegate plus the Material, Cupertino and Widgets
+      // delegates, which is what gives Arabic its right-to-left layout and its
+      // own date and number formats (LANG-3, LANG-5).
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      // Null follows the device language (LANG-1); the callback is what turns
+      // "follows the device language" into "and falls back to English".
+      locale: settings.localeOverride,
+      localeListResolutionCallback: _resolveAppLocale,
+      theme: AppTheme.light(dynamicScheme: lightDynamic),
+      darkTheme: AppTheme.dark(dynamicScheme: darkDynamic),
+      themeMode: settings.themeMode,
+      home: const HomeScreen(),
+    );
+  }
+}
+
+/// What the app shows when the database cannot be opened.
+///
+/// A plain screen with the error string from the message files (LANG-2) rather
+/// than a crash or a blank white frame. There are no settings to read, so it
+/// takes the device language, resolved the same way the rest of the app resolves
+/// it (LANG-1), and the seed theme.
+class DatabaseUnavailableApp extends StatelessWidget {
+  const DatabaseUnavailableApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'QR Scanner + Generator',
-      theme: ThemeData(colorSchemeSeed: Colors.indigo),
-      darkTheme: ThemeData(
-        colorSchemeSeed: Colors.indigo,
-        brightness: Brightness.dark,
+      onGenerateTitle: (BuildContext context) =>
+          AppLocalizations.of(context).appTitle,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localeListResolutionCallback: _resolveAppLocale,
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      home: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsetsDirectional.all(24),
+            child: Center(
+              child: Builder(
+                builder: (BuildContext context) => Text(
+                  AppLocalizations.of(context).errorStorageUnavailable,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
-      home: const Scaffold(body: Center(child: Text('QR Scanner + Generator'))),
     );
   }
 }

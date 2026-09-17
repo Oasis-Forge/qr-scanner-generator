@@ -49,22 +49,22 @@ Set up before the first feature, while it's cheap.
 
 ## Phase 1: Foundations (Sep 21–25)
 Groundwork every feature builds on. Settle everything that shapes stored data now, before testers have any.
-- [ ] Architecture (default set 2026-09-16, confirm):
+- [x] Architecture (confirmed by the user 2026-09-17):
   - the kit's single app at the repo root: `provider` + `ChangeNotifier`, `sqflite` with ordered migrations (`docs/STACK_NOTES.md`)
   - code other apps will reuse (theme, ads and consent, Pro, database helpers) lives in `lib/core/` without app imports, so it can move to the shared core repo when Notes starts on Nov 2
-- [ ] Strict lints (unawaited futures, declared return types, single quotes, const where possible)
-- [ ] Inject the storage layer and every device service into the state layer, so tests use an in-memory database and no-op fakes: camera scanner, image decoder, permissions, ads, consent, billing, crash reports, clipboard, file picker and share, Custom Tabs and intents, Wi-Fi
-- [ ] Migration scaffold: an ordered list of schema steps run on upgrade, with a test that upgrades the oldest schema
-- [ ] Reliable writes: write first, then change state; on failure roll back and show an error
-- [ ] Schema step 1 (REC-1–REC-4, DATA-1–DATA-8, DATE-1–DATE-3, DEL-1):
+- [x] Strict lints (unawaited futures, declared return types, single quotes, const where possible); `prefer_initializing_formals` is off, so public parameter names stay readable in front of private fields
+- [x] Inject the storage layer and every device service into the state layer, so tests use an in-memory database and no-op fakes: camera scanner, image decoder, permissions, ads, consent, billing, crash reports, clipboard, file picker and share, Custom Tabs and intents, Wi-Fi (`lib/services/app_services.dart`; only `main.dart` builds real ones)
+- [x] Migration scaffold: an ordered list of schema steps run on upgrade, with a test that upgrades the oldest schema
+- [x] Reliable writes: write first, then change state; on failure roll back and show an error
+- [x] Schema step 1 (REC-1–REC-4, DATA-1–DATA-8, DATE-1–DATE-3, DEL-1):
   - the records table with every field in "Roadmap impact" of `docs/PRODUCT_RULES.md`
   - the batch staging table
   - stores for settings, consent, Pro ownership and success counts
   - v1 fields included, so no migration touches testers' data
-- [ ] Localization scaffolding: English and Arabic message files, locale-formatted dates and numbers, and right-to-left layout from the start (LANG-1–LANG-3, LANG-5), with the CI message check
-- [ ] Themes: system, light and dark with dynamic colour (SET-1 theme engine, `dynamic_color` 1.9.0), edge-to-edge insets, predictive back
-- [ ] Test harnesses: icon labels (A11Y-1), touch targets (A11Y-2), every language at 2.0× text (A11Y-4, LANG-6). Contrast in both themes (A11Y-5) and no colour-only states (A11Y-6) go into every screen PR's checklist.
-- [ ] Tests: model round-trip, migration upgrade, duplicate matching (DATA-4), the sensitive-field flag (DATA-5)
+- [x] Localization scaffolding: English and Arabic message files, locale-formatted dates and numbers, and right-to-left layout from the start (LANG-1–LANG-3, LANG-5), with the CI message check and a test that both files carry the same keys and placeholders
+- [x] Themes: system, light and dark with dynamic colour (SET-1 theme engine, `dynamic_color` 1.9.0), edge-to-edge insets, predictive back
+- [x] Test harnesses: icon labels (A11Y-1), touch targets (A11Y-2), every language at 2.0× text (A11Y-4, LANG-6) in `test/helpers/test_app.dart`. Contrast in both themes (A11Y-5) and no colour-only states (A11Y-6) go into every screen PR's checklist.
+- [x] Tests: model round-trip, migration upgrade, duplicate matching (DATA-4), the sensitive-field flag (DATA-5)
 - [x] Platform decision: Android only in v1; iOS deferred (2026-09-14)
 
 ## Phase 2a: Closed-test build (Sep 28 – Oct 9)
