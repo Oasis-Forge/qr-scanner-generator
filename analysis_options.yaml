@@ -7,6 +7,9 @@ analyzer:
     - android/**
   errors:
     unawaited_futures: warning
+    # We keep readable public parameter names (`now:`, `personalizedAllowed:`) in
+    # front of private fields; this rule would have us rename them to `_now:`.
+    prefer_initializing_formals: ignore
 
 linter:
   rules:

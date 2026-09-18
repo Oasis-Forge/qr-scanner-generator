@@ -12,7 +12,18 @@ Scan any QR code or barcode and see exactly where it leads before anything opens
 - `bash scripts/version.sh name|build|check|notes` reads the version, runs CI's bump check, prints the changelog entry
 
 ## Architecture
-<!-- Fill in as Phase 1 lands: one line per folder or key file, plus the data flow (screen → state → storage). Update it in the PR that changes the structure. -->
+Decided 2026-09-17: `provider` + `ChangeNotifier`, `sqflite` with ordered migration steps, one app at the repo root.
+
+Data flows one way: screen → state → storage/service. A write lands first, then state changes; on failure it rolls back and the screen shows an error.
+
+- `lib/core/`: reusable across the portfolio's apps, so it imports nothing from the folders below. `db/` (migration contract and runner, database open), `store/` (key-value store for settings, consent, Pro, success counts), `theme/`, `services/` (clipboard, share, crash reports, ads, consent, billing, link opener).
+- `lib/models/`: immutable records with `toMap`/`fromMap` and `copyWith` (sentinel for clearable nullables); pure Dart, no Flutter imports.
+- `lib/db/`: `migrations/step_NNN_*.dart` in an ordered list, plus the DAOs. A merged step is never edited.
+- `lib/services/`: device capabilities this app adds (camera scanner, image decoder, permissions, Wi-Fi, system intents), each an interface with a `Noop` fake; `app_services.dart` holds one of each, and only `main.dart` builds real ones.
+- `lib/state/`: `ChangeNotifier`s (settings, success counts, later history and the generator).
+- `lib/l10n/`: `app_en.arb`, `app_ar.arb`, and the generated `app_localizations.dart`, all committed; CI regenerates and fails on a diff.
+- `lib/screens/`: presentational only, reading state with `context.read/watch`.
+- `test/`: mirrors `lib/`, plus `test/helpers/` (in-memory database, fakes, pump helpers) and the accessibility and text-scale harnesses.
 
 ## Conventions
 - Product principles: no ad in the working area (viewfinder, scan result, generator editor), and the largest button is always the real action; nothing opens before the user has seen where it leads; the free app does the whole core job, and Pro is a one-time purchase that removes ads, never a subscription; no account, and scans, codes and history leave the device only when the user shares or exports them; ads and crash reports run only as far as the user's consent allows. Every feature keeps them.

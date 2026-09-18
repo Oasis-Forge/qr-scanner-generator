@@ -4,6 +4,16 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-18
+
+### Added
+- The app now opens to a screen of its own, in English or Arabic, following the phone's language and falling back to English.
+- Light, dark and system themes, using the phone's own colours where it offers them. Your choice is remembered.
+- Arabic mirrors the whole layout, right to left.
+
+### Changed
+- Groundwork for everything that stores a scan: the database, its first schema step, and the counters behind history, so nothing testers save will need a rebuild later.
+
 ## [0.1.2] - 2026-09-17
 
 ### Changed

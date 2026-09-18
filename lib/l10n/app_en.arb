@@ -1,0 +1,247 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "QR Scanner + Generator",
+  "@appTitle": {
+    "description": "LANG-2. The app name, shown in the task switcher and as the fallback screen title."
+  },
+
+  "navScan": "Scan",
+  "@navScan": {
+    "description": "SCAN-1. Bottom navigation destination for the live scanner."
+  },
+  "navCreate": "Create",
+  "@navCreate": {
+    "description": "SCAN-1. Bottom navigation destination for the code generator."
+  },
+  "navHistory": "History",
+  "@navHistory": {
+    "description": "SCAN-1. Bottom navigation destination for the list of scanned and created codes."
+  },
+  "navSettings": "Settings",
+  "@navSettings": {
+    "description": "SCAN-1. Bottom navigation destination for Settings."
+  },
+
+  "cameraPermissionReason": "The camera is used only to read codes on this device.",
+  "@cameraPermissionReason": {
+    "description": "RUN-1. The one reason shown on the scanner placeholder before the camera is allowed. Translations must stay at or under 70 characters."
+  },
+  "cameraAllowButton": "Allow camera",
+  "@cameraAllowButton": {
+    "description": "RUN-1. Largest control on the scanner placeholder; opens the system camera prompt."
+  },
+  "cameraOpenSettingsButton": "Open settings",
+  "@cameraOpenSettingsButton": {
+    "description": "RUN-6. Replaces the allow button once Android will not show its prompt again; opens the app permission page."
+  },
+  "scanFromPhotoButton": "Scan a photo",
+  "@scanFromPhotoButton": {
+    "description": "RUN-4, SCAN-11. Opens the system photo picker to decode a code from an image."
+  },
+  "typeCodeButton": "Type a code",
+  "@typeCodeButton": {
+    "description": "RUN-4, SCAN-12. Opens typed entry, which runs the same parsers as a camera scan."
+  },
+
+  "settingsGroupGeneral": "General",
+  "@settingsGroupGeneral": {
+    "description": "SET-5. First Settings group: theme, language, sound, vibration, copy on scan, search engine."
+  },
+  "settingsGroupPrivacy": "Privacy",
+  "@settingsGroupPrivacy": {
+    "description": "SET-5. Second Settings group: save history, send crash reports, privacy options."
+  },
+  "settingsGroupPro": "Pro",
+  "@settingsGroupPro": {
+    "description": "SET-5, PRO-1. Third Settings group: remove ads, restore purchase. Pro is the product name, not a description."
+  },
+  "settingsGroupAbout": "About",
+  "@settingsGroupAbout": {
+    "description": "SET-5. Fourth Settings group: feedback, privacy policy, open-source licences, version."
+  },
+
+  "settingsTheme": "Theme",
+  "@settingsTheme": {
+    "description": "SET-1, SET-5. Settings row that opens the theme choice."
+  },
+  "settingsLanguage": "Language",
+  "@settingsLanguage": {
+    "description": "LANG-1, SET-5. Settings row that opens the language choice."
+  },
+  "settingsSoundOnScan": "Sound on scan",
+  "@settingsSoundOnScan": {
+    "description": "SET-2, SET-5. Switch for the scan sound, off by default."
+  },
+  "settingsVibrateOnScan": "Vibrate on scan",
+  "@settingsVibrateOnScan": {
+    "description": "SET-2, SET-5. Switch for the scan vibration, on by default."
+  },
+  "settingsCopyOnScan": "Copy on scan",
+  "@settingsCopyOnScan": {
+    "description": "SET-3, SET-5. Switch that copies the decoded text once the result is on screen, off by default."
+  },
+  "settingsSearchEngine": "Search engine",
+  "@settingsSearchEngine": {
+    "description": "SET-4, SET-5. Settings row that chooses the engine used by Search the web."
+  },
+
+  "settingsSaveHistory": "Save history",
+  "@settingsSaveHistory": {
+    "description": "HIS-8, SET-5. Switch that stores scans and created codes, on by default."
+  },
+  "settingsSendCrashReports": "Send crash reports",
+  "@settingsSendCrashReports": {
+    "description": "PRIV-3, SET-5. Switch that turns on crash reporting, off by default."
+  },
+  "settingsPrivacyOptions": "Privacy options",
+  "@settingsPrivacyOptions": {
+    "description": "PRIV-2, SET-5. Settings row shown only where the consent SDK reports the region needs it."
+  },
+
+  "settingsRemoveAds": "Remove ads",
+  "@settingsRemoveAds": {
+    "description": "PRO-4, SET-5. Settings row that starts the one-time Pro purchase."
+  },
+  "settingsRemoveAdsSubtitle": "One-time purchase",
+  "@settingsRemoveAdsSubtitle": {
+    "description": "PRO-1, PRO-3, PRO-5. Second line under Remove ads. Never a subscription, and no price or discount is shown here."
+  },
+  "settingsRestorePurchase": "Restore purchase",
+  "@settingsRestorePurchase": {
+    "description": "PRO-6, SET-5. Settings row next to Remove ads that re-checks ownership."
+  },
+
+  "settingsFeedback": "Feedback",
+  "@settingsFeedback": {
+    "description": "SET-8, SET-5. Settings row that opens the feedback form."
+  },
+  "settingsPrivacyPolicy": "Privacy policy",
+  "@settingsPrivacyPolicy": {
+    "description": "SET-6, SET-5. Settings row that opens the published policy in Custom Tabs."
+  },
+  "settingsOpenSourceLicences": "Open-source licences",
+  "@settingsOpenSourceLicences": {
+    "description": "SET-7, SET-5. Settings row that opens the Flutter licence page."
+  },
+  "settingsVersion": "Version",
+  "@settingsVersion": {
+    "description": "SET-5. Label of the last About row."
+  },
+  "settingsVersionValue": "{version} ({build})",
+  "@settingsVersionValue": {
+    "description": "SET-5. Value of the version row: the SemVer name followed by the build number in brackets.",
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "1.0.0"
+      },
+      "build": {
+        "type": "String",
+        "example": "12"
+      }
+    }
+  },
+
+  "themeSystemDefault": "System default",
+  "@themeSystemDefault": {
+    "description": "SET-1. Theme choice that follows the phone setting; the initial choice."
+  },
+  "themeLight": "Light",
+  "@themeLight": {
+    "description": "SET-1. Light theme choice."
+  },
+  "themeDark": "Dark",
+  "@themeDark": {
+    "description": "SET-1. Dark theme choice."
+  },
+
+  "languageSystemDefault": "System default",
+  "@languageSystemDefault": {
+    "description": "LANG-1. Language choice that follows the device language and falls back to English. Kept apart from themeSystemDefault because languages that inflect need different wording here."
+  },
+  "languageEnglish": "English",
+  "@languageEnglish": {
+    "description": "LANG-1. English, written in its own language; the same in every message file."
+  },
+  "languageArabic": "العربية",
+  "@languageArabic": {
+    "description": "LANG-1. Arabic, written in its own language; the same in every message file."
+  },
+
+  "historyHeaderToday": "Today",
+  "@historyHeaderToday": {
+    "description": "DATE-2, HIS-3. Date header for rows from the current local calendar day."
+  },
+  "historyHeaderYesterday": "Yesterday",
+  "@historyHeaderYesterday": {
+    "description": "DATE-2, HIS-3. Date header for rows from the previous local calendar day."
+  },
+  "historyHeaderWeekday": "{date}",
+  "@historyHeaderWeekday": {
+    "description": "DATE-2, HIS-3, LANG-3. Date header for rows from the last 7 days: the weekday name in the app language.",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "EEEE",
+        "example": "Monday"
+      }
+    }
+  },
+  "historyHeaderDate": "{date}",
+  "@historyHeaderDate": {
+    "description": "DATE-2, HIS-3, LANG-3. Date header for older rows: the local calendar day formatted for the app language.",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMMMMd",
+        "example": "September 17, 2026"
+      }
+    }
+  },
+  "historySeenCount": "×{count}",
+  "@historySeenCount": {
+    "description": "HIS-4, LANG-3. Shown on a history row when the code was seen 2 or more times; the number follows the app language.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "3"
+      }
+    }
+  },
+  "historyCodeCount": "{count, plural, zero{No codes} one{1 code} other{{count} codes}}",
+  "@historyCodeCount": {
+    "description": "HIS-6, DATA-8. A count of codes, used for a saved batch row and for empty states.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+
+  "copiedSnackbar": "Copied {what}",
+  "@copiedSnackbar": {
+    "description": "SET-3, RES-2. Snackbar confirming what was copied. The placeholder takes an already translated noun, such as the link or the password.",
+    "placeholders": {
+      "what": {
+        "type": "String",
+        "example": "the link"
+      }
+    }
+  },
+
+  "errorStorageUnavailable": "The app cannot open its storage. Close it and open it again.",
+  "@errorStorageUnavailable": {
+    "description": "LANG-2. Fills the screen when the app database will not open at launch, so the app says what happened instead of crashing or showing a blank frame. Not errorSaveFailed: nothing was being saved."
+  },
+  "errorSaveFailed": "Nothing was saved. Try again.",
+  "@errorSaveFailed": {
+    "description": "Reliable writes: shown when a write fails and the change was rolled back, so no partial record is left."
+  },
+  "actionRetry": "Retry",
+  "@actionRetry": {
+    "description": "Button that runs the failed action again, shown with errorSaveFailed."
+  }
+}
