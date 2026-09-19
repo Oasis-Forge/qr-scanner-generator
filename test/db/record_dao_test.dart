@@ -633,4 +633,56 @@ void main() {
       ]);
     });
   });
+
+  group('purgeTrashDeletedBefore (DEL-4)', () {
+    test('removes a record deleted before the cutoff', () async {
+      final record = await insertLink('https://example.com');
+      await dao.softDelete(record.id, at: clock);
+
+      final removed = await dao.purgeTrashDeletedBefore(
+        clock.add(const Duration(seconds: 1)),
+      );
+
+      expect(removed, 1);
+      expect(await dao.findById(record.id), isNull);
+    });
+
+    test('keeps a record deleted exactly at the cutoff', () async {
+      final record = await insertLink('https://example.com');
+      await dao.softDelete(record.id, at: clock);
+
+      final removed = await dao.purgeTrashDeletedBefore(clock);
+
+      expect(removed, 0);
+      expect(await dao.findById(record.id), isNotNull);
+    });
+
+    test('never touches a live record, however old', () async {
+      final record = await insertLink('https://example.com');
+
+      final removed = await dao.purgeTrashDeletedBefore(
+        clock.add(const Duration(days: 60)),
+      );
+
+      expect(removed, 0);
+      expect(await dao.findById(record.id), isNotNull);
+    });
+
+    test('removes several trashed records in one write, leaving a live one '
+        'alone', () async {
+      final first = await insertLink('https://first.example');
+      final second = await insertLink('https://second.example');
+      final kept = await insertLink('https://kept.example');
+      await dao.softDeleteAll(<String>[first.id, second.id], at: clock);
+      tick();
+
+      final removed = await dao.purgeTrashDeletedBefore(clock);
+
+      expect(removed, 2);
+      expect(await dao.findById(first.id), isNull);
+      expect(await dao.findById(second.id), isNull);
+      expect(await dao.findById(kept.id), isNotNull);
+      expect(await livePayloads(), <String>['https://kept.example']);
+    });
+  });
 }

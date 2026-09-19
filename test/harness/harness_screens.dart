@@ -1,9 +1,12 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:qrscanner/l10n/app_localizations.dart';
 import 'package:qrscanner/models/record_enums.dart';
+import 'package:qrscanner/models/scan_record.dart';
 import 'package:qrscanner/screens/app_shell.dart';
+import 'package:qrscanner/screens/history_screen.dart';
 import 'package:qrscanner/screens/manual_entry_screen.dart';
 import 'package:qrscanner/screens/placeholder_tab.dart';
 import 'package:qrscanner/screens/result_screen.dart';
@@ -12,11 +15,14 @@ import 'package:qrscanner/services/app_services.dart';
 import 'package:qrscanner/services/camera_scanner.dart';
 import 'package:qrscanner/services/image_decoder.dart';
 import 'package:qrscanner/services/permission_service.dart';
+import 'package:qrscanner/state/history_state.dart';
 import 'package:qrscanner/state/scan_outcome.dart';
 import 'package:qrscanner/state/scanner_state.dart';
+import 'package:qrscanner/state/settings_state.dart';
 
 import '../helpers/fake_stores.dart';
 import '../helpers/test_app.dart';
+import '../screens/history/history_harness_data.dart';
 import 'scanner_scope.dart';
 
 /// Every screen and sheet the scanner PR adds, for the accessibility and
@@ -197,27 +203,43 @@ final List<HarnessScreen> scannerHarnessScreens = <HarnessScreen>[
     },
   ),
   HarnessScreen(
-    name: 'the History tab placeholder',
-    build: () => Builder(
-      builder: (BuildContext context) {
-        final AppLocalizations l10n = AppLocalizations.of(context);
-        return PlaceholderTab(
-          title: l10n.navHistory,
-          message: l10n.placeholderHistoryMessage,
-          icon: Icons.history,
-        );
-      },
-    ),
+    name: 'the History screen, empty (HIS-11)',
+    build: () => _historyScreen(const <ScanRecord>[]),
     readableText: const <String, String>{
-      'en':
-          'The History list arrives in the next test build. Your scans are '
-          'already kept on this phone.',
-      'ar':
-          'تصل قائمة السجل في النسخة التجريبية التالية. عمليات المسح محفوظة '
-          'من الآن على هذا الهاتف.',
+      'en': 'Codes you scan or create will show up here.',
+      'ar': 'ستظهر هنا الرموز التي تمسحها أو تنشئها.',
+    },
+  ),
+  HarnessScreen(
+    name: 'the History screen, with rows (HIS-4)',
+    build: () => _historyScreen(historyHarnessRecords()),
+    // A link's content is never translated (LANG-5): the same string proves
+    // the screen drew its rows in either language.
+    readableText: const <String, String>{
+      'en': 'https://example.com/harness',
+      'ar': 'https://example.com/harness',
     },
   ),
 ];
+
+/// A [HistoryScreen] over [records], provided the [HistoryState] the harness
+/// cannot get from `pumpApp` alone (`test/helpers/test_app.dart` knows
+/// nothing about History).
+Widget _historyScreen(List<ScanRecord> records) {
+  return ChangeNotifierProvider<HistoryState>(
+    create: (BuildContext context) => HistoryState(
+      records: StaticHistoryRecordDao(records),
+      settings: context.read<SettingsState>(),
+    ),
+    child: const HistoryScreen(
+      onSwitchToScan: _doNothing,
+      onSwitchToCreate: _doNothing,
+      onSwitchToSettings: _doNothing,
+    ),
+  );
+}
+
+void _doNothing() {}
 
 /// Every screen both harnesses run: the ones `test_app.dart` registers and the
 /// scanner PR's.

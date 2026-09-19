@@ -11,6 +11,7 @@ import 'package:qrscanner/db/record_dao.dart';
 import 'package:qrscanner/l10n/app_localizations.dart';
 import 'package:qrscanner/screens/settings_screen.dart';
 import 'package:qrscanner/services/app_services.dart';
+import 'package:qrscanner/state/history_state.dart';
 import 'package:qrscanner/state/settings_state.dart';
 import 'package:qrscanner/state/success_counts.dart';
 
@@ -173,6 +174,12 @@ Future<TestApp> pumpApp(
         ChangeNotifierProvider<SuccessCounts>.value(value: appCounts),
         Provider<RecordDao>.value(value: appRecords),
         Provider<AppServices>.value(value: appServices),
+        // History (HIS-1), over the same records and settings, as the app
+        // provides it, so a screen that opens the History tab finds it.
+        ChangeNotifierProvider<HistoryState>(
+          create: (BuildContext context) =>
+              HistoryState(records: appRecords, settings: appSettings),
+        ),
       ],
       child: _TestShell(
         screen: screen,

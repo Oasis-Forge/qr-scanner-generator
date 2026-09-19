@@ -364,6 +364,86 @@
       }
     }
   },
+  "historySegmentAll": "الكل",
+  "@historySegmentAll": {
+    "description": "HIS-1. Segmented control option showing every live record, scanned and created."
+  },
+  "historySegmentScanned": "الممسوحة",
+  "@historySegmentScanned": {
+    "description": "HIS-1. Segmented control option showing only records of kind scan."
+  },
+  "historySegmentCreated": "المُنشأة",
+  "@historySegmentCreated": {
+    "description": "HIS-1. Segmented control option showing only records of kind created."
+  },
+  "historyEmptyMessage": "ستظهر هنا الرموز التي تمسحها أو تنشئها.",
+  "@historyEmptyMessage": {
+    "description": "HIS-11. The one line shown when History holds no live records at all."
+  },
+  "historyEmptyScanButton": "مسح رمز",
+  "@historyEmptyScanButton": {
+    "description": "HIS-11. On the empty History screen; switches to the Scan tab."
+  },
+  "historyEmptyCreateButton": "إنشاء رمز",
+  "@historyEmptyCreateButton": {
+    "description": "HIS-11. On the empty History screen; switches to the Create tab."
+  },
+  "historyEmptyNotSavingMessage": "لا يتم حفظ عمليات المسح الجديدة.",
+  "@historyEmptyNotSavingMessage": {
+    "description": "HIS-8, HIS-11. Second line on the empty History screen while Save history is off."
+  },
+  "historyEmptySettingsButton": "الانتقال إلى الإعدادات",
+  "@historyEmptySettingsButton": {
+    "description": "HIS-8, HIS-11. On the empty History screen while Save history is off; switches to the Settings tab."
+  },
+  "historyLoading": "جارٍ تحميل السجل",
+  "@historyLoading": {
+    "description": "HIS-1, A11Y-1. Screen-reader label for the spinner shown for the moment before History's first read completes."
+  },
+  "historyDeletedSnackbar": "{count, plural, zero{لم يُحذف أي عنصر} one{تم حذف عنصر واحد} two{تم حذف عنصرين} few{تم حذف {count} عناصر} many{تم حذف {count} عنصرًا} other{تم حذف {count} عنصر}}",
+  "@historyDeletedSnackbar": {
+    "description": "DEL-2. Snackbar confirming a delete, with Undo beside it for HistoryState.undoWindow.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "historyUndoButton": "تراجع",
+  "@historyUndoButton": {
+    "description": "DEL-2. Action on historyDeletedSnackbar; restores what was just deleted."
+  },
+  "historyDeleteFailed": "تعذّر الحذف. حاول مرة أخرى.",
+  "@historyDeleteFailed": {
+    "description": "DEL-2. Snackbar when moving one or more records to Trash failed; History still shows them."
+  },
+  "historyUndoFailed": "تعذّر التراجع. حاول مرة أخرى.",
+  "@historyUndoFailed": {
+    "description": "DEL-2. Snackbar when restoring from Trash failed; the records stay out of History."
+  },
+  "historyLoadFailed": "تعذّر تحميل السجل. حاول مرة أخرى.",
+  "@historyLoadFailed": {
+    "description": "HIS-1. Snackbar when History could not be read from the database; the rows already shown stay."
+  },
+  "historySelectedCount": "{count, plural, zero{لم يتم تحديد أي عنصر} one{تم تحديد عنصر واحد} two{تم تحديد عنصرين} few{تم تحديد {count} عناصر} many{تم تحديد {count} عنصرًا} other{تم تحديد {count} عنصر}}",
+  "@historySelectedCount": {
+    "description": "DEL-2. Title of History's app bar while rows are selected for deletion.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "historyDeleteSelectedButton": "حذف",
+  "@historyDeleteSelectedButton": {
+    "description": "DEL-2, A11Y-1. Screen-reader label and tooltip of the action that deletes every selected row."
+  },
+  "historyCancelSelectionButton": "إلغاء التحديد",
+  "@historyCancelSelectionButton": {
+    "description": "DEL-2, A11Y-1. Screen-reader label and tooltip of the action that leaves selection mode without deleting."
+  },
 
   "copiedSnackbar": "تم نسخ {what}",
   "@copiedSnackbar": {
