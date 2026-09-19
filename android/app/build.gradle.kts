@@ -49,3 +49,11 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // The ads SDK (google_mobile_ads) brings WorkManager 2.7.0, whose
+    // database the release shrinker strips, so a release build crashed at
+    // launch ("Failed to create an instance of WorkDatabase"). Later versions
+    // ship the keep rules it needs.
+    implementation("androidx.work:work-runtime:2.11.2")
+}

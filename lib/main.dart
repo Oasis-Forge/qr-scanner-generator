@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -16,9 +17,12 @@ import 'package:qrscanner/db/migrations/migrations.dart';
 import 'package:qrscanner/db/record_dao.dart';
 import 'package:qrscanner/l10n/app_localizations.dart';
 import 'package:qrscanner/screens/app_shell.dart';
+import 'package:qrscanner/core/services/device/admob_ads_service.dart';
 import 'package:qrscanner/core/services/device/custom_tabs_link_opener.dart';
 import 'package:qrscanner/core/services/device/flutter_clipboard_service.dart';
+import 'package:qrscanner/core/services/device/play_billing_service.dart';
 import 'package:qrscanner/core/services/device/share_plus_service.dart';
+import 'package:qrscanner/core/services/device/ump_consent_service.dart';
 import 'package:qrscanner/services/app_services.dart';
 import 'package:qrscanner/services/device/android_system_intents.dart';
 import 'package:qrscanner/services/device/device_permission_service.dart';
@@ -26,8 +30,10 @@ import 'package:qrscanner/services/device/haptic_scan_feedback.dart';
 import 'package:qrscanner/services/device/image_picker_photo_picker.dart';
 import 'package:qrscanner/services/device/mlkit_image_decoder.dart';
 import 'package:qrscanner/services/device/mobile_scanner_camera.dart';
+import 'package:qrscanner/services/device/platform_app_version_info.dart';
 import 'package:qrscanner/services/permission_service.dart';
 import 'package:qrscanner/state/history_state.dart';
+import 'package:qrscanner/state/pro_state.dart';
 import 'package:qrscanner/state/scanner_state.dart';
 import 'package:qrscanner/state/settings_state.dart';
 import 'package:qrscanner/state/success_counts.dart';
@@ -58,14 +64,24 @@ Future<void> main() async {
     final AppServices services = _deviceServices(store);
     final SettingsState settings = SettingsState(store);
     final SuccessCounts successCounts = SuccessCounts(store);
-    // Loaded together, not one after the other: the two read disjoint keys
-    // (`settings.*` against `counts.*` and `prompts.*`), neither writes
+    final ProState proState = ProState(
+      billing: services.billing,
+      store: store,
+      successCounts: successCounts,
+    );
+    // Loaded together, not one after the other: they read disjoint keys
+    // (`settings.*`, `counts.*` and `prompts.*`, `pro.*`), none writes
     // anything, and sqflite runs the reads on its own queue, so the outcome is
-    // the one sequential loads gave — the first frame just waits for both sets
-    // of reads to interleave instead of for one set after the other.
+    // the one sequential loads gave — the first frame just waits for the reads
+    // to interleave instead of for one set after the other. Billing starts
+    // first, so its purchase stream is listening before Pro's start-up
+    // re-check (PRO-6) asks the store; Pro's load returns once its cache is
+    // read (PRO-7) and never waits on the store.
     await Future.wait<void>(<Future<void>>[
+      services.billing.initialize(),
       settings.load(),
       successCounts.load(),
+      proState.load(),
     ]);
 
     runApp(
@@ -74,8 +90,13 @@ Future<void> main() async {
         successCounts: successCounts,
         records: RecordDao(database),
         services: services,
+        proState: proState,
       ),
     );
+    // PRIV-1: consent is refreshed silently at each start; nothing shows. The
+    // form itself waits until an ad screen is about to ask for an ad
+    // (AdsState). The ads SDK starts only then too.
+    unawaited(services.consent.refresh());
   } on Object catch (error, stackTrace) {
     // Nothing is sent anywhere: the crash-report opt-in (PRIV-3) lives in the
     // database that just failed to open, so the failure only goes to the log.
@@ -99,6 +120,10 @@ Future<void> main() async {
 /// link opener (LINK-8, RES-9). Still the no-op fake until their PR: saving a
 /// file (SAVE-2), ads, consent, billing and crash reports (ADS-1, PRIV-1,
 /// PRO-1, PRIV-3), and Wi-Fi joining (RES-5).
+/// The AdMob banner unit every ADS-1 slot shows in a release build. Ad unit
+/// IDs aren't secrets; the matching app ID is in `AndroidManifest.xml`.
+const String bannerAdUnitId = 'ca-app-pub-8287765177319119/9242359295';
+
 AppServices _deviceServices(KeyValueStore store) {
   final PermissionService permissions = DevicePermissionService(store: store);
   return AppServices.fakes().copyWith(
@@ -111,6 +136,14 @@ AppServices _deviceServices(KeyValueStore store) {
     share: const SharePlusService(),
     systemIntents: const AndroidSystemIntents(),
     linkOpener: const CustomTabsLinkOpener(themeColor: AppTheme.seedColor),
+    // Real ads only in a release build; a debug build asks for Google's test
+    // banner, so development never touches the real inventory.
+    ads: AdmobAdsService(
+      adUnitId: kReleaseMode ? bannerAdUnitId : testAdaptiveBannerAdUnitId,
+    ),
+    consent: UmpConsentService(),
+    billing: PlayBillingService(),
+    versionInfo: PlatformAppVersionInfo(),
   );
 }
 
@@ -183,6 +216,7 @@ class QrScannerApp extends StatelessWidget {
     required this.successCounts,
     required this.records,
     required this.services,
+    required this.proState,
     super.key,
   });
 
@@ -198,6 +232,10 @@ class QrScannerApp extends StatelessWidget {
   /// Every device capability, behind its interface (`CLAUDE.md`).
   final AppServices services;
 
+  /// Pro ownership and the one Pro prompt (PRO), already loaded from its
+  /// cache, like [settings].
+  final ProState proState;
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -206,6 +244,7 @@ class QrScannerApp extends StatelessWidget {
         ChangeNotifierProvider<SuccessCounts>.value(value: successCounts),
         Provider<RecordDao>.value(value: records),
         Provider<AppServices>.value(value: services),
+        ChangeNotifierProvider<ProState>.value(value: proState),
         // The scanner (SCAN-1, RUN-1 to RUN-7), built from the same services,
         // records and settings every other screen reads. It lives as long as
         // the app; the scanner screen enters and leaves it.

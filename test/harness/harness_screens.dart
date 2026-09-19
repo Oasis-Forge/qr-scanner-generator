@@ -11,6 +11,7 @@ import 'package:qrscanner/screens/manual_entry_screen.dart';
 import 'package:qrscanner/screens/placeholder_tab.dart';
 import 'package:qrscanner/screens/result_screen.dart';
 import 'package:qrscanner/screens/scanner_screen.dart';
+import 'package:qrscanner/screens/settings_screen.dart';
 import 'package:qrscanner/services/app_services.dart';
 import 'package:qrscanner/services/camera_scanner.dart';
 import 'package:qrscanner/services/image_decoder.dart';
@@ -23,6 +24,7 @@ import 'package:qrscanner/state/settings_state.dart';
 import '../helpers/fake_stores.dart';
 import '../helpers/test_app.dart';
 import '../screens/history/history_harness_data.dart';
+import '../screens/settings/settings_scope.dart';
 import 'scanner_scope.dart';
 
 /// Every screen and sheet the scanner PR adds, for the accessibility and
@@ -241,11 +243,25 @@ Widget _historyScreen(List<ScanRecord> records) {
 
 void _doNothing() {}
 
-/// Every screen both harnesses run: the ones `test_app.dart` registers and the
-/// scanner PR's.
+/// The full Settings screen the ads/Pro/settings PR ships, for the
+/// accessibility and text-size harnesses (A11Y-1, A11Y-2, A11Y-4, LANG-6).
+/// Wrapped in `SettingsScope`, which provides the `ProState` and
+/// `AppVersionInfo` that plain `pumpApp` does not, the way
+/// `scannerHarnessScreens` wraps scanner screens in `ScannerScope`.
+final List<HarnessScreen> settingsHarnessScreens = <HarnessScreen>[
+  HarnessScreen(
+    name: 'the settings screen in its full form (SET-5)',
+    build: () => const SettingsScope(child: SettingsScreen()),
+    readableText: const <String, String>{'en': 'General', 'ar': 'عام'},
+  ),
+];
+
+/// Every screen both harnesses run: the ones `test_app.dart` registers, the
+/// scanner PR's and the settings PR's.
 List<HarnessScreen> get allHarnessScreens => <HarnessScreen>[
   ...harnessScreens,
   ...scannerHarnessScreens,
+  ...settingsHarnessScreens,
 ];
 
 /// The no-op services with the camera allowed, unless [permissions] says

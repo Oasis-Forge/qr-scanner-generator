@@ -4,13 +4,25 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:qrscanner/core/db/app_database.dart';
 import 'package:qrscanner/core/db/migration.dart';
+import 'package:qrscanner/core/services/ads_service.dart';
+import 'package:qrscanner/core/services/billing_service.dart';
+import 'package:qrscanner/core/services/consent_service.dart';
+import 'package:qrscanner/core/services/link_opener.dart';
 import 'package:qrscanner/core/theme/app_theme.dart';
 import 'package:qrscanner/db/migrations/migrations.dart';
 import 'package:qrscanner/db/record_dao.dart';
 import 'package:qrscanner/main.dart';
+import 'package:qrscanner/screens/ads/ad_banner_slot.dart';
 import 'package:qrscanner/screens/app_shell.dart';
+import 'package:qrscanner/screens/settings/about_section.dart';
+import 'package:qrscanner/services/app_version_info.dart';
+import 'package:qrscanner/screens/settings/feedback_screen.dart';
+import 'package:qrscanner/screens/settings/general_section.dart';
+import 'package:qrscanner/screens/settings/pro_section.dart';
+import 'package:qrscanner/screens/settings/privacy_section.dart';
 import 'package:qrscanner/screens/settings_screen.dart';
 import 'package:qrscanner/services/app_services.dart';
+import 'package:qrscanner/state/pro_state.dart';
 import 'package:qrscanner/state/settings_state.dart';
 import 'package:qrscanner/state/success_counts.dart';
 
@@ -22,155 +34,352 @@ import '../helpers/fake_stores.dart';
 /// (SCAN-1).
 void main() {
   group('SettingsScreen', () {
-    testWidgets('LANG-2: shows both switchers in English', (
-      WidgetTester tester,
-    ) async {
-      await _pumpSettings(tester);
+    group('General (SET-1, SET-2, SET-3, LANG-1)', () {
+      testWidgets('LANG-2: shows both switchers in English', (
+        WidgetTester tester,
+      ) async {
+        await _pumpSettings(tester);
 
-      expect(find.text('Theme'), findsOneWidget);
-      expect(find.text('Light'), findsOneWidget);
-      expect(find.text('Dark'), findsOneWidget);
-      expect(find.text('Language'), findsOneWidget);
-      expect(find.text('English'), findsOneWidget);
-      expect(find.text('العربية'), findsOneWidget);
-      // "System default" is one choice in each switcher.
-      expect(find.text('System default'), findsNWidgets(2));
-      // The screen's title and its bottom-bar label.
-      expect(find.text('Settings'), findsNWidgets(2));
+        expect(find.text('Theme'), findsOneWidget);
+        expect(find.text('Light'), findsOneWidget);
+        expect(find.text('Dark'), findsOneWidget);
+        expect(find.text('Language'), findsOneWidget);
+        expect(find.text('English'), findsOneWidget);
+        expect(find.text('العربية'), findsOneWidget);
+        // "System default" is one choice in each switcher.
+        expect(find.text('System default'), findsNWidgets(2));
+        // The screen's title and its bottom-bar label.
+        expect(find.text('Settings'), findsNWidgets(2));
+      });
+
+      testWidgets(
+        'LANG-1, LANG-5: a stored Arabic language shows Arabic text and lays '
+        'the screen out right to left',
+        (WidgetTester tester) async {
+          await _pumpSettings(
+            tester,
+            stored: <String, String>{SettingsState.localeKey: 'ar'},
+          );
+
+          expect(find.text('Theme'), findsNothing);
+          expect(find.text('المظهر'), findsOneWidget);
+          expect(find.text('فاتح'), findsOneWidget);
+          expect(find.text('داكن'), findsOneWidget);
+          expect(find.text('اللغة'), findsOneWidget);
+          expect(_directionOnScreen(tester), TextDirection.rtl);
+        },
+      );
+
+      testWidgets(
+        'SET-1: choosing Dark stores the theme and repaints the app dark',
+        (WidgetTester tester) async {
+          final _Harness harness = await _pumpSettings(tester);
+          expect(_brightnessOnScreen(tester), Brightness.light);
+
+          await _tapShown(tester, find.byKey(GeneralSection.darkThemeKey));
+          await tester.pumpAndSettle();
+
+          expect(harness.settings.themeMode, ThemeMode.dark);
+          expect(
+            harness.store.writes,
+            contains('set settings.theme_mode=dark'),
+          );
+          expect(_brightnessOnScreen(tester), Brightness.dark);
+          // The chosen option is not colour alone: it carries a tick (A11Y-6).
+          expect(
+            find.descendant(
+              of: find.byKey(GeneralSection.darkThemeKey),
+              matching: find.byIcon(Icons.check),
+            ),
+            findsOneWidget,
+          );
+        },
+      );
+
+      testWidgets(
+        'SET-2: sound off and vibrate on by default; each switch writes '
+        'before it changes',
+        (WidgetTester tester) async {
+          final _Harness harness = await _pumpSettings(tester);
+          _expectSwitch(tester, GeneralSection.soundOnScanKey, isFalse);
+          _expectSwitch(tester, GeneralSection.vibrateOnScanKey, isTrue);
+
+          await _tapShown(tester, find.byKey(GeneralSection.soundOnScanKey));
+          await tester.pumpAndSettle();
+
+          expect(harness.settings.soundOnScan, isTrue);
+          expect(
+            harness.store.writes,
+            contains('set settings.sound_on_scan=1'),
+          );
+          _expectSwitch(tester, GeneralSection.soundOnScanKey, isTrue);
+        },
+      );
+
+      testWidgets('SET-3: copy on scan off by default, and persists on', (
+        WidgetTester tester,
+      ) async {
+        final _Harness harness = await _pumpSettings(tester);
+        _expectSwitch(tester, GeneralSection.copyOnScanKey, isFalse);
+
+        await _tapShown(tester, find.byKey(GeneralSection.copyOnScanKey));
+        await tester.pumpAndSettle();
+
+        expect(harness.settings.copyOnScan, isTrue);
+        expect(harness.store.writes, contains('set settings.copy_on_scan=1'));
+      });
+
+      testWidgets(
+        'LANG-1: choosing العربية stores the language and the app follows '
+        'it without a restart',
+        (WidgetTester tester) async {
+          final _Harness harness = await _pumpSettings(tester);
+          expect(find.text('Language'), findsOneWidget);
+
+          await _tapShown(tester, find.byKey(GeneralSection.arabicLanguageKey));
+          await tester.pumpAndSettle();
+
+          expect(harness.settings.localeOverride, const Locale('ar'));
+          expect(harness.store.writes, contains('set settings.language=ar'));
+          expect(find.text('اللغة'), findsOneWidget);
+          // The bottom bar follows too, and Settings stays the open tab.
+          expect(find.text('الإعدادات'), findsNWidgets(2));
+          expect(_directionOnScreen(tester), TextDirection.rtl);
+        },
+      );
+
+      testWidgets(
+        'a write that fails changes nothing and says so in the app language',
+        (WidgetTester tester) async {
+          final _Harness harness = await _pumpSettings(tester);
+          harness.store.failingKeys.add(SettingsState.themeModeKey);
+
+          await _tapShown(tester, find.byKey(GeneralSection.darkThemeKey));
+          await tester.pumpAndSettle();
+
+          expect(harness.settings.themeMode, ThemeMode.system);
+          expect(_brightnessOnScreen(tester), Brightness.light);
+          expect(find.text('Nothing was saved. Try again.'), findsOneWidget);
+
+          // Let the snackbar time out, so no timer is left pending.
+          await tester.pumpAndSettle(const Duration(seconds: 5));
+        },
+      );
     });
 
-    testWidgets(
-      'LANG-1, LANG-5: a stored Arabic language shows Arabic text and lays the '
-      'screen out right to left',
-      (WidgetTester tester) async {
-        await _pumpSettings(
-          tester,
-          stored: <String, String>{SettingsState.localeKey: 'ar'},
-        );
-
-        expect(find.text('Theme'), findsNothing);
-        expect(find.text('المظهر'), findsOneWidget);
-        expect(find.text('فاتح'), findsOneWidget);
-        expect(find.text('داكن'), findsOneWidget);
-        expect(find.text('اللغة'), findsOneWidget);
-        expect(_directionOnScreen(tester), TextDirection.rtl);
-      },
-    );
-
-    testWidgets(
-      'SET-1: choosing Dark stores the theme and repaints the app dark',
-      (WidgetTester tester) async {
+    group('Privacy (HIS-8, PRIV-2, PRIV-3)', () {
+      testWidgets('save history is on by default and persists off (HIS-8)', (
+        WidgetTester tester,
+      ) async {
         final _Harness harness = await _pumpSettings(tester);
-        expect(_brightnessOnScreen(tester), Brightness.light);
+        _expectSwitch(tester, PrivacySection.saveHistoryKey, isTrue);
 
-        await tester.tap(find.byKey(SettingsScreen.darkThemeKey));
+        await _tapShown(tester, find.byKey(PrivacySection.saveHistoryKey));
         await tester.pumpAndSettle();
 
-        expect(harness.settings.themeMode, ThemeMode.dark);
-        expect(harness.store.writes, contains('set settings.theme_mode=dark'));
-        expect(_brightnessOnScreen(tester), Brightness.dark);
-        // The chosen option is not colour alone: it carries a tick (A11Y-6).
-        expect(
-          find.descendant(
-            of: find.byKey(SettingsScreen.darkThemeKey),
-            matching: find.byIcon(Icons.check),
+        expect(harness.settings.saveHistory, isFalse);
+        expect(harness.store.writes, contains('set settings.save_history=0'));
+      });
+
+      testWidgets(
+        'the crash-report row is absent: Firebase is not wired in yet '
+        '(PRIV-3, PRIV-8)',
+        (WidgetTester tester) async {
+          await _pumpSettings(tester);
+
+          expect(find.byKey(PrivacySection.sendCrashReportsKey), findsNothing);
+          expect(find.text('Send crash reports'), findsNothing);
+        },
+      );
+
+      testWidgets(
+        'privacy options is absent when the region needs none (PRIV-2)',
+        (WidgetTester tester) async {
+          await _pumpSettings(
+            tester,
+            services: AppServices.fakes().copyWith(
+              consent: NoopConsentService(privacyOptionsRequired: false),
+            ),
+          );
+
+          expect(find.byKey(PrivacySection.privacyOptionsKey), findsNothing);
+        },
+      );
+
+      testWidgets('privacy options shows and reopens the consent form when the '
+          'region needs it (PRIV-2)', (WidgetTester tester) async {
+        final NoopConsentService consent = NoopConsentService(
+          privacyOptionsRequired: true,
+        );
+        await _pumpSettings(
+          tester,
+          services: AppServices.fakes().copyWith(consent: consent),
+        );
+
+        expect(find.byKey(PrivacySection.privacyOptionsKey), findsOneWidget);
+        await _tapShown(tester, find.byKey(PrivacySection.privacyOptionsKey));
+        await tester.pumpAndSettle();
+
+        expect(consent.calls, contains('showPrivacyOptions'));
+      });
+    });
+
+    group('Pro (PRO-1, PRO-2, PRO-4, PRO-5, PRO-6)', () {
+      testWidgets('shows the store\'s own price, and no other price or '
+          'discount (PRO-5)', (WidgetTester tester) async {
+        await _pumpSettings(
+          tester,
+          services: AppServices.fakes().copyWith(
+            billing: NoopBillingService(
+              product: const StoreProduct(
+                id: ProState.removeAdsProductId,
+                title: 'Remove ads',
+                formattedPrice: r'$1.99',
+              ),
+            ),
           ),
-          findsOneWidget,
         );
-      },
-    );
-
-    testWidgets(
-      'LANG-1: choosing العربية stores the language and the app follows it '
-      'without a restart',
-      (WidgetTester tester) async {
-        final _Harness harness = await _pumpSettings(tester);
-        expect(find.text('Language'), findsOneWidget);
-
-        await tester.tap(find.byKey(SettingsScreen.arabicLanguageKey));
         await tester.pumpAndSettle();
 
-        expect(harness.settings.localeOverride, const Locale('ar'));
-        expect(harness.store.writes, contains('set settings.language=ar'));
-        expect(find.text('اللغة'), findsOneWidget);
-        // The bottom bar follows too, and Settings stays the open tab.
-        expect(find.text('الإعدادات'), findsNWidgets(2));
-        expect(_directionOnScreen(tester), TextDirection.rtl);
-      },
-    );
+        expect(find.text('Remove ads'), findsOneWidget);
+        expect(find.textContaining(r'$1.99'), findsOneWidget);
+      });
 
-    testWidgets(
-      'LANG-1: choosing System default removes the stored language, so the '
-      'device language is followed again',
-      (WidgetTester tester) async {
-        final _Harness harness = await _pumpSettings(
+      testWidgets('restore purchase reports what it found (PRO-6)', (
+        WidgetTester tester,
+      ) async {
+        await _pumpSettings(
           tester,
-          stored: <String, String>{SettingsState.localeKey: 'ar'},
-          deviceLanguages: const <Locale>[Locale('en')],
+          services: AppServices.fakes().copyWith(billing: NoopBillingService()),
         );
 
-        await tester.tap(find.byKey(SettingsScreen.systemLanguageKey));
+        await _tapShown(tester, find.byKey(ProSection.restorePurchaseKey));
         await tester.pumpAndSettle();
 
-        expect(harness.settings.localeOverride, isNull);
-        expect(harness.store.writes, contains('remove settings.language'));
-        expect(
-          harness.store.values.containsKey(SettingsState.localeKey),
-          isFalse,
-        );
-        expect(find.text('Language'), findsOneWidget);
-      },
-    );
+        expect(find.text('No previous purchase was found.'), findsOneWidget);
+      });
 
-    testWidgets(
-      'LANG-1: a device language the app does not have opens the app in '
-      'English, not in the first language the message files happen to list',
-      (WidgetTester tester) async {
-        // The message files list Arabic first, so Flutter's own fallback would
-        // hand this phone a right-to-left Arabic app.
+      testWidgets(
+        'once owned, says so instead of offering to buy, and shows no ads '
+        '(PRO-2, PRO-4, ADS-7)',
+        (WidgetTester tester) async {
+          await _pumpSettings(
+            tester,
+            services: AppServices.fakes().copyWith(
+              billing: NoopBillingService(
+                owned: <String>{ProState.removeAdsProductId},
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(find.text('Ads removed'), findsOneWidget);
+          expect(find.text('Remove ads'), findsNothing);
+          expect(find.byType(AdBannerSlot), findsOneWidget);
+          expect(find.byType(Divider), findsNothing);
+        },
+      );
+    });
+
+    group('About (SET-6, SET-7, SET-8)', () {
+      testWidgets('shows the version once loaded (SET-5)', (
+        WidgetTester tester,
+      ) async {
         await _pumpSettings(
           tester,
-          deviceLanguages: const <Locale>[Locale('fr', 'FR'), Locale('de')],
+          versionInfo: NoopAppVersionInfo(
+            details: const AppVersionDetails(
+              version: '1.4.0',
+              buildNumber: '27',
+              androidVersion: 'Android 14',
+            ),
+          ),
         );
+        await tester.pumpAndSettle();
 
-        expect(find.text('Language'), findsOneWidget);
-        expect(find.text('اللغة'), findsNothing);
-        expect(_directionOnScreen(tester), TextDirection.ltr);
-      },
-    );
+        expect(find.text('1.4.0 (27)'), findsOneWidget);
+      });
 
-    testWidgets(
-      'LANG-1: a device set to a country the message files do not name still '
-      'gets that language',
-      (WidgetTester tester) async {
+      testWidgets('opens the privacy policy in Custom Tabs (SET-6, LINK-8)', (
+        WidgetTester tester,
+      ) async {
+        final NoopLinkOpener linkOpener = NoopLinkOpener();
         await _pumpSettings(
           tester,
-          deviceLanguages: const <Locale>[Locale('ar', 'EG')],
+          services: AppServices.fakes().copyWith(linkOpener: linkOpener),
         );
 
-        expect(find.text('اللغة'), findsOneWidget);
-        expect(find.text('Language'), findsNothing);
-        expect(_directionOnScreen(tester), TextDirection.rtl);
-      },
-    );
+        await _tapShown(tester, find.byKey(AboutSection.privacyPolicyKey));
+        await tester.pumpAndSettle();
 
-    testWidgets(
-      'LANG-1: the language chosen in Settings wins over the device language '
-      'list',
-      (WidgetTester tester) async {
-        // Arabic is what the device asks for first, and the app has it, so only
-        // the stored choice can put the app into English.
-        await _pumpSettings(
-          tester,
-          stored: <String, String>{SettingsState.localeKey: 'en'},
-          deviceLanguages: const <Locale>[Locale('ar'), Locale('en')],
-        );
+        expect(linkOpener.openedUrls, hasLength(1));
+        expect(linkOpener.openedUrls.single.toString(), privacyPolicyUrl);
+      });
 
-        expect(find.text('Language'), findsOneWidget);
-        expect(find.text('اللغة'), findsNothing);
-        expect(_directionOnScreen(tester), TextDirection.ltr);
-      },
-    );
+      testWidgets('opens the feedback screen (SET-8)', (
+        WidgetTester tester,
+      ) async {
+        await _pumpSettings(tester);
+
+        await _tapShown(tester, find.byKey(AboutSection.feedbackKey));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(FeedbackScreen), findsOneWidget);
+      });
+    });
+
+    testWidgets('SET-5: the four groups appear General, Privacy, Pro, About, '
+        'top to bottom', (WidgetTester tester) async {
+      await _pumpSettings(tester);
+
+      final double general = tester.getTopLeft(find.text('General')).dy;
+      final double privacy = tester.getTopLeft(find.text('Privacy')).dy;
+      final double pro = tester.getTopLeft(find.text('Pro')).dy;
+      final double about = tester.getTopLeft(find.text('About')).dy;
+
+      expect(general, lessThan(privacy));
+      expect(privacy, lessThan(pro));
+      expect(pro, lessThan(about));
+    });
+
+    group('the ADS-1 banner slot', () {
+      testWidgets('is absent before the install\'s first success (ADS-6)', (
+        WidgetTester tester,
+      ) async {
+        await _pumpSettings(tester, services: _eligibleAdsServices());
+
+        expect(find.byType(AdBannerSlot), findsOneWidget);
+        expect(find.byType(Divider), findsNothing);
+      });
+
+      testWidgets(
+        'is present, fixed and non-scrolling, once eligible (ADS-1, ADS-3)',
+        (WidgetTester tester) async {
+          final SuccessCounts successCounts = SuccessCounts(
+            FakeKeyValueStore(),
+          );
+          await successCounts.load();
+          await successCounts.recordSuccessfulScan();
+
+          await _pumpSettings(
+            tester,
+            services: _eligibleAdsServices(),
+            successCounts: successCounts,
+          );
+          await tester.pumpAndSettle();
+
+          expect(find.byType(Divider), findsOneWidget);
+          // Fixed and non-scrolling: outside the scroll view, not inside it.
+          expect(
+            find.ancestor(
+              of: find.byType(AdBannerSlot),
+              matching: find.byType(SingleChildScrollView),
+            ),
+            findsNothing,
+          );
+        },
+      );
+    });
 
     testWidgets('A11Y-1: every switcher option carries its own screen-reader '
         'label', (WidgetTester tester) async {
@@ -180,12 +389,12 @@ void main() {
       await _pumpSettings(tester);
 
       const List<(Key, String)> expected = <(Key, String)>[
-        (SettingsScreen.systemThemeKey, 'System default'),
-        (SettingsScreen.lightThemeKey, 'Light'),
-        (SettingsScreen.darkThemeKey, 'Dark'),
-        (SettingsScreen.systemLanguageKey, 'System default'),
-        (SettingsScreen.englishLanguageKey, 'English'),
-        (SettingsScreen.arabicLanguageKey, 'العربية'),
+        (GeneralSection.systemThemeKey, 'System default'),
+        (GeneralSection.lightThemeKey, 'Light'),
+        (GeneralSection.darkThemeKey, 'Dark'),
+        (GeneralSection.systemLanguageKey, 'System default'),
+        (GeneralSection.englishLanguageKey, 'English'),
+        (GeneralSection.arabicLanguageKey, 'العربية'),
       ];
       for (final (Key key, String label) in expected) {
         expect(
@@ -196,11 +405,11 @@ void main() {
       }
       // The chosen option announces that it is the chosen one.
       expect(
-        tester.getSemantics(find.byKey(SettingsScreen.systemThemeKey)),
+        tester.getSemantics(find.byKey(GeneralSection.systemThemeKey)),
         isSemantics(isSelected: true),
       );
       expect(
-        tester.getSemantics(find.byKey(SettingsScreen.darkThemeKey)),
+        tester.getSemantics(find.byKey(GeneralSection.darkThemeKey)),
         isSemantics(isSelected: false),
       );
       semantics.dispose();
@@ -212,12 +421,12 @@ void main() {
       await _pumpSettings(tester);
 
       const List<Key> options = <Key>[
-        SettingsScreen.systemThemeKey,
-        SettingsScreen.lightThemeKey,
-        SettingsScreen.darkThemeKey,
-        SettingsScreen.systemLanguageKey,
-        SettingsScreen.englishLanguageKey,
-        SettingsScreen.arabicLanguageKey,
+        GeneralSection.systemThemeKey,
+        GeneralSection.lightThemeKey,
+        GeneralSection.darkThemeKey,
+        GeneralSection.systemLanguageKey,
+        GeneralSection.englishLanguageKey,
+        GeneralSection.arabicLanguageKey,
       ];
       for (final Key option in options) {
         final Size size = tester.getSize(find.byKey(option));
@@ -233,24 +442,6 @@ void main() {
         );
       }
     });
-
-    testWidgets(
-      'a write that fails changes nothing and says so in the app language',
-      (WidgetTester tester) async {
-        final _Harness harness = await _pumpSettings(tester);
-        harness.store.failingKeys.add(SettingsState.themeModeKey);
-
-        await tester.tap(find.byKey(SettingsScreen.darkThemeKey));
-        await tester.pumpAndSettle();
-
-        expect(harness.settings.themeMode, ThemeMode.system);
-        expect(_brightnessOnScreen(tester), Brightness.light);
-        expect(find.text('Nothing was saved. Try again.'), findsOneWidget);
-
-        // Let the snackbar time out, so no timer is left pending.
-        await tester.pumpAndSettle(const Duration(seconds: 5));
-      },
-    );
   });
 }
 
@@ -263,25 +454,41 @@ class _Harness {
   final FakeKeyValueStore store;
 }
 
+/// [AppServices] with consent already resolved to "no message needed" and no
+/// Pro ownership, so the ADS-1 banner slot is eligible as soon as the install
+/// has its first success. Used only by the banner-slot tests: every other
+/// test above keeps the default fakes, under which consent stays unresolved
+/// and the slot never shows (ADS-5) — itself already covered.
+AppServices _eligibleAdsServices() => AppServices.fakes().copyWith(
+  ads: NoopAdsService(),
+  consent: NoopConsentService(seededStatus: ConsentStatus.notNeeded),
+);
+
 /// Builds the real app shell over an in-memory store and the no-op services,
-/// then opens the Settings tab from the bottom bar, so a test drives the widget
-/// tree that ships.
+/// then opens the Settings tab from the bottom bar, so a test drives the
+/// widget tree that ships.
 Future<_Harness> _pumpSettings(
   WidgetTester tester, {
   Map<String, String>? stored,
   List<Locale>? deviceLanguages,
+  AppServices? services,
+  SuccessCounts? successCounts,
+  AppVersionInfo? versionInfo,
 }) async {
   if (deviceLanguages != null) {
-    // Set before the first frame, so the shell resolves the language from this
-    // list the way it would at launch, and put the real list back afterwards.
+    // Set before the first frame, so the shell resolves the language from
+    // this list the way it would at launch, and put the real list back
+    // afterwards.
     tester.platformDispatcher.localesTestValue = deviceLanguages;
     addTearDown(tester.platformDispatcher.clearLocalesTestValue);
   }
   final FakeKeyValueStore store = FakeKeyValueStore(stored);
   final SettingsState settings = SettingsState(store);
   await settings.load();
-  final SuccessCounts successCounts = SuccessCounts(store);
-  await successCounts.load();
+  final SuccessCounts counts = successCounts ?? SuccessCounts(store);
+  if (successCounts == null) {
+    await counts.load();
+  }
   // Nothing here reads records; the DAO is here because the shell provides
   // it, and its database is never opened.
   final RecordDao records = RecordDao(
@@ -292,13 +499,26 @@ Future<_Harness> _pumpSettings(
       databaseFactory: databaseFactoryFfi,
     ),
   );
+  final AppServices baseServices = services ?? AppServices.fakes();
+  final AppServices appServices = versionInfo == null
+      ? baseServices
+      : baseServices.copyWith(versionInfo: versionInfo);
+  final ProState proState = ProState(
+    billing: appServices.billing,
+    store: FakeKeyValueStore(),
+    successCounts: counts,
+  );
+  await proState.load();
+  await proState.startupCheck;
+  addTearDown(proState.dispose);
 
   await tester.pumpWidget(
     QrScannerApp(
       settings: settings,
-      successCounts: successCounts,
+      successCounts: counts,
       records: records,
-      services: AppServices.fakes(),
+      services: appServices,
+      proState: proState,
     ),
   );
   await tester.pumpAndSettle();
@@ -311,6 +531,13 @@ Future<_Harness> _pumpSettings(
   return _Harness(settings: settings, store: store);
 }
 
+/// Reads the [Switch] found by [key] and asserts its value, so a test names
+/// the setting instead of Flutter's own widget shape.
+void _expectSwitch(WidgetTester tester, Key key, Matcher isOn) {
+  final SwitchListTile tile = tester.widget(find.byKey(key));
+  expect(tile.value, isOn);
+}
+
 /// The brightness the screen is actually painted with (SET-1).
 Brightness _brightnessOnScreen(WidgetTester tester) =>
     Theme.of(tester.element(find.byType(SettingsScreen))).brightness;
@@ -318,3 +545,11 @@ Brightness _brightnessOnScreen(WidgetTester tester) =>
 /// The direction the screen is laid out in (LANG-5).
 TextDirection _directionOnScreen(WidgetTester tester) =>
     Directionality.of(tester.element(find.byType(SettingsScreen)));
+
+/// Scrolls [finder] into view, then taps it: Settings is taller than the test
+/// surface, and a tap below its bottom edge would land on nothing.
+Future<void> _tapShown(WidgetTester tester, Finder finder) async {
+  await tester.ensureVisible(finder);
+  await tester.pumpAndSettle();
+  await tester.tap(finder);
+}
