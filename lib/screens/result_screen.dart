@@ -3,34 +3,46 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../core/services/clipboard_service.dart';
-import '../core/services/share_service.dart';
-import '../core/theme/app_theme.dart';
 import '../l10n/app_localizations.dart';
-import '../models/record_enums.dart';
+import '../models/parsed_payload.dart';
 import '../services/app_services.dart';
+import '../state/result_state.dart';
 import '../state/scan_outcome.dart';
 import '../state/settings_state.dart';
+import 'result/contact_section.dart';
+import 'result/email_section.dart';
+import 'result/event_section.dart';
+import 'result/link_section.dart';
+import 'result/location_section.dart';
+import 'result/phone_section.dart';
+import 'result/plain_text_section.dart';
+import 'result/result_actions.dart';
+import 'result/product_section.dart';
+import 'result/sms_section.dart';
+import 'result/unknown_section.dart';
+import 'result/wifi_section.dart';
 import 'scanner/code_labels.dart';
-import 'scanner/payload_text.dart';
 
-/// The result of one scanned code (RES-1 to RES-3).
+/// The result of one scanned code (RES-1 to RES-14).
 ///
-/// One screen serves every source: the camera, a photo, typed entry and a pick
-/// from the multi-code list, and later a History reopen (RES-3). Top to
-/// bottom it shows the type and format in words ("Link · QR code", DATA-1),
-/// the full decoded content, selectable and never truncated, left to right
-/// even in Arabic (LANG-5), and Copy and Share of the exact decoded text
-/// (RES-1). The results PR adds each type's own primary action above them.
+/// One screen serves every source: the camera, a photo, typed entry, a pick
+/// from the multi-code list, and a History reopen (RES-3). Top to bottom it
+/// shows the type and format in words ("Link · QR code", DATA-1), then the
+/// section for [ScanOutcome.parsedType] (`lib/screens/result/*.dart`), which
+/// draws that type's own fields and its primary and secondary actions,
+/// always including Copy and Share of the exact decoded text (RES-1).
 ///
-/// Nothing happens without a tap (RES-2): nothing opens, dials, joins or
-/// shares by itself. The one exception is "Copy on scan" (SET-3), off by
-/// default, which copies only once this screen is fully on screen and says so
-/// in a snackbar. No ad, upsell or Pro prompt appears here (ADS-1).
+/// Nothing happens without a tap (RES-2): nothing opens, dials, joins,
+/// inserts or shares by itself. The one exception is "Copy on scan"
+/// (SET-3), off by default, which copies only once this screen is fully on
+/// screen and says so in a snackbar. No ad, upsell or Pro prompt appears
+/// here (ADS-1).
 ///
-/// Presentational: the outcome arrives already written to History (or not,
-/// HIS-8); the only calls this screen makes are the copy and share the user
-/// asked for, through the app's services.
+/// Presentational (`CLAUDE.md`): every service call this screen's sections
+/// make goes through [ResultState], which this screen creates once, from
+/// the real [AppServices] and [SettingsState] the app already provides, and
+/// disposes when it closes. The outcome arrives already written to History
+/// (or not, HIS-8).
 class ResultScreen extends StatefulWidget {
   const ResultScreen({
     required this.outcome,
@@ -46,15 +58,6 @@ class ResultScreen extends StatefulWidget {
   /// The "Link · QR code" line (RES-1).
   static const Key typeLineKey = Key('result.type_line');
 
-  /// The full decoded content (RES-1).
-  static const Key contentKey = Key('result.content');
-
-  /// Copy (RES-1).
-  static const Key copyKey = Key('result.copy');
-
-  /// Share (RES-1).
-  static const Key shareKey = Key('result.share');
-
   /// The line saying the scan couldn't be written to History.
   static const Key notSavedKey = Key('result.not_saved');
 
@@ -69,9 +72,10 @@ class ResultScreen extends StatefulWidget {
 }
 
 class _ResultScreenState extends State<ResultScreen> {
-  /// Whether "Copy on scan" has been dealt with for this result, so it copies
-  /// at most once (SET-3).
-  bool _copyOnScanDone = false;
+  /// Built once, from the real services this screen is handed, and given to
+  /// every section below through [ChangeNotifierProvider.value] — a `.value`
+  /// provider never disposes what it's given, so [dispose] does that here.
+  late final ResultState _resultState;
 
   /// The route animation being waited on, until this screen is fully shown.
   Animation<double>? _entrance;
@@ -81,9 +85,26 @@ class _ResultScreenState extends State<ResultScreen> {
   bool _entranceChecked = false;
 
   @override
+  void initState() {
+    super.initState();
+    final AppServices services = context.read<AppServices>();
+    final SettingsState settings = context.read<SettingsState>();
+    _resultState = ResultState(
+      outcome: widget.outcome,
+      isReopened: widget.isReopened,
+      copyOnScan: settings.copyOnScan,
+      searchEngine: settings.searchEngine,
+      clipboard: services.clipboard,
+      share: services.share,
+      systemIntents: services.systemIntents,
+      linkOpener: services.linkOpener,
+    );
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (widget.isReopened || _copyOnScanDone || _entranceChecked) {
+    if (widget.isReopened || _entranceChecked) {
       return;
     }
     _entranceChecked = true;
@@ -94,13 +115,12 @@ class _ResultScreenState extends State<ResultScreen> {
     // after the first frame instead. A screen with nothing to wait for (the
     // first route) then reads as complete and copies straight away.
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
-      if (!mounted || _copyOnScanDone) {
+      if (!mounted) {
         return;
       }
       final Animation<double>? animation = ModalRoute.of(context)?.animation;
       if (animation == null || animation.isCompleted) {
-        _copyOnScanDone = true;
-        unawaited(_copyOnScan());
+        unawaited(_copyOnArrival());
         return;
       }
       _entrance = animation..addStatusListener(_onEntranceStatus);
@@ -110,58 +130,30 @@ class _ResultScreenState extends State<ResultScreen> {
   @override
   void dispose() {
     _entrance?.removeStatusListener(_onEntranceStatus);
+    _resultState.dispose();
     super.dispose();
   }
 
   void _onEntranceStatus(AnimationStatus status) {
-    if (status != AnimationStatus.completed || _copyOnScanDone) {
+    if (status != AnimationStatus.completed) {
       return;
     }
-    _copyOnScanDone = true;
     _entrance?.removeStatusListener(_onEntranceStatus);
-    unawaited(_copyOnScan());
+    unawaited(_copyOnArrival());
   }
 
-  /// SET-3: copies when the user turned "Copy on scan" on, and only then.
-  Future<void> _copyOnScan() async {
-    if (!mounted || !context.read<SettingsState>().copyOnScan) {
+  /// SET-3: once the result is fully on screen, copies when Copy on scan is
+  /// on, and confirms with the same snackbar as the Copy button.
+  Future<void> _copyOnArrival() async {
+    if (!mounted) {
       return;
     }
-    await _copy();
-  }
-
-  /// Copies the exact decoded text and says what was copied (RES-1, SET-3).
-  Future<void> _copy() async {
     final AppLocalizations l10n = AppLocalizations.of(context);
     final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
-    final ClipboardService clipboard = context.read<AppServices>().clipboard;
-    final String what = widget.outcome.parsedType == ParsedType.url
-        ? l10n.copiedWhatLink
-        : l10n.copiedWhatContent;
-    String message;
-    try {
-      await clipboard.copyText(widget.outcome.payloadText);
-      message = l10n.copiedSnackbar(what);
-    } on Object {
-      message = l10n.resultCopyFailed;
-    }
-    messenger
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
-  }
-
-  /// Hands the exact decoded text to the system share sheet (RES-1). Nothing
-  /// leaves the device until the user picks where it goes.
-  Future<void> _share() async {
-    final AppLocalizations l10n = AppLocalizations.of(context);
-    final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
-    final ShareService share = context.read<AppServices>().share;
-    try {
-      await share.shareText(widget.outcome.payloadText);
-    } on Object {
-      messenger
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(l10n.resultShareFailed)));
+    final ResultIoOutcome? outcome = await _resultState
+        .notifyEntranceFinished();
+    if (outcome != null) {
+      showCopyOutcome(messenger, l10n, _resultState, outcome);
     }
   }
 
@@ -171,93 +163,66 @@ class _ResultScreenState extends State<ResultScreen> {
     final ThemeData theme = Theme.of(context);
     final ScanOutcome outcome = widget.outcome;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.resultTitle)),
-      body: SafeArea(
-        top: false,
-        child: ListView(
-          padding: const EdgeInsetsDirectional.fromSTEB(24, 16, 24, 32),
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Icon(
-                  parsedTypeIcon(outcome.parsedType),
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Semantics(
-                    header: true,
-                    child: Text(
-                      l10n.typeAndFormat(outcome.parsedType, outcome.symbology),
-                      key: ResultScreen.typeLineKey,
-                      style: theme.textTheme.titleMedium,
+    return ChangeNotifierProvider<ResultState>.value(
+      value: _resultState,
+      child: Scaffold(
+        appBar: AppBar(title: Text(l10n.resultTitle)),
+        body: SafeArea(
+          top: false,
+          child: ListView(
+            padding: const EdgeInsetsDirectional.fromSTEB(24, 16, 24, 32),
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Icon(
+                    parsedTypeIcon(outcome.parsedType),
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Semantics(
+                      header: true,
+                      child: Text(
+                        l10n.typeAndFormat(
+                          outcome.parsedType,
+                          outcome.symbology,
+                        ),
+                        key: ResultScreen.typeLineKey,
+                        style: theme.textTheme.titleMedium,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (outcome.saveFailed) ...<Widget>[
-              _NotSaved(message: l10n.resultNotSaved),
+                ],
+              ),
               const SizedBox(height: 16),
-            ],
-            DecoratedBox(
-              decoration: BoxDecoration(
-                border: Border.all(color: theme.colorScheme.outlineVariant),
-                borderRadius: const BorderRadius.all(Radius.circular(12)),
-              ),
-              child: Padding(
-                padding: const EdgeInsetsDirectional.all(16),
-                child: outcome.isBinary
-                    // RES-13: raw bytes aren't text to show.
-                    ? Text(
-                        l10n.scanBinaryData(outcome.byteCount ?? 0),
-                        key: ResultScreen.contentKey,
-                        style: theme.textTheme.bodyLarge,
-                      )
-                    : PayloadText(
-                        outcome.payloadText,
-                        key: ResultScreen.contentKey,
-                        type: outcome.parsedType,
-                        selectable: true,
-                        style: theme.textTheme.bodyLarge,
-                      ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: <Widget>[
-                OutlinedButton.icon(
-                  key: ResultScreen.copyKey,
-                  onPressed: () => unawaited(_copy()),
-                  style: _actionStyle,
-                  icon: const Icon(Icons.copy),
-                  label: Text(l10n.resultCopyButton),
-                ),
-                OutlinedButton.icon(
-                  key: ResultScreen.shareKey,
-                  onPressed: () => unawaited(_share()),
-                  style: _actionStyle,
-                  icon: const Icon(Icons.share),
-                  label: Text(l10n.resultShareButton),
-                ),
+              if (outcome.saveFailed) ...<Widget>[
+                _NotSaved(message: l10n.resultNotSaved),
+                const SizedBox(height: 16),
               ],
-            ),
-          ],
+              _sectionFor(_resultState.payload),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  static final ButtonStyle _actionStyle = OutlinedButton.styleFrom(
-    minimumSize: const Size(
-      AppTheme.minTapTargetSize * 2,
-      AppTheme.minTapTargetSize,
-    ),
-  );
+  /// The one section for [payload]'s type (RES-4 to RES-13), a sealed switch
+  /// so a new [ParsedPayload] subclass fails to compile here until it has
+  /// one.
+  Widget _sectionFor(ParsedPayload payload) => switch (payload) {
+    Link link => LinkSection(link: link),
+    Wifi wifi => WifiSection(wifi: wifi),
+    Contact contact => ContactSection(contact: contact),
+    CalendarEvent event => EventSection(event: event),
+    Phone phone => PhoneSection(phone: phone),
+    Sms sms => SmsSection(sms: sms),
+    Email email => EmailSection(email: email),
+    Location location => LocationSection(location: location),
+    Product product => ProductSection(product: product),
+    PlainText text => PlainTextSection(text: text),
+    Unknown unknown => UnknownSection(unknown: unknown),
+  };
 }
 
 /// Says the scan couldn't be written to History. The result still works; the

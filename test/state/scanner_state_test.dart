@@ -1020,6 +1020,26 @@ void main() {
       expect(scanner.outcome!.parsedType, ParsedType.text);
     });
 
+    test('the camera stays off under a typed result and starts again when '
+        'it closes (SCAN-3, battery)', () async {
+      final ScannerState scanner = await liveScanner();
+      // The screen leaves the scanner while the user types.
+      await scanner.leave();
+      expect(camera.isRunning, isFalse);
+
+      await scanner.submitTyped('Hello');
+      // Back from the form: the scanner is entered again, but the result is
+      // on top, so nothing streams underneath it.
+      await scanner.enter();
+      expect(scanner.outcome, isNotNull);
+      expect(camera.isRunning, isFalse);
+
+      await scanner.closeResult();
+
+      expect(camera.isRunning, isTrue);
+      expect(camera.isDetecting, isTrue);
+    });
+
     test('blank text opens nothing (SCAN-12)', () async {
       final ScannerState scanner = await liveScanner();
 

@@ -417,4 +417,182 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get actionRetry => 'إعادة المحاولة';
+
+  @override
+  String get copiedWhatPassword => 'كلمة المرور';
+
+  @override
+  String get resultHandOffFailed => 'تعذّر الفتح. حاول مرة أخرى.';
+
+  @override
+  String get resultUnavailableWifiSettings =>
+      'لا يمكن فتح إعدادات Wi-Fi على هذا الجهاز.';
+
+  @override
+  String get resultUnavailableContacts => 'لا يوجد تطبيق جهات اتصال مثبَّت.';
+
+  @override
+  String get resultUnavailableCalendar => 'لا يوجد تطبيق تقويم مثبَّت.';
+
+  @override
+  String get resultUnavailableDialer => 'لا يوجد تطبيق هاتف مثبَّت.';
+
+  @override
+  String get resultUnavailableSms => 'لا يوجد تطبيق رسائل مثبَّت.';
+
+  @override
+  String get resultUnavailableEmail => 'لا يوجد تطبيق بريد إلكتروني مثبَّت.';
+
+  @override
+  String get resultUnavailableBrowser => 'لا يوجد متصفّح مثبَّت.';
+
+  @override
+  String get resultWifiNetworkNameLabel => 'اسم الشبكة';
+
+  @override
+  String get resultWifiSecurityLabel => 'الحماية';
+
+  @override
+  String get resultWifiPasswordLabel => 'كلمة المرور';
+
+  @override
+  String get resultWifiRevealPasswordTooltip => 'إظهار كلمة المرور';
+
+  @override
+  String get resultWifiHidePasswordTooltip => 'إخفاء كلمة المرور';
+
+  @override
+  String get resultWifiWepNotice =>
+      'لا يمكن لنظام أندرويد الانضمام إلى شبكات WEP من التطبيقات.';
+
+  @override
+  String get resultWifiPrimaryButton => 'فتح إعدادات Wi-Fi';
+
+  @override
+  String get resultWifiCopyPasswordButton => 'نسخ كلمة المرور';
+
+  @override
+  String get resultWifiSecurityWpa => 'WPA';
+
+  @override
+  String get resultWifiSecurityWpa2 => 'WPA2';
+
+  @override
+  String get resultWifiSecurityWpa3 => 'WPA3';
+
+  @override
+  String get resultWifiSecurityWep => 'WEP';
+
+  @override
+  String get resultWifiSecurityNone => 'مفتوحة';
+
+  @override
+  String get resultContactNameLabel => 'الاسم';
+
+  @override
+  String get resultContactPhoneLabel => 'الهاتف';
+
+  @override
+  String get resultContactEmailLabel => 'البريد الإلكتروني';
+
+  @override
+  String get resultContactOrganisationLabel => 'المؤسسة';
+
+  @override
+  String get resultContactPrimaryButton => 'إضافة إلى جهات الاتصال';
+
+  @override
+  String get resultEventTitleLabel => 'العنوان';
+
+  @override
+  String get resultEventStartLabel => 'البداية';
+
+  @override
+  String get resultEventEndLabel => 'النهاية';
+
+  @override
+  String get resultEventLocationLabel => 'الموقع';
+
+  @override
+  String get resultEventNotesLabel => 'ملاحظات';
+
+  @override
+  String get resultEventAllDayNotice => 'حدث يستغرق اليوم كله.';
+
+  @override
+  String resultEventTimeUtc(String time) {
+    return '$time بالتوقيت العالمي';
+  }
+
+  @override
+  String resultEventTimeZoned(String time, String zone) {
+    return '$time ($zone)';
+  }
+
+  @override
+  String get resultUnavailableEventNoStart =>
+      'لا يحتوي هذا الحدث على وقت بدء، لذا لا يمكن إضافته.';
+
+  @override
+  String get resultEventPrimaryButton => 'إضافة إلى التقويم';
+
+  @override
+  String get resultPhoneNumberLabel => 'الرقم';
+
+  @override
+  String get resultPhonePrimaryButton => 'اتصال';
+
+  @override
+  String get resultSmsNumberLabel => 'الرقم';
+
+  @override
+  String get resultSmsMessageLabel => 'الرسالة';
+
+  @override
+  String get resultSmsPrimaryButton => 'رسالة';
+
+  @override
+  String get resultEmailToLabel => 'إلى';
+
+  @override
+  String get resultEmailSubjectLabel => 'الموضوع';
+
+  @override
+  String get resultEmailBodyLabel => 'الرسالة';
+
+  @override
+  String get resultEmailPrimaryButton => 'بريد إلكتروني';
+
+  @override
+  String get resultProductNumberLabel => 'الرقم';
+
+  @override
+  String get resultProductFormatLabel => 'الصيغة';
+
+  @override
+  String get resultProductFormatEan13 => 'EAN-13';
+
+  @override
+  String get resultProductFormatEan8 => 'EAN-8';
+
+  @override
+  String get resultProductFormatUpcA => 'UPC-A';
+
+  @override
+  String get resultProductFormatUpcE => 'UPC-E';
+
+  @override
+  String get resultProductFormatIsbn => 'ISBN';
+
+  @override
+  String get resultProductSearchButton => 'البحث على الويب';
+
+  @override
+  String get resultLocationLatitudeLabel => 'خط العرض';
+
+  @override
+  String get resultLocationLongitudeLabel => 'خط الطول';
+
+  @override
+  String get resultLocationNameLabel => 'الاسم';
 }

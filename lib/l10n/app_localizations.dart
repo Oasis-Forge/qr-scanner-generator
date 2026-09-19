@@ -739,6 +739,348 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get actionRetry;
+
+  /// SET-3, RES-4. Fills copiedSnackbar after a Wi-Fi password was copied.
+  ///
+  /// In en, this message translates to:
+  /// **'the password'**
+  String get copiedWhatPassword;
+
+  /// RES-6, RES-7, RES-9. Snackbar when a hand-off to a system app, or a web search, could not be started.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open. Try again.'**
+  String get resultHandOffFailed;
+
+  /// RES-4, RES-14. One-line reason shown when Open Wi-Fi settings is disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Wi-Fi settings can\'\'t be opened on this device.'**
+  String get resultUnavailableWifiSettings;
+
+  /// RES-6, RES-14. One-line reason shown when Add to contacts is disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'No contacts app is installed.'**
+  String get resultUnavailableContacts;
+
+  /// RES-6, RES-14. One-line reason shown when Add to calendar is disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'No calendar app is installed.'**
+  String get resultUnavailableCalendar;
+
+  /// RES-7, RES-14. One-line reason shown when Call is disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'No phone app is installed.'**
+  String get resultUnavailableDialer;
+
+  /// RES-7, RES-14. One-line reason shown when Message is disabled on an SMS result.
+  ///
+  /// In en, this message translates to:
+  /// **'No messaging app is installed.'**
+  String get resultUnavailableSms;
+
+  /// RES-7, RES-14. One-line reason shown when Email is disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'No email app is installed.'**
+  String get resultUnavailableEmail;
+
+  /// RES-9, RES-14. One-line reason shown when Search the web is disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'No browser is installed.'**
+  String get resultUnavailableBrowser;
+
+  /// RES-4. Label above a Wi-Fi result's network name.
+  ///
+  /// In en, this message translates to:
+  /// **'Network name'**
+  String get resultWifiNetworkNameLabel;
+
+  /// RES-4. Label above a Wi-Fi result's security type.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get resultWifiSecurityLabel;
+
+  /// RES-4. Label above a Wi-Fi result's password, masked until revealed.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get resultWifiPasswordLabel;
+
+  /// RES-4, A11Y-1. Screen-reader label of the icon button that reveals the masked Wi-Fi password.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get resultWifiRevealPasswordTooltip;
+
+  /// RES-4, A11Y-1. Screen-reader label of the same icon button once the password is revealed.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get resultWifiHidePasswordTooltip;
+
+  /// RES-4. Note shown under a WEP network's fields.
+  ///
+  /// In en, this message translates to:
+  /// **'Android can\'\'t join WEP networks from apps.'**
+  String get resultWifiWepNotice;
+
+  /// RES-4. Primary action of a Wi-Fi result.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Wi-Fi settings'**
+  String get resultWifiPrimaryButton;
+
+  /// RES-4. Secondary action that copies only the password, never the whole payload.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy password'**
+  String get resultWifiCopyPasswordButton;
+
+  /// RES-4. Value of the security field for a WPA network; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'WPA'**
+  String get resultWifiSecurityWpa;
+
+  /// RES-4. Value of the security field for a WPA2 network; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'WPA2'**
+  String get resultWifiSecurityWpa2;
+
+  /// RES-4. Value of the security field for a WPA3 network; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'WPA3'**
+  String get resultWifiSecurityWpa3;
+
+  /// RES-4. Value of the security field for a WEP network; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'WEP'**
+  String get resultWifiSecurityWep;
+
+  /// RES-4. Value of the security field for a network with no password.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get resultWifiSecurityNone;
+
+  /// RES-6. Label above a contact result's name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get resultContactNameLabel;
+
+  /// RES-6. Label above each of a contact result's phone numbers.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get resultContactPhoneLabel;
+
+  /// RES-6. Label above each of a contact result's email addresses.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get resultContactEmailLabel;
+
+  /// RES-6. Label above a contact result's organisation.
+  ///
+  /// In en, this message translates to:
+  /// **'Organisation'**
+  String get resultContactOrganisationLabel;
+
+  /// RES-6. Primary action of a contact result.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to contacts'**
+  String get resultContactPrimaryButton;
+
+  /// RES-6. Label above an event result's title.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get resultEventTitleLabel;
+
+  /// RES-6. Label above an event result's start, shown exactly as encoded (DATE-3).
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get resultEventStartLabel;
+
+  /// RES-6. Label above an event result's end, shown exactly as encoded (DATE-3).
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get resultEventEndLabel;
+
+  /// RES-6. Label above an event result's location.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get resultEventLocationLabel;
+
+  /// RES-6. Label above an event result's notes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get resultEventNotesLabel;
+
+  /// RES-6. Note shown on an event result whose start has no time part.
+  ///
+  /// In en, this message translates to:
+  /// **'All-day event.'**
+  String get resultEventAllDayNotice;
+
+  /// RES-6, DATE-3. An event time written in UTC, shown as encoded with UTC after it.
+  ///
+  /// In en, this message translates to:
+  /// **'{time} UTC'**
+  String resultEventTimeUtc(String time);
+
+  /// RES-6, DATE-3. An event time written in a named time zone, shown as encoded with the zone name after it.
+  ///
+  /// In en, this message translates to:
+  /// **'{time} ({zone})'**
+  String resultEventTimeZoned(String time, String zone);
+
+  /// RES-6, RES-14. Why Add to calendar is disabled for an event code with no readable start time.
+  ///
+  /// In en, this message translates to:
+  /// **'This event has no start time, so it can\'\'t be added.'**
+  String get resultUnavailableEventNoStart;
+
+  /// RES-6. Primary action of an event result.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to calendar'**
+  String get resultEventPrimaryButton;
+
+  /// RES-7. Label above a phone result's number.
+  ///
+  /// In en, this message translates to:
+  /// **'Number'**
+  String get resultPhoneNumberLabel;
+
+  /// RES-7. Primary action of a phone result; opens the dialer prefilled and never calls.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get resultPhonePrimaryButton;
+
+  /// RES-7. Label above an SMS result's recipient number.
+  ///
+  /// In en, this message translates to:
+  /// **'Number'**
+  String get resultSmsNumberLabel;
+
+  /// RES-7. Label above an SMS result's pre-filled message, when it has one.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get resultSmsMessageLabel;
+
+  /// RES-7. Primary action of an SMS result; opens the messaging app prefilled and never sends.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get resultSmsPrimaryButton;
+
+  /// RES-7. Label above an email result's recipient address.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get resultEmailToLabel;
+
+  /// RES-7. Label above an email result's subject, when it has one.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject'**
+  String get resultEmailSubjectLabel;
+
+  /// RES-7. Label above an email result's body, when it has one.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get resultEmailBodyLabel;
+
+  /// RES-7. Primary action of an email result; opens the email app prefilled and never sends.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get resultEmailPrimaryButton;
+
+  /// RES-9. Label above a product result's number.
+  ///
+  /// In en, this message translates to:
+  /// **'Number'**
+  String get resultProductNumberLabel;
+
+  /// RES-9. Label above a product result's format.
+  ///
+  /// In en, this message translates to:
+  /// **'Format'**
+  String get resultProductFormatLabel;
+
+  /// RES-9. Value of the format field for an EAN-13 product; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'EAN-13'**
+  String get resultProductFormatEan13;
+
+  /// RES-9. Value of the format field for an EAN-8 product; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'EAN-8'**
+  String get resultProductFormatEan8;
+
+  /// RES-9. Value of the format field for a UPC-A product; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'UPC-A'**
+  String get resultProductFormatUpcA;
+
+  /// RES-9. Value of the format field for a UPC-E product; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'UPC-E'**
+  String get resultProductFormatUpcE;
+
+  /// RES-9. Value of the format field for an ISBN, an EAN-13 whose digits mark it as one; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'ISBN'**
+  String get resultProductFormatIsbn;
+
+  /// RES-9, SET-4. Primary action of a product result; searches with the engine chosen in Settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Search the web'**
+  String get resultProductSearchButton;
+
+  /// RES-8. Label above a location result's latitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Latitude'**
+  String get resultLocationLatitudeLabel;
+
+  /// RES-8. Label above a location result's longitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Longitude'**
+  String get resultLocationLongitudeLabel;
+
+  /// RES-8. Label above a location result's optional place name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get resultLocationNameLabel;
 }
 
 class _AppLocalizationsDelegate

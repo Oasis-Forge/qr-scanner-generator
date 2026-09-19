@@ -540,5 +540,256 @@
   "actionRetry": "إعادة المحاولة",
   "@actionRetry": {
     "description": "Button that runs the failed action again, shown with errorSaveFailed."
+  },
+
+  "copiedWhatPassword": "كلمة المرور",
+  "@copiedWhatPassword": {
+    "description": "SET-3, RES-4. Fills copiedSnackbar after a Wi-Fi password was copied."
+  },
+  "resultHandOffFailed": "تعذّر الفتح. حاول مرة أخرى.",
+  "@resultHandOffFailed": {
+    "description": "RES-6, RES-7, RES-9. Snackbar when a hand-off to a system app, or a web search, could not be started."
+  },
+  "resultUnavailableWifiSettings": "لا يمكن فتح إعدادات Wi-Fi على هذا الجهاز.",
+  "@resultUnavailableWifiSettings": {
+    "description": "RES-4, RES-14. One-line reason shown when Open Wi-Fi settings is disabled."
+  },
+  "resultUnavailableContacts": "لا يوجد تطبيق جهات اتصال مثبَّت.",
+  "@resultUnavailableContacts": {
+    "description": "RES-6, RES-14. One-line reason shown when Add to contacts is disabled."
+  },
+  "resultUnavailableCalendar": "لا يوجد تطبيق تقويم مثبَّت.",
+  "@resultUnavailableCalendar": {
+    "description": "RES-6, RES-14. One-line reason shown when Add to calendar is disabled."
+  },
+  "resultUnavailableDialer": "لا يوجد تطبيق هاتف مثبَّت.",
+  "@resultUnavailableDialer": {
+    "description": "RES-7, RES-14. One-line reason shown when Call is disabled."
+  },
+  "resultUnavailableSms": "لا يوجد تطبيق رسائل مثبَّت.",
+  "@resultUnavailableSms": {
+    "description": "RES-7, RES-14. One-line reason shown when Message is disabled on an SMS result."
+  },
+  "resultUnavailableEmail": "لا يوجد تطبيق بريد إلكتروني مثبَّت.",
+  "@resultUnavailableEmail": {
+    "description": "RES-7, RES-14. One-line reason shown when Email is disabled."
+  },
+  "resultUnavailableBrowser": "لا يوجد متصفّح مثبَّت.",
+  "@resultUnavailableBrowser": {
+    "description": "RES-9, RES-14. One-line reason shown when Search the web is disabled."
+  },
+
+  "resultWifiNetworkNameLabel": "اسم الشبكة",
+  "@resultWifiNetworkNameLabel": {
+    "description": "RES-4. Label above a Wi-Fi result's network name."
+  },
+  "resultWifiSecurityLabel": "الحماية",
+  "@resultWifiSecurityLabel": {
+    "description": "RES-4. Label above a Wi-Fi result's security type."
+  },
+  "resultWifiPasswordLabel": "كلمة المرور",
+  "@resultWifiPasswordLabel": {
+    "description": "RES-4. Label above a Wi-Fi result's password, masked until revealed."
+  },
+  "resultWifiRevealPasswordTooltip": "إظهار كلمة المرور",
+  "@resultWifiRevealPasswordTooltip": {
+    "description": "RES-4, A11Y-1. Screen-reader label of the icon button that reveals the masked Wi-Fi password."
+  },
+  "resultWifiHidePasswordTooltip": "إخفاء كلمة المرور",
+  "@resultWifiHidePasswordTooltip": {
+    "description": "RES-4, A11Y-1. Screen-reader label of the same icon button once the password is revealed."
+  },
+  "resultWifiWepNotice": "لا يمكن لنظام أندرويد الانضمام إلى شبكات WEP من التطبيقات.",
+  "@resultWifiWepNotice": {
+    "description": "RES-4. Note shown under a WEP network's fields."
+  },
+  "resultWifiPrimaryButton": "فتح إعدادات Wi-Fi",
+  "@resultWifiPrimaryButton": {
+    "description": "RES-4. Primary action of a Wi-Fi result."
+  },
+  "resultWifiCopyPasswordButton": "نسخ كلمة المرور",
+  "@resultWifiCopyPasswordButton": {
+    "description": "RES-4. Secondary action that copies only the password, never the whole payload."
+  },
+  "resultWifiSecurityWpa": "WPA",
+  "@resultWifiSecurityWpa": {
+    "description": "RES-4. Value of the security field for a WPA network; a proper name."
+  },
+  "resultWifiSecurityWpa2": "WPA2",
+  "@resultWifiSecurityWpa2": {
+    "description": "RES-4. Value of the security field for a WPA2 network; a proper name."
+  },
+  "resultWifiSecurityWpa3": "WPA3",
+  "@resultWifiSecurityWpa3": {
+    "description": "RES-4. Value of the security field for a WPA3 network; a proper name."
+  },
+  "resultWifiSecurityWep": "WEP",
+  "@resultWifiSecurityWep": {
+    "description": "RES-4. Value of the security field for a WEP network; a proper name."
+  },
+  "resultWifiSecurityNone": "مفتوحة",
+  "@resultWifiSecurityNone": {
+    "description": "RES-4. Value of the security field for a network with no password."
+  },
+
+  "resultContactNameLabel": "الاسم",
+  "@resultContactNameLabel": {
+    "description": "RES-6. Label above a contact result's name."
+  },
+  "resultContactPhoneLabel": "الهاتف",
+  "@resultContactPhoneLabel": {
+    "description": "RES-6. Label above each of a contact result's phone numbers."
+  },
+  "resultContactEmailLabel": "البريد الإلكتروني",
+  "@resultContactEmailLabel": {
+    "description": "RES-6. Label above each of a contact result's email addresses."
+  },
+  "resultContactOrganisationLabel": "المؤسسة",
+  "@resultContactOrganisationLabel": {
+    "description": "RES-6. Label above a contact result's organisation."
+  },
+  "resultContactPrimaryButton": "إضافة إلى جهات الاتصال",
+  "@resultContactPrimaryButton": {
+    "description": "RES-6. Primary action of a contact result."
+  },
+
+  "resultEventTitleLabel": "العنوان",
+  "@resultEventTitleLabel": {
+    "description": "RES-6. Label above an event result's title."
+  },
+  "resultEventStartLabel": "البداية",
+  "@resultEventStartLabel": {
+    "description": "RES-6. Label above an event result's start, shown exactly as encoded (DATE-3)."
+  },
+  "resultEventEndLabel": "النهاية",
+  "@resultEventEndLabel": {
+    "description": "RES-6. Label above an event result's end, shown exactly as encoded (DATE-3)."
+  },
+  "resultEventLocationLabel": "الموقع",
+  "@resultEventLocationLabel": {
+    "description": "RES-6. Label above an event result's location."
+  },
+  "resultEventNotesLabel": "ملاحظات",
+  "@resultEventNotesLabel": {
+    "description": "RES-6. Label above an event result's notes."
+  },
+  "resultEventAllDayNotice": "حدث يستغرق اليوم كله.",
+  "@resultEventAllDayNotice": {
+    "description": "RES-6. Note shown on an event result whose start has no time part."
+  },
+  "resultEventTimeUtc": "{time} بالتوقيت العالمي",
+  "@resultEventTimeUtc": {
+    "description": "RES-6, DATE-3. An event time written in UTC, shown as encoded with UTC after it.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "Thu, Oct 1, 2026 9:00 AM"
+      }
+    }
+  },
+  "resultEventTimeZoned": "{time} ({zone})",
+  "@resultEventTimeZoned": {
+    "description": "RES-6, DATE-3. An event time written in a named time zone, shown as encoded with the zone name after it.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "Thu, Oct 1, 2026 9:00 AM"
+      },
+      "zone": {
+        "type": "String",
+        "example": "Europe/Paris"
+      }
+    }
+  },
+  "resultUnavailableEventNoStart": "لا يحتوي هذا الحدث على وقت بدء، لذا لا يمكن إضافته.",
+  "@resultUnavailableEventNoStart": {
+    "description": "RES-6, RES-14. Why Add to calendar is disabled for an event code with no readable start time."
+  },
+  "resultEventPrimaryButton": "إضافة إلى التقويم",
+  "@resultEventPrimaryButton": {
+    "description": "RES-6. Primary action of an event result."
+  },
+
+  "resultPhoneNumberLabel": "الرقم",
+  "@resultPhoneNumberLabel": {
+    "description": "RES-7. Label above a phone result's number."
+  },
+  "resultPhonePrimaryButton": "اتصال",
+  "@resultPhonePrimaryButton": {
+    "description": "RES-7. Primary action of a phone result; opens the dialer prefilled and never calls."
+  },
+  "resultSmsNumberLabel": "الرقم",
+  "@resultSmsNumberLabel": {
+    "description": "RES-7. Label above an SMS result's recipient number."
+  },
+  "resultSmsMessageLabel": "الرسالة",
+  "@resultSmsMessageLabel": {
+    "description": "RES-7. Label above an SMS result's pre-filled message, when it has one."
+  },
+  "resultSmsPrimaryButton": "رسالة",
+  "@resultSmsPrimaryButton": {
+    "description": "RES-7. Primary action of an SMS result; opens the messaging app prefilled and never sends."
+  },
+  "resultEmailToLabel": "إلى",
+  "@resultEmailToLabel": {
+    "description": "RES-7. Label above an email result's recipient address."
+  },
+  "resultEmailSubjectLabel": "الموضوع",
+  "@resultEmailSubjectLabel": {
+    "description": "RES-7. Label above an email result's subject, when it has one."
+  },
+  "resultEmailBodyLabel": "الرسالة",
+  "@resultEmailBodyLabel": {
+    "description": "RES-7. Label above an email result's body, when it has one."
+  },
+  "resultEmailPrimaryButton": "بريد إلكتروني",
+  "@resultEmailPrimaryButton": {
+    "description": "RES-7. Primary action of an email result; opens the email app prefilled and never sends."
+  },
+
+  "resultProductNumberLabel": "الرقم",
+  "@resultProductNumberLabel": {
+    "description": "RES-9. Label above a product result's number."
+  },
+  "resultProductFormatLabel": "الصيغة",
+  "@resultProductFormatLabel": {
+    "description": "RES-9. Label above a product result's format."
+  },
+  "resultProductFormatEan13": "EAN-13",
+  "@resultProductFormatEan13": {
+    "description": "RES-9. Value of the format field for an EAN-13 product; a proper name."
+  },
+  "resultProductFormatEan8": "EAN-8",
+  "@resultProductFormatEan8": {
+    "description": "RES-9. Value of the format field for an EAN-8 product; a proper name."
+  },
+  "resultProductFormatUpcA": "UPC-A",
+  "@resultProductFormatUpcA": {
+    "description": "RES-9. Value of the format field for a UPC-A product; a proper name."
+  },
+  "resultProductFormatUpcE": "UPC-E",
+  "@resultProductFormatUpcE": {
+    "description": "RES-9. Value of the format field for a UPC-E product; a proper name."
+  },
+  "resultProductFormatIsbn": "ISBN",
+  "@resultProductFormatIsbn": {
+    "description": "RES-9. Value of the format field for an ISBN, an EAN-13 whose digits mark it as one; a proper name."
+  },
+  "resultProductSearchButton": "البحث على الويب",
+  "@resultProductSearchButton": {
+    "description": "RES-9, SET-4. Primary action of a product result; searches with the engine chosen in Settings."
+  },
+
+  "resultLocationLatitudeLabel": "خط العرض",
+  "@resultLocationLatitudeLabel": {
+    "description": "RES-8. Label above a location result's latitude."
+  },
+  "resultLocationLongitudeLabel": "خط الطول",
+  "@resultLocationLongitudeLabel": {
+    "description": "RES-8. Label above a location result's longitude."
+  },
+  "resultLocationNameLabel": "الاسم",
+  "@resultLocationNameLabel": {
+    "description": "RES-8. Label above a location result's optional place name."
   }
 }
