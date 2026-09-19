@@ -283,6 +283,74 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get historySegmentAll => 'All';
+
+  @override
+  String get historySegmentScanned => 'Scanned';
+
+  @override
+  String get historySegmentCreated => 'Created';
+
+  @override
+  String get historyEmptyMessage =>
+      'Codes you scan or create will show up here.';
+
+  @override
+  String get historyEmptyScanButton => 'Scan a code';
+
+  @override
+  String get historyEmptyCreateButton => 'Create a code';
+
+  @override
+  String get historyEmptyNotSavingMessage => 'New scans aren\'t being saved.';
+
+  @override
+  String get historyEmptySettingsButton => 'Go to Settings';
+
+  @override
+  String get historyLoading => 'Loading History';
+
+  @override
+  String historyDeletedSnackbar(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items deleted',
+      one: '1 item deleted',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get historyUndoButton => 'Undo';
+
+  @override
+  String get historyDeleteFailed => 'Could not delete. Try again.';
+
+  @override
+  String get historyUndoFailed => 'Could not undo. Try again.';
+
+  @override
+  String get historyLoadFailed => 'History couldn\'t be loaded. Try again.';
+
+  @override
+  String historySelectedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count selected',
+      one: '1 selected',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get historyDeleteSelectedButton => 'Delete';
+
+  @override
+  String get historyCancelSelectionButton => 'Cancel selection';
+
+  @override
   String copiedSnackbar(String what) {
     return 'Copied $what';
   }

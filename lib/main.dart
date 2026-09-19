@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dynamic_color/dynamic_color.dart';
@@ -26,6 +27,7 @@ import 'package:qrscanner/services/device/image_picker_photo_picker.dart';
 import 'package:qrscanner/services/device/mlkit_image_decoder.dart';
 import 'package:qrscanner/services/device/mobile_scanner_camera.dart';
 import 'package:qrscanner/services/permission_service.dart';
+import 'package:qrscanner/state/history_state.dart';
 import 'package:qrscanner/state/scanner_state.dart';
 import 'package:qrscanner/state/settings_state.dart';
 import 'package:qrscanner/state/success_counts.dart';
@@ -218,6 +220,21 @@ class QrScannerApp extends StatelessWidget {
             settings: settings,
             successCounts: successCounts,
           ),
+        ),
+        // History (HIS-1). Built at start, not lazily, so DEL-4's purge of
+        // Trash older than 30 local days runs at every app start; it runs
+        // unawaited, so the first frame never waits for it, and it swallows
+        // its own failures.
+        ChangeNotifierProvider<HistoryState>(
+          lazy: false,
+          create: (BuildContext context) {
+            final HistoryState history = HistoryState(
+              records: records,
+              settings: settings,
+            );
+            unawaited(history.purgeExpiredTrash());
+            return history;
+          },
         ),
       ],
       // The device's own palette, where Android offers one (SET-1). The schemes

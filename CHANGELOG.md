@@ -4,6 +4,16 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-09-20
+
+### Added
+- History: every code you scan, newest first, under Today, Yesterday, the day of the week, then the date. Filter by All, Scanned or Created.
+- Each row shows the code's type, its content (or your label), the time, and how many times you've scanned it. Wi-Fi passwords stay hidden.
+- Tap a row to open its result again.
+- Swipe a row away, or long-press to select several, and delete them. There's no "are you sure?": Undo is right there for 5 seconds.
+- Deleted codes go to Trash and are removed for good after 30 days.
+- An empty History offers to scan or create a code, and says so if saving history is turned off.
+
 ## [0.4.0] - 2026-09-19
 
 ### Added

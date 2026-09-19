@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qrscanner/screens/app_shell.dart';
+import 'package:qrscanner/screens/history_screen.dart';
 import 'package:qrscanner/screens/placeholder_tab.dart';
 import 'package:qrscanner/screens/scanner/scanner_keys.dart';
 import 'package:qrscanner/screens/scanner_screen.dart';
@@ -85,15 +86,11 @@ void main() {
           1,
         );
 
+        // History is the real list now (HIS-1), no longer a placeholder.
         await tester.tap(find.byKey(AppShell.historyTabKey));
         await tester.pumpAndSettle();
-        expect(
-          find.text(
-            'The History list arrives in the next test build. Your scans are '
-            'already kept on this phone.',
-          ),
-          findsOneWidget,
-        );
+        expect(find.byType(HistoryScreen), findsOneWidget);
+        expect(find.byType(PlaceholderTab), findsNothing);
 
         await tester.tap(find.byKey(AppShell.settingsTabKey));
         await tester.pumpAndSettle();
@@ -126,12 +123,10 @@ void main() {
 
       await tester.tap(find.byKey(AppShell.historyTabKey));
       await tester.pumpAndSettle();
+      expect(find.byType(HistoryScreen), findsOneWidget);
       expect(
-        find.text(
-          'تصل قائمة السجل في النسخة التجريبية التالية. عمليات المسح محفوظة '
-          'من الآن على هذا الهاتف.',
-        ),
-        findsOneWidget,
+        Directionality.of(tester.element(find.byType(HistoryScreen))),
+        TextDirection.rtl,
       );
     });
 

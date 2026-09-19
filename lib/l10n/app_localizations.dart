@@ -506,6 +506,108 @@ abstract class AppLocalizations {
   /// **'{count, plural, zero{No codes} one{1 code} other{{count} codes}}'**
   String historyCodeCount(int count);
 
+  /// HIS-1. Segmented control option showing every live record, scanned and created.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get historySegmentAll;
+
+  /// HIS-1. Segmented control option showing only records of kind scan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanned'**
+  String get historySegmentScanned;
+
+  /// HIS-1. Segmented control option showing only records of kind created.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get historySegmentCreated;
+
+  /// HIS-11. The one line shown when History holds no live records at all.
+  ///
+  /// In en, this message translates to:
+  /// **'Codes you scan or create will show up here.'**
+  String get historyEmptyMessage;
+
+  /// HIS-11. On the empty History screen; switches to the Scan tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan a code'**
+  String get historyEmptyScanButton;
+
+  /// HIS-11. On the empty History screen; switches to the Create tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a code'**
+  String get historyEmptyCreateButton;
+
+  /// HIS-8, HIS-11. Second line on the empty History screen while Save history is off.
+  ///
+  /// In en, this message translates to:
+  /// **'New scans aren\'\'t being saved.'**
+  String get historyEmptyNotSavingMessage;
+
+  /// HIS-8, HIS-11. On the empty History screen while Save history is off; switches to the Settings tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Settings'**
+  String get historyEmptySettingsButton;
+
+  /// HIS-1, A11Y-1. Screen-reader label for the spinner shown for the moment before History's first read completes.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading History'**
+  String get historyLoading;
+
+  /// DEL-2. Snackbar confirming a delete, with Undo beside it for HistoryState.undoWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 item deleted} other{{count} items deleted}}'**
+  String historyDeletedSnackbar(int count);
+
+  /// DEL-2. Action on historyDeletedSnackbar; restores what was just deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get historyUndoButton;
+
+  /// DEL-2. Snackbar when moving one or more records to Trash failed; History still shows them.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not delete. Try again.'**
+  String get historyDeleteFailed;
+
+  /// DEL-2. Snackbar when restoring from Trash failed; the records stay out of History.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not undo. Try again.'**
+  String get historyUndoFailed;
+
+  /// HIS-1. Snackbar when History could not be read from the database; the rows already shown stay.
+  ///
+  /// In en, this message translates to:
+  /// **'History couldn\'\'t be loaded. Try again.'**
+  String get historyLoadFailed;
+
+  /// DEL-2. Title of History's app bar while rows are selected for deletion.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 selected} other{{count} selected}}'**
+  String historySelectedCount(int count);
+
+  /// DEL-2, A11Y-1. Screen-reader label and tooltip of the action that deletes every selected row.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get historyDeleteSelectedButton;
+
+  /// DEL-2, A11Y-1. Screen-reader label and tooltip of the action that leaves selection mode without deleting.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel selection'**
+  String get historyCancelSelectionButton;
+
   /// SET-3, RES-2. Snackbar confirming what was copied. The placeholder takes an already translated noun, such as the link or the password.
   ///
   /// In en, this message translates to:

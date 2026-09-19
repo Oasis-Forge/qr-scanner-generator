@@ -72,7 +72,7 @@ In dependency order, one theme per PR. Everything else in Phase 2 arrives during
 - [x] **Scanner and permissions:** RUN-1–RUN-7, SCAN-1–SCAN-7, SCAN-9, SCAN-11–SCAN-13, A11Y-3. SCAN-2 and SCAN-3's numbers stay provisional until S6. Done 2026-09-19 (v0.3.0). Still for a real phone: a live read with the code inside the target (the emulator's scene is too soft), and SCAN-2/SCAN-3 timings (S6). Open for the user: SCAN-7's 2x auto-zoom cap can't be enforced Flutter-only.
 - [x] **Result screens and parsers:** RES-1–RES-4, RES-6, RES-7, RES-9, RES-13, RES-14. Each payload parser is pure Dart with its own tests.
 - [ ] **Link safety:** LINK-1–LINK-5, LINK-8, LINK-9 (LINK-2 bolds the full host until S11), and the one-time link callout RUN-8, so every tester sees it on their first link
-- [ ] **History and delete:** HIS-1 (segments), HIS-3–HIS-5, HIS-7, HIS-11, DEL-2, DEL-4
+- [x] **History and delete:** HIS-1 (segments), HIS-3–HIS-5, HIS-7, HIS-11, DEL-2, DEL-4
 - [ ] **Generator and save:**
   - GEN-1, GEN-3, GEN-5, GEN-6 (closed-test fields), GEN-7, GEN-8, GEN-12, GEN-13 (every created code is saved until HIS-8's switch ships in 2b)
   - STY-1, STY-5 (if S2 fails, STY-5 moves to v1 and the listing doesn't claim a scan check)
