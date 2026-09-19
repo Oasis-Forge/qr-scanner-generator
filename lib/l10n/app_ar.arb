@@ -44,6 +44,150 @@
     "description": "RUN-4, SCAN-12. Opens typed entry, which runs the same parsers as a camera scan."
   },
 
+  "placeholderCreateMessage": "يصل إنشاء الرموز في النسخة التجريبية التالية.",
+  "@placeholderCreateMessage": {
+    "description": "SCAN-1. Body of the Create tab until the generator ships: says plainly that it is not in this build yet."
+  },
+  "placeholderHistoryMessage": "تصل قائمة السجل في النسخة التجريبية التالية. عمليات المسح محفوظة من الآن على هذا الهاتف.",
+  "@placeholderHistoryMessage": {
+    "description": "SCAN-1, DATA-4. Body of the History tab until the list ships. Scans are written from this build on, so it says they are kept, and only on the phone."
+  },
+
+  "scanTargetHint": "وجّه الكاميرا نحو رمز",
+  "@scanTargetHint": {
+    "description": "SCAN-4. One line on the live scanner, under the square target. Detection is automatic: there is no shutter to press."
+  },
+  "scanCameraUnavailable": "تعذّر تشغيل الكاميرا. ربما يستخدمها تطبيق آخر.",
+  "@scanCameraUnavailable": {
+    "description": "The camera is allowed but did not start (no usable back camera, or another app holds it). Shown with Scan a photo and Type a code."
+  },
+  "scanTorchOn": "تشغيل الفلاش",
+  "@scanTorchOn": {
+    "description": "SCAN-6, A11Y-1. Screen-reader name and tooltip of the torch button while the torch is off."
+  },
+  "scanTorchOff": "إيقاف الفلاش",
+  "@scanTorchOff": {
+    "description": "SCAN-6, A11Y-1. Screen-reader name and tooltip of the torch button while the torch is on."
+  },
+  "scanZoomLabel": "التكبير",
+  "@scanZoomLabel": {
+    "description": "SCAN-7, A11Y-1. Screen-reader name of the zoom slider on the live scanner."
+  },
+  "scanZoomValue": "{zoom}×",
+  "@scanZoomValue": {
+    "description": "SCAN-7, LANG-3. The current zoom beside the slider and as its screen-reader value, such as 2× or 1.5×. The number follows the app language and stays left to right (LANG-5).",
+    "placeholders": {
+      "zoom": {
+        "type": "double",
+        "format": "decimalPattern",
+        "example": "1.5"
+      }
+    }
+  },
+  "scanReadingPhoto": "جارٍ قراءة الصورة",
+  "@scanReadingPhoto": {
+    "description": "SCAN-11, A11Y-1. Screen-reader name of the progress indicator shown while a picked photo is decoded."
+  },
+  "scanPhotoPickerFailed": "لم يُفتح منتقي الصور. حاول مرة أخرى.",
+  "@scanPhotoPickerFailed": {
+    "description": "SCAN-11. Snackbar when the system photo picker could not be opened."
+  },
+  "scanSettingsDidNotOpen": "لم تُفتح الإعدادات. اسمح باستخدام الكاميرا من إعدادات الهاتف.",
+  "@scanSettingsDidNotOpen": {
+    "description": "RUN-6. Snackbar when Open settings could not open the app permission page."
+  },
+  "scanDetectedAnnouncement": "تم اكتشاف {format}: {type}",
+  "@scanDetectedAnnouncement": {
+    "description": "A11Y-3. Spoken by screen readers when the camera or a photo reads a code. Both placeholders take already translated labels.",
+    "placeholders": {
+      "format": {
+        "type": "String",
+        "example": "QR code"
+      },
+      "type": {
+        "type": "String",
+        "example": "Link"
+      }
+    }
+  },
+  "scanTypeDetectedAnnouncement": "تم اكتشاف {type}",
+  "@scanTypeDetectedAnnouncement": {
+    "description": "A11Y-3. As scanDetectedAnnouncement, for a code whose format has no name. The placeholder takes an already translated type label.",
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "example": "Link"
+      }
+    }
+  },
+  "scanChoicesAnnouncement": "{count, plural, zero{لم يُكتشف أي رمز} one{تم اكتشاف رمز واحد} two{تم اكتشاف رمزين} few{تم اكتشاف {count} رموز} many{تم اكتشاف {count} رمزًا} other{تم اكتشاف {count} رمز}}",
+  "@scanChoicesAnnouncement": {
+    "description": "A11Y-3, SCAN-13. Spoken by screen readers when one pass finds two or more codes and the list opens.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "scanChoicesTitle": "{count, plural, zero{لم يُعثر على أي رمز} one{تم العثور على رمز واحد} two{تم العثور على رمزين} few{تم العثور على {count} رموز} many{تم العثور على {count} رمزًا} other{تم العثور على {count} رمز}}",
+  "@scanChoicesTitle": {
+    "description": "SCAN-13. Heading of the list shown when one pass finds two or more codes.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "scanChoicesHint": "اختر الرمز الذي تريد فتحه.",
+  "@scanChoicesHint": {
+    "description": "SCAN-13. One line under the heading of the list of codes."
+  },
+  "scanBinaryData": "{count, plural, zero{بيانات ثنائية، 0 بايت} one{بيانات ثنائية، بايت واحد} two{بيانات ثنائية، بايتان} few{بيانات ثنائية، {count} بايتات} many{بيانات ثنائية، {count} بايتًا} other{بيانات ثنائية، {count} بايت}}",
+  "@scanBinaryData": {
+    "description": "RES-13, SCAN-13. Shown instead of a payload that is not valid text, on the result and in the list of codes.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "12"
+      }
+    }
+  },
+  "noCodeFoundTitle": "لم يُعثر على رمز",
+  "@noCodeFoundTitle": {
+    "description": "SCAN-11. Heading shown when a picked photo holds no readable code."
+  },
+  "noCodeFoundHint": "تأكد من ظهور الرمز كاملًا في الصورة، وأنه واضح وجيد الإضاءة.",
+  "@noCodeFoundHint": {
+    "description": "SCAN-11. The one hint under No code found."
+  },
+  "tryAnotherPhotoButton": "جرّب صورة أخرى",
+  "@tryAnotherPhotoButton": {
+    "description": "SCAN-11. Largest control on No code found; opens the photo picker again."
+  },
+  "actionClose": "إغلاق",
+  "@actionClose": {
+    "description": "A11Y-1. Screen-reader name and tooltip of the close buttons on the list of codes and on No code found."
+  },
+
+  "manualEntryTitle": "كتابة رمز",
+  "@manualEntryTitle": {
+    "description": "SCAN-12. Title of the typed-entry screen."
+  },
+  "manualEntryFieldLabel": "محتوى الرمز",
+  "@manualEntryFieldLabel": {
+    "description": "SCAN-12. Label of the multi-line field the content is typed into."
+  },
+  "manualEntryFieldHint": "رابط أو نص أو رقم باركود",
+  "@manualEntryFieldHint": {
+    "description": "SCAN-12. Hint inside the empty typed-entry field."
+  },
+  "manualEntryScanButton": "مسح",
+  "@manualEntryScanButton": {
+    "description": "SCAN-12. Largest control on typed entry, disabled while the field is empty; opens the same result as a camera scan."
+  },
+
   "settingsGroupGeneral": "عام",
   "@settingsGroupGeneral": {
     "description": "SET-5. First Settings group: theme, language, sound, vibration, copy on scan, search engine."
@@ -230,6 +374,159 @@
         "example": "the link"
       }
     }
+  },
+  "copiedWhatLink": "الرابط",
+  "@copiedWhatLink": {
+    "description": "SET-3, RES-1. Fills copiedSnackbar after a link was copied."
+  },
+  "copiedWhatContent": "المحتوى",
+  "@copiedWhatContent": {
+    "description": "SET-3, RES-1. Fills copiedSnackbar after the decoded content of any other type was copied."
+  },
+
+  "resultTitle": "النتيجة",
+  "@resultTitle": {
+    "description": "RES-1, RES-3. Title of the result screen, whatever the source of the code."
+  },
+  "resultTypeAndFormat": "{type} · {format}",
+  "@resultTypeAndFormat": {
+    "description": "RES-1, DATA-1. First line of a result: the type, then the format it was read in. Both placeholders take already translated labels.",
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "example": "Link"
+      },
+      "format": {
+        "type": "String",
+        "example": "QR code"
+      }
+    }
+  },
+  "resultCopyButton": "نسخ",
+  "@resultCopyButton": {
+    "description": "RES-1. Copies the exact decoded text."
+  },
+  "resultShareButton": "مشاركة",
+  "@resultShareButton": {
+    "description": "RES-1. Opens the system share sheet with the exact decoded text."
+  },
+  "resultNotSaved": "تعذّر حفظ هذا المسح في السجل.",
+  "@resultNotSaved": {
+    "description": "DATA-4. Shown on a result when Save history is on but writing the scan failed; the result still works."
+  },
+  "resultCopyFailed": "تعذّر النسخ. حاول مرة أخرى.",
+  "@resultCopyFailed": {
+    "description": "RES-1. Snackbar when the clipboard refused the text."
+  },
+  "resultShareFailed": "تعذّر فتح المشاركة. حاول مرة أخرى.",
+  "@resultShareFailed": {
+    "description": "RES-1. Snackbar when the system share sheet could not be opened."
+  },
+
+  "parsedTypeUrl": "رابط",
+  "@parsedTypeUrl": {
+    "description": "DATA-1. Label of the url type, on results and in the list of codes."
+  },
+  "parsedTypeWifi": "شبكة Wi-Fi",
+  "@parsedTypeWifi": {
+    "description": "DATA-1, RES-4. Label of the wifi type."
+  },
+  "parsedTypeText": "نص",
+  "@parsedTypeText": {
+    "description": "DATA-1. Label of the text type: plain text that fits no other type."
+  },
+  "parsedTypeContact": "جهة اتصال",
+  "@parsedTypeContact": {
+    "description": "DATA-1, RES-6. Label of the contact type (vCard, MeCard)."
+  },
+  "parsedTypePhone": "رقم هاتف",
+  "@parsedTypePhone": {
+    "description": "DATA-1, RES-7. Label of the phone type."
+  },
+  "parsedTypeEmail": "بريد إلكتروني",
+  "@parsedTypeEmail": {
+    "description": "DATA-1, RES-7. Label of the email type."
+  },
+  "parsedTypeSms": "رسالة نصية",
+  "@parsedTypeSms": {
+    "description": "DATA-1, RES-7. Label of the sms type: a text message with an optional body."
+  },
+  "parsedTypeGeo": "موقع",
+  "@parsedTypeGeo": {
+    "description": "DATA-1, RES-8. Label of the geo type."
+  },
+  "parsedTypeEvent": "حدث",
+  "@parsedTypeEvent": {
+    "description": "DATA-1, RES-6. Label of the event type (iCalendar)."
+  },
+  "parsedTypeProduct": "منتج",
+  "@parsedTypeProduct": {
+    "description": "DATA-1, RES-9. Label of the product type (EAN, UPC, ISBN)."
+  },
+  "parsedTypeAppStore": "تطبيق",
+  "@parsedTypeAppStore": {
+    "description": "DATA-1, GEN-10. Label of the app_store type: a Play Store app."
+  },
+  "parsedTypeUnknown": "غير معروف",
+  "@parsedTypeUnknown": {
+    "description": "DATA-1, RES-13. Label of the unknown type: a payload that fits no type."
+  },
+
+  "symbologyQr": "رمز QR",
+  "@symbologyQr": {
+    "description": "DATA-1, SCAN-9. Name of the QR code format."
+  },
+  "symbologyDataMatrix": "Data Matrix",
+  "@symbologyDataMatrix": {
+    "description": "DATA-1, SCAN-9. Name of the Data Matrix format; a proper name."
+  },
+  "symbologyPdf417": "PDF417",
+  "@symbologyPdf417": {
+    "description": "DATA-1, SCAN-9. Name of the PDF417 format; a proper name."
+  },
+  "symbologyAztec": "Aztec",
+  "@symbologyAztec": {
+    "description": "DATA-1, SCAN-9. Name of the Aztec format; a proper name."
+  },
+  "symbologyCode128": "Code 128",
+  "@symbologyCode128": {
+    "description": "DATA-1, SCAN-9. Name of the Code 128 format; a proper name."
+  },
+  "symbologyCode39": "Code 39",
+  "@symbologyCode39": {
+    "description": "DATA-1, SCAN-9. Name of the Code 39 format; a proper name."
+  },
+  "symbologyCode93": "Code 93",
+  "@symbologyCode93": {
+    "description": "DATA-1, SCAN-9. Name of the Code 93 format; a proper name."
+  },
+  "symbologyCodabar": "Codabar",
+  "@symbologyCodabar": {
+    "description": "DATA-1, SCAN-9. Name of the Codabar format; a proper name."
+  },
+  "symbologyItf": "ITF",
+  "@symbologyItf": {
+    "description": "DATA-1, SCAN-9. Name of the ITF (Interleaved 2 of 5) format; a proper name."
+  },
+  "symbologyEan13": "EAN-13",
+  "@symbologyEan13": {
+    "description": "DATA-1, SCAN-9, RES-9. Name of the EAN-13 format, which also carries ISBN; a proper name."
+  },
+  "symbologyEan8": "EAN-8",
+  "@symbologyEan8": {
+    "description": "DATA-1, SCAN-9, RES-9. Name of the EAN-8 format; a proper name."
+  },
+  "symbologyUpcA": "UPC-A",
+  "@symbologyUpcA": {
+    "description": "DATA-1, SCAN-9, RES-9. Name of the UPC-A format; a proper name."
+  },
+  "symbologyUpcE": "UPC-E",
+  "@symbologyUpcE": {
+    "description": "DATA-1, SCAN-9, RES-9. Name of the UPC-E format; a proper name."
+  },
+  "symbologyUnknown": "تنسيق غير معروف",
+  "@symbologyUnknown": {
+    "description": "DATA-1. Name shown for a format this build cannot name."
   },
 
   "errorStorageUnavailable": "لا يمكن للتطبيق فتح مساحة التخزين. أغلق التطبيق ثم افتحه من جديد.",

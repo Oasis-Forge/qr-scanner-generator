@@ -8,6 +8,8 @@ import 'package:qrscanner/core/services/share_service.dart';
 import 'package:qrscanner/services/camera_scanner.dart';
 import 'package:qrscanner/services/image_decoder.dart';
 import 'package:qrscanner/services/permission_service.dart';
+import 'package:qrscanner/services/photo_picker.dart';
+import 'package:qrscanner/services/scan_feedback.dart';
 import 'package:qrscanner/services/system_intents.dart';
 import 'package:qrscanner/services/wifi_service.dart';
 
@@ -22,6 +24,8 @@ class AppServices {
     required this.cameraScanner,
     required this.imageDecoder,
     required this.permissions,
+    required this.photoPicker,
+    required this.scanFeedback,
     required this.clipboard,
     required this.share,
     required this.crashReporter,
@@ -43,6 +47,8 @@ class AppServices {
     cameraScanner: NoopCameraScanner(),
     imageDecoder: NoopImageDecoder(),
     permissions: NoopPermissionService(),
+    photoPicker: NoopPhotoPicker(),
+    scanFeedback: NoopScanFeedback(),
     clipboard: NoopClipboardService(),
     share: NoopShareService(),
     crashReporter: NoopCrashReporter(),
@@ -62,6 +68,12 @@ class AppServices {
 
   /// The camera permission (RUN-3 to RUN-6).
   final PermissionService permissions;
+
+  /// The system photo picker, for scanning a photo (SCAN-11).
+  final PhotoPicker photoPicker;
+
+  /// The vibration and sound of a successful scan (SCAN-5, SET-2).
+  final ScanFeedback scanFeedback;
 
   /// Copy and paste (RES-1, SET-3).
   final ClipboardService clipboard;
@@ -89,4 +101,42 @@ class AppServices {
 
   /// Joining a scanned network (RES-5).
   final WifiService wifi;
+
+  /// This set with the given capabilities swapped in and every other one kept.
+  ///
+  /// The entry point starts from [AppServices.fakes] and swaps in each real
+  /// implementation as its PR lands, so a capability whose plugin hasn't
+  /// shipped yet stays the no-op fake. A test swaps in one seeded fake the
+  /// same way.
+  AppServices copyWith({
+    CameraScanner? cameraScanner,
+    ImageDecoder? imageDecoder,
+    PermissionService? permissions,
+    PhotoPicker? photoPicker,
+    ScanFeedback? scanFeedback,
+    ClipboardService? clipboard,
+    ShareService? share,
+    CrashReporter? crashReporter,
+    AdsService? ads,
+    ConsentService? consent,
+    BillingService? billing,
+    LinkOpener? linkOpener,
+    SystemIntents? systemIntents,
+    WifiService? wifi,
+  }) => AppServices(
+    cameraScanner: cameraScanner ?? this.cameraScanner,
+    imageDecoder: imageDecoder ?? this.imageDecoder,
+    permissions: permissions ?? this.permissions,
+    photoPicker: photoPicker ?? this.photoPicker,
+    scanFeedback: scanFeedback ?? this.scanFeedback,
+    clipboard: clipboard ?? this.clipboard,
+    share: share ?? this.share,
+    crashReporter: crashReporter ?? this.crashReporter,
+    ads: ads ?? this.ads,
+    consent: consent ?? this.consent,
+    billing: billing ?? this.billing,
+    linkOpener: linkOpener ?? this.linkOpener,
+    systemIntents: systemIntents ?? this.systemIntents,
+    wifi: wifi ?? this.wifi,
+  );
 }

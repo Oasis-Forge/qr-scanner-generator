@@ -9,7 +9,7 @@ import 'package:qrscanner/core/theme/app_theme.dart';
 import 'package:qrscanner/db/migrations/migrations.dart';
 import 'package:qrscanner/db/record_dao.dart';
 import 'package:qrscanner/l10n/app_localizations.dart';
-import 'package:qrscanner/screens/home_screen.dart';
+import 'package:qrscanner/screens/settings_screen.dart';
 import 'package:qrscanner/services/app_services.dart';
 import 'package:qrscanner/state/settings_state.dart';
 import 'package:qrscanner/state/success_counts.dart';
@@ -78,8 +78,8 @@ class HarnessScreen {
 /// language at every text size.
 final List<HarnessScreen> harnessScreens = <HarnessScreen>[
   HarnessScreen(
-    name: 'the home screen',
-    build: () => const HomeScreen(),
+    name: 'the settings screen',
+    build: () => const SettingsScreen(),
     readableText: const <String, String>{'en': 'Theme', 'ar': 'المظهر'},
   ),
 ];

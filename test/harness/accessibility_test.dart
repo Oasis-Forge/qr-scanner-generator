@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/test_app.dart';
+import 'harness_screens.dart';
 
 /// The shared accessibility harness.
 ///
@@ -10,14 +11,15 @@ import '../helpers/test_app.dart';
 /// 48 × 48 dp (A11Y-2) — over every screen the app has today, in every language
 /// the message files ship, at the system text size and at 200%.
 ///
-/// A screen PR adds its screen to `harnessScreens` and is covered here without
-/// touching this file.
+/// A screen PR adds its screen to `harnessScreens` (or, for a screen that reads
+/// `ScannerState`, to `scannerHarnessScreens` in `harness_screens.dart`) and is
+/// covered here without touching this file.
 ///
 /// The last group proves the checks bite: each one is handed a control that
 /// breaks its rule, and must fail naming that control, so a later PR can act on
 /// the message without a debugger.
 void main() {
-  for (final HarnessScreen screen in harnessScreens) {
+  for (final HarnessScreen screen in allHarnessScreens) {
     for (final Locale locale in harnessLocales) {
       for (final double textScale in harnessTextScales) {
         final String where =

@@ -1,4 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- RUN-1..RUN-3: asked for only from the scanner's "Allow camera" button. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Photo scanning and typed entry work without a camera (SCAN-11, SCAN-12),
+         so a phone without one can still install the app. -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
     <application
         android:label="qrscanner"
         android:name="${applicationName}"

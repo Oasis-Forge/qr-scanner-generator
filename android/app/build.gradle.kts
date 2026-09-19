@@ -6,7 +6,9 @@ plugins {
 
 android {
     namespace = "com.oasisforge.qrscanner"
-    compileSdk = flutter.compileSdkVersion
+    // 37: permission_handler_android 14.x refuses to build against less (spike S8).
+    // targetSdk stays on the Flutter default.
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

@@ -30,13 +30,14 @@ You can turn off saving history in Settings. Uninstalling the app removes everyt
 - **Ads:** Google AdMob and Google's consent tool collect and share information such as your IP address, device and advertising identifiers, ad interactions, and diagnostics, to show and measure ads. Personalised ads appear only with consent where it's required. See [how Google uses information from apps that use its services](https://policies.google.com/technologies/partner-sites).
 - **Crash reports, only if you turn on "Send crash reports":** Firebase Crashlytics receives crash details (what failed in the code, device model, Android version, app version, and an installation identifier). We never add your scans, codes, or history to crash reports.
 - **Purchases:** Google Play processes the Pro purchase. The app receives only confirmation that the purchase is valid, never your payment details.
+- **Code reading:** codes are read on your phone by Google's ML Kit, which runs entirely on the device. ML Kit sends Google usage and performance statistics about the reader itself (such as how long a read took and the device model). It never sends the camera image, the photo, or what a code contains. See [ML Kit's terms](https://developers.google.com/ml-kit/terms).
 
 The app contains no other analytics.
 
 ## Permissions
 
 - **Camera:** to scan codes. It's requested the first time you tap "Allow camera". If you refuse, you can still scan a code from a photo or type it in.
-- **Internet and network state:** for ads, consent, purchases, crash reports (if on), and the link check (when you tap it).
+- **Internet and network state:** for ads, consent, purchases, crash reports (if on), the link check (when you tap it), and ML Kit's usage statistics.
 - **Google Play billing:** to buy Pro.
 - **Advertising ID:** used by the ads SDK. You can reset or delete it in Android's settings.
 
