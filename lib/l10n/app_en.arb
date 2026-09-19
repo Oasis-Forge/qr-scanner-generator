@@ -364,6 +364,86 @@
       }
     }
   },
+  "historySegmentAll": "All",
+  "@historySegmentAll": {
+    "description": "HIS-1. Segmented control option showing every live record, scanned and created."
+  },
+  "historySegmentScanned": "Scanned",
+  "@historySegmentScanned": {
+    "description": "HIS-1. Segmented control option showing only records of kind scan."
+  },
+  "historySegmentCreated": "Created",
+  "@historySegmentCreated": {
+    "description": "HIS-1. Segmented control option showing only records of kind created."
+  },
+  "historyEmptyMessage": "Codes you scan or create will show up here.",
+  "@historyEmptyMessage": {
+    "description": "HIS-11. The one line shown when History holds no live records at all."
+  },
+  "historyEmptyScanButton": "Scan a code",
+  "@historyEmptyScanButton": {
+    "description": "HIS-11. On the empty History screen; switches to the Scan tab."
+  },
+  "historyEmptyCreateButton": "Create a code",
+  "@historyEmptyCreateButton": {
+    "description": "HIS-11. On the empty History screen; switches to the Create tab."
+  },
+  "historyEmptyNotSavingMessage": "New scans aren''t being saved.",
+  "@historyEmptyNotSavingMessage": {
+    "description": "HIS-8, HIS-11. Second line on the empty History screen while Save history is off."
+  },
+  "historyEmptySettingsButton": "Go to Settings",
+  "@historyEmptySettingsButton": {
+    "description": "HIS-8, HIS-11. On the empty History screen while Save history is off; switches to the Settings tab."
+  },
+  "historyLoading": "Loading History",
+  "@historyLoading": {
+    "description": "HIS-1, A11Y-1. Screen-reader label for the spinner shown for the moment before History's first read completes."
+  },
+  "historyDeletedSnackbar": "{count, plural, one{1 item deleted} other{{count} items deleted}}",
+  "@historyDeletedSnackbar": {
+    "description": "DEL-2. Snackbar confirming a delete, with Undo beside it for HistoryState.undoWindow.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "historyUndoButton": "Undo",
+  "@historyUndoButton": {
+    "description": "DEL-2. Action on historyDeletedSnackbar; restores what was just deleted."
+  },
+  "historyDeleteFailed": "Could not delete. Try again.",
+  "@historyDeleteFailed": {
+    "description": "DEL-2. Snackbar when moving one or more records to Trash failed; History still shows them."
+  },
+  "historyUndoFailed": "Could not undo. Try again.",
+  "@historyUndoFailed": {
+    "description": "DEL-2. Snackbar when restoring from Trash failed; the records stay out of History."
+  },
+  "historyLoadFailed": "History couldn''t be loaded. Try again.",
+  "@historyLoadFailed": {
+    "description": "HIS-1. Snackbar when History could not be read from the database; the rows already shown stay."
+  },
+  "historySelectedCount": "{count, plural, one{1 selected} other{{count} selected}}",
+  "@historySelectedCount": {
+    "description": "DEL-2. Title of History's app bar while rows are selected for deletion.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "historyDeleteSelectedButton": "Delete",
+  "@historyDeleteSelectedButton": {
+    "description": "DEL-2, A11Y-1. Screen-reader label and tooltip of the action that deletes every selected row."
+  },
+  "historyCancelSelectionButton": "Cancel selection",
+  "@historyCancelSelectionButton": {
+    "description": "DEL-2, A11Y-1. Screen-reader label and tooltip of the action that leaves selection mode without deleting."
+  },
 
   "copiedSnackbar": "Copied {what}",
   "@copiedSnackbar": {

@@ -297,6 +297,81 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get historySegmentAll => 'الكل';
+
+  @override
+  String get historySegmentScanned => 'الممسوحة';
+
+  @override
+  String get historySegmentCreated => 'المُنشأة';
+
+  @override
+  String get historyEmptyMessage => 'ستظهر هنا الرموز التي تمسحها أو تنشئها.';
+
+  @override
+  String get historyEmptyScanButton => 'مسح رمز';
+
+  @override
+  String get historyEmptyCreateButton => 'إنشاء رمز';
+
+  @override
+  String get historyEmptyNotSavingMessage => 'لا يتم حفظ عمليات المسح الجديدة.';
+
+  @override
+  String get historyEmptySettingsButton => 'الانتقال إلى الإعدادات';
+
+  @override
+  String get historyLoading => 'جارٍ تحميل السجل';
+
+  @override
+  String historyDeletedSnackbar(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تم حذف $count عنصر',
+      many: 'تم حذف $count عنصرًا',
+      few: 'تم حذف $count عناصر',
+      two: 'تم حذف عنصرين',
+      one: 'تم حذف عنصر واحد',
+      zero: 'لم يُحذف أي عنصر',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get historyUndoButton => 'تراجع';
+
+  @override
+  String get historyDeleteFailed => 'تعذّر الحذف. حاول مرة أخرى.';
+
+  @override
+  String get historyUndoFailed => 'تعذّر التراجع. حاول مرة أخرى.';
+
+  @override
+  String get historyLoadFailed => 'تعذّر تحميل السجل. حاول مرة أخرى.';
+
+  @override
+  String historySelectedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تم تحديد $count عنصر',
+      many: 'تم تحديد $count عنصرًا',
+      few: 'تم تحديد $count عناصر',
+      two: 'تم تحديد عنصرين',
+      one: 'تم تحديد عنصر واحد',
+      zero: 'لم يتم تحديد أي عنصر',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get historyDeleteSelectedButton => 'حذف';
+
+  @override
+  String get historyCancelSelectionButton => 'إلغاء التحديد';
+
+  @override
   String copiedSnackbar(String what) {
     return 'تم نسخ $what';
   }

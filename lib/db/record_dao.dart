@@ -231,6 +231,25 @@ class RecordDao {
     return _setDeletedAt(ids, deletedAt: null, updatedAt: now);
   }
 
+  /// Hard-deletes every record in Trash whose `deleted_at` is strictly before
+  /// [cutoff] (DEL-4). Deleted rows are gone for good: no `updated_at`
+  /// bump, no undo. Returns how many rows were removed.
+  ///
+  /// [cutoff] is a UTC instant. Turning DEL-4's "30 local calendar days" into
+  /// that instant is the state layer's job (`HistoryState.trashCutoffFor`),
+  /// not this one's, so this method stays a plain, exact comparison that is
+  /// simple to test on its own.
+  Future<int> purgeTrashDeletedBefore(DateTime cutoff) {
+    final int cutoffSeconds = utcSecondsOf(cutoff);
+    return _database.transaction<int>((txn) {
+      return txn.delete(
+        ScanRecord.tableName,
+        where: 'deleted_at IS NOT NULL AND deleted_at < ?',
+        whereArgs: <Object?>[cutoffSeconds],
+      );
+    });
+  }
+
   /// Sets or clears a record's label (HIS-9) and bumps `updated_at` (REC-3).
   /// Returns the stored record, or null when there is no such record.
   Future<ScanRecord?> updateLabel(
