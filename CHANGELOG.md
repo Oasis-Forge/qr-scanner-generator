@@ -4,6 +4,21 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-09-21
+
+### Added
+- Settings, in four groups:
+  - General: theme, language, sound, vibration, and copy on scan.
+  - Privacy: whether history is saved, and Privacy options where your region needs them.
+  - Pro: Remove ads and Restore purchase.
+  - About: version, privacy policy, open-source licences, and Send feedback.
+- Pro: one purchase that removes ads for good. It isn't a subscription, and the Play price is the only price shown.
+- Restore purchase. The app also re-checks Pro at every start, and a Pro owner who is offline still sees no ads.
+- A single, dismissible Pro offer on History or Settings after your fifth scan or created code. It never comes back once closed.
+- Send feedback: pick a topic and write a note. It opens your email app with the app and Android versions filled in, and nothing is sent until you send it.
+- Banner ads, only at the bottom of History, Settings and the Create screen. Never on the scanner, a result or the code editor, and none before your first scan or created code. Their space is held while they load, so nothing jumps.
+- Where the law requires it, the app asks for ad consent before the first ad, not on first launch. You can change your choice later in Settings → Privacy options.
+
 ## [0.7.0] - 2026-09-21
 
 ### Added

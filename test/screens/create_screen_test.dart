@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:qrscanner/core/services/ads_service.dart';
+import 'package:qrscanner/core/services/consent_service.dart';
 import 'package:qrscanner/models/record_enums.dart' show ParsedType;
 import 'package:qrscanner/screens/create/create_form_body.dart';
 import 'package:qrscanner/screens/create/created_code_view.dart';
@@ -9,8 +11,11 @@ import 'package:qrscanner/screens/create/text_form.dart';
 import 'package:qrscanner/screens/create/type_picker.dart';
 import 'package:qrscanner/screens/create/wifi_form.dart';
 import 'package:qrscanner/screens/create_screen.dart';
+import 'package:qrscanner/services/app_services.dart';
+import 'package:qrscanner/state/success_counts.dart';
 
 import '../harness/generator_scope.dart';
+import '../helpers/fake_stores.dart';
 import '../helpers/memory_record_dao.dart';
 import '../helpers/test_app.dart';
 import 'create/create_test_helpers.dart';
@@ -184,6 +189,41 @@ void main() {
 
       expect(find.byKey(CreatedCodeView.imageKey), findsNothing);
       expect(find.byKey(CreateFormBody.createButtonKey), findsOneWidget);
+    });
+  });
+
+  group('the banner (ADS-1, ADS-3)', () {
+    testWidgets('sits below the type picker once ads are allowed, and never '
+        'on a form', (WidgetTester tester) async {
+      final NoopAdsService ads = NoopAdsService();
+      final SuccessCounts counts = SuccessCounts(FakeKeyValueStore());
+      await counts.load();
+      await counts.recordSuccessfulScan();
+      addTearDown(counts.dispose);
+      await pumpApp(
+        tester,
+        GeneratorScope(dao: MemoryRecordDao(), child: const CreateScreen()),
+        successCounts: counts,
+        services: AppServices.fakes().copyWith(
+          ads: ads,
+          consent: NoopConsentService(seededStatus: ConsentStatus.notNeeded),
+        ),
+      );
+
+      expect(ads.calls.last, startsWith('loadBanner: create_type_picker'));
+      expect(find.byType(Divider), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.byType(Divider)).dy,
+        greaterThanOrEqualTo(
+          tester.getBottomLeft(find.byType(CreateTypePicker)).dy,
+        ),
+      );
+
+      await tester.tap(find.byKey(CreateTypePicker.tileKey(_text)));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(Divider), findsNothing);
+      expect(ads.calls.last, 'disposeBanner: create_type_picker');
     });
   });
 }

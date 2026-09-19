@@ -40,6 +40,8 @@ The app contains no other analytics.
 - **Internet and network state:** for ads, consent, purchases, crash reports (if on), the link check (when you tap it), and ML Kit's usage statistics.
 - **Google Play billing:** to buy Pro.
 - **Advertising ID:** used by the ads SDK. You can reset or delete it in Android's settings.
+- **Ad topics and ad measurement (Android's Privacy Sandbox):** the ads SDK may use them to choose and measure ads. You can turn them off in Android's settings.
+- **Background tasks:** the ads SDK uses Android's background-task library, which declares that it may keep the device awake briefly and run a foreground service. The app doesn't scan, read codes, or track you in the background.
 
 The app doesn't ask for permission to read your photos: Android's photo picker gives it only the photo you choose. It doesn't ask for contacts, calendar, location, or storage permissions: saving a contact or an event hands it to your contacts or calendar app, and saving a file goes through Android's file picker. <!-- Add Wi-Fi permissions here in the PR that ships joining a scanned network (RES-5). The share target (ENTRY-2) ships only without storage or media permissions (S12); if that ever changes, fix the photo sentence above. -->
 

@@ -255,6 +255,49 @@
   "@settingsRestorePurchase": {
     "description": "PRO-6, SET-5. Settings row next to Remove ads that re-checks ownership."
   },
+  "settingsRemoveAdsPrice": "One-time purchase · {price}",
+  "@settingsRemoveAdsPrice": {
+    "description": "PRO-4, PRO-5. Second line under Remove ads once the store's own price has loaded; replaces settingsRemoveAdsSubtitle. Also the label of the Pro prompt's buy button once a price is known. The placeholder is the store's own localised price string, never reformatted.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$1.99"
+      }
+    }
+  },
+  "settingsProOwned": "Ads removed",
+  "@settingsProOwned": {
+    "description": "PRO-2, PRO-4, SET-5. Replaces settingsRemoveAds and settingsRemoveAdsSubtitle once Pro is owned; there is nothing left to buy or restore."
+  },
+
+  "proBuyFailed": "Could not complete the purchase. Try again.",
+  "@proBuyFailed": {
+    "description": "PRO-1. Snackbar when a purchase attempt errored or the store was unavailable; a cancelled or still-pending purchase shows nothing."
+  },
+  "proRestoreSuccess": "Purchase restored.",
+  "@proRestoreSuccess": {
+    "description": "PRO-6. Snackbar after Restore purchase found the product owned."
+  },
+  "proRestoreNotFound": "No previous purchase was found.",
+  "@proRestoreNotFound": {
+    "description": "PRO-6. Snackbar after Restore purchase reached the store but found nothing owned."
+  },
+  "proRestoreFailed": "Could not check the store. Try again.",
+  "@proRestoreFailed": {
+    "description": "PRO-6. Snackbar after Restore purchase could not reach the store at all, e.g. offline."
+  },
+  "proPromptTitle": "Remove ads?",
+  "@proPromptTitle": {
+    "description": "PRO-4. Heading of the one dismissible Pro prompt."
+  },
+  "proPromptBody": "A one-time purchase, never a subscription.",
+  "@proPromptBody": {
+    "description": "PRO-1, PRO-4. Body text of the Pro prompt."
+  },
+  "proPromptDismissTooltip": "Dismiss",
+  "@proPromptDismissTooltip": {
+    "description": "PRO-4, A11Y-1. Screen-reader name of the Pro prompt's close icon button."
+  },
 
   "settingsFeedback": "Feedback",
   "@settingsFeedback": {
@@ -283,6 +326,69 @@
       "build": {
         "type": "String",
         "example": "12"
+      }
+    }
+  },
+  "settingsLinkOpenFailed": "Could not open the link.",
+  "@settingsLinkOpenFailed": {
+    "description": "SET-6. Snackbar when the privacy policy could not be opened: no app can show a web link, or the hand-off failed."
+  },
+
+  "feedbackCategoryLabel": "Category",
+  "@feedbackCategoryLabel": {
+    "description": "SET-8. Heading above the feedback screen's category chips."
+  },
+  "feedbackCategoryScanning": "Scanning",
+  "@feedbackCategoryScanning": {
+    "description": "SET-8. Feedback category chip."
+  },
+  "feedbackCategoryResults": "Results",
+  "@feedbackCategoryResults": {
+    "description": "SET-8. Feedback category chip."
+  },
+  "feedbackCategoryCreatingCodes": "Creating codes",
+  "@feedbackCategoryCreatingCodes": {
+    "description": "SET-8. Feedback category chip."
+  },
+  "feedbackCategoryAds": "Ads",
+  "@feedbackCategoryAds": {
+    "description": "SET-8. Feedback category chip."
+  },
+  "feedbackCategoryOther": "Other",
+  "@feedbackCategoryOther": {
+    "description": "SET-8. Feedback category chip."
+  },
+  "feedbackMessageHint": "What happened, and what did you expect?",
+  "@feedbackMessageHint": {
+    "description": "SET-8. Hint text inside the feedback screen's empty text box."
+  },
+  "feedbackSendButton": "Send",
+  "@feedbackSendButton": {
+    "description": "SET-8. Largest button on the feedback screen; opens the email app and sends nothing itself. Disabled until a category is chosen."
+  },
+  "feedbackSendNoHandler": "No email app is set up on this device.",
+  "@feedbackSendNoHandler": {
+    "description": "SET-8, RES-14. Snackbar when no installed app can compose an email."
+  },
+  "feedbackEmailSubject": "{appTitle} feedback ({version}+{build}, {androidVersion})",
+  "@feedbackEmailSubject": {
+    "description": "SET-8. Subject line of the feedback email, with the app and Android versions. androidVersion already reads like \"Android 14\"; nothing else adds the word \"Android\".",
+    "placeholders": {
+      "appTitle": {
+        "type": "String",
+        "example": "QR Scanner + Generator"
+      },
+      "version": {
+        "type": "String",
+        "example": "1.4.0"
+      },
+      "build": {
+        "type": "String",
+        "example": "27"
+      },
+      "androidVersion": {
+        "type": "String",
+        "example": "Android 14"
       }
     }
   },

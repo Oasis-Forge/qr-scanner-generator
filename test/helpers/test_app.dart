@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,6 +14,7 @@ import 'package:qrscanner/l10n/app_localizations.dart';
 import 'package:qrscanner/screens/settings_screen.dart';
 import 'package:qrscanner/services/app_services.dart';
 import 'package:qrscanner/state/history_state.dart';
+import 'package:qrscanner/state/pro_state.dart';
 import 'package:qrscanner/state/settings_state.dart';
 import 'package:qrscanner/state/success_counts.dart';
 
@@ -81,7 +84,7 @@ final List<HarnessScreen> harnessScreens = <HarnessScreen>[
   HarnessScreen(
     name: 'the settings screen',
     build: () => const SettingsScreen(),
-    readableText: const <String, String>{'en': 'Theme', 'ar': 'المظهر'},
+    readableText: const <String, String>{'en': 'General', 'ar': 'عام'},
   ),
 ];
 
@@ -179,6 +182,20 @@ Future<TestApp> pumpApp(
         ChangeNotifierProvider<HistoryState>(
           create: (BuildContext context) =>
               HistoryState(records: appRecords, settings: appSettings),
+        ),
+        // Pro (PRO-7), over the same store and billing fake, as the app
+        // provides it, so a screen with the Pro prompt or a banner slot finds
+        // it. A free user unless the test seeds ownership.
+        ChangeNotifierProvider<ProState>(
+          create: (BuildContext context) {
+            final ProState pro = ProState(
+              billing: appServices.billing,
+              store: appStore,
+              successCounts: appCounts,
+            );
+            unawaited(pro.load());
+            return pro;
+          },
         ),
       ],
       child: _TestShell(

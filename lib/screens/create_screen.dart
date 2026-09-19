@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 
 import '../l10n/app_localizations.dart' show AppLocalizations;
 import '../models/record_enums.dart' show ParsedType;
+import '../state/ads_state.dart';
 import '../state/generator_state.dart';
+import 'ads/ad_banner_slot.dart';
 import 'create/create_form_body.dart';
 import 'create/created_code_view.dart';
 import 'create/type_picker.dart';
@@ -71,7 +73,14 @@ class _CreateScreenState extends State<CreateScreen> {
         appBar: AppBar(title: Text(l10n.navCreate)),
         body: SafeArea(
           top: false,
-          child: CreateTypePicker(onSelected: _chooseType),
+          child: Column(
+            children: <Widget>[
+              Expanded(child: CreateTypePicker(onSelected: _chooseType)),
+              // Fixed below the picker, the one Create step an ad may sit on;
+              // never a form or a created code (ADS-1, ADS-3).
+              const AdBannerSlot(slot: AdSlots.createTypePicker),
+            ],
+          ),
         ),
       );
     }

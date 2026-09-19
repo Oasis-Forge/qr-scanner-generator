@@ -48,6 +48,11 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true">
+        <!-- ADS-1..ADS-8: the app's AdMob app ID (not a secret). Debug builds
+             still request Google's test banner unit (lib/main.dart). -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-8287765177319119~8713902372" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

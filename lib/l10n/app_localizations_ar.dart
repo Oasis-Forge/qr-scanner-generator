@@ -216,6 +216,35 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsRestorePurchase => 'استعادة الشراء';
 
   @override
+  String settingsRemoveAdsPrice(String price) {
+    return 'شراء لمرة واحدة · $price';
+  }
+
+  @override
+  String get settingsProOwned => 'تمت إزالة الإعلانات';
+
+  @override
+  String get proBuyFailed => 'تعذّر إتمام عملية الشراء. حاول مرة أخرى.';
+
+  @override
+  String get proRestoreSuccess => 'تمت استعادة الشراء.';
+
+  @override
+  String get proRestoreNotFound => 'لم يُعثر على شراء سابق.';
+
+  @override
+  String get proRestoreFailed => 'تعذّر التحقق من المتجر. حاول مرة أخرى.';
+
+  @override
+  String get proPromptTitle => 'إزالة الإعلانات؟';
+
+  @override
+  String get proPromptBody => 'شراء لمرة واحدة، وليس اشتراكًا أبدًا.';
+
+  @override
+  String get proPromptDismissTooltip => 'إغلاق';
+
+  @override
   String get settingsFeedback => 'الملاحظات';
 
   @override
@@ -230,6 +259,47 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String settingsVersionValue(String version, String build) {
     return '$version ($build)';
+  }
+
+  @override
+  String get settingsLinkOpenFailed => 'تعذّر فتح الرابط.';
+
+  @override
+  String get feedbackCategoryLabel => 'الفئة';
+
+  @override
+  String get feedbackCategoryScanning => 'المسح';
+
+  @override
+  String get feedbackCategoryResults => 'النتائج';
+
+  @override
+  String get feedbackCategoryCreatingCodes => 'إنشاء الرموز';
+
+  @override
+  String get feedbackCategoryAds => 'الإعلانات';
+
+  @override
+  String get feedbackCategoryOther => 'أخرى';
+
+  @override
+  String get feedbackMessageHint => 'ما الذي حدث، وما الذي كنت تتوقعه؟';
+
+  @override
+  String get feedbackSendButton => 'إرسال';
+
+  @override
+  String get feedbackSendNoHandler =>
+      'لا يوجد تطبيق بريد إلكتروني مُهيّأ على هذا الجهاز.';
+
+  @override
+  String feedbackEmailSubject(
+    String appTitle,
+    String version,
+    String build,
+    String androidVersion,
+  ) {
+    return 'ملاحظات $appTitle ($version+$build، $androidVersion)';
   }
 
   @override

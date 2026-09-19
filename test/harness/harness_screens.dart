@@ -12,6 +12,7 @@ import 'package:qrscanner/screens/history_screen.dart';
 import 'package:qrscanner/screens/manual_entry_screen.dart';
 import 'package:qrscanner/screens/result_screen.dart';
 import 'package:qrscanner/screens/scanner_screen.dart';
+import 'package:qrscanner/screens/settings_screen.dart';
 import 'package:qrscanner/services/app_services.dart';
 import 'package:qrscanner/services/camera_scanner.dart';
 import 'package:qrscanner/services/image_decoder.dart';
@@ -26,6 +27,7 @@ import '../helpers/fake_stores.dart';
 import '../helpers/memory_record_dao.dart';
 import '../helpers/test_app.dart';
 import '../screens/history/history_harness_data.dart';
+import '../screens/settings/settings_scope.dart';
 import 'generator_scope.dart';
 import 'scanner_scope.dart';
 
@@ -228,6 +230,18 @@ Widget _historyScreen(List<ScanRecord> records) {
 
 void _doNothing() {}
 
+/// The full Settings screen the ads/Pro/settings PR ships, for the
+/// accessibility and text-size harnesses (A11Y-1, A11Y-2, A11Y-4, LANG-6).
+///
+/// Wrapped in `SettingsScope`, the way the Settings tests pump it.
+final List<HarnessScreen> settingsHarnessScreens = <HarnessScreen>[
+  HarnessScreen(
+    name: 'the settings screen in its full form (SET-5)',
+    build: () => const SettingsScope(child: SettingsScreen()),
+    readableText: const <String, String>{'en': 'General', 'ar': 'عام'},
+  ),
+];
+
 /// The generator PR's screens (GEN-1, STY-1, SAVE-1), for the accessibility
 /// and text-size harnesses.
 ///
@@ -280,11 +294,12 @@ final List<HarnessScreen> generatorHarnessScreens = <HarnessScreen>[
 ];
 
 /// Every screen both harnesses run: the ones `test_app.dart` registers, the
-/// scanner PR's and the generator PR's.
+/// scanner PR's, the generator PR's and the settings PR's.
 List<HarnessScreen> get allHarnessScreens => <HarnessScreen>[
   ...harnessScreens,
   ...scannerHarnessScreens,
   ...generatorHarnessScreens,
+  ...settingsHarnessScreens,
 ];
 
 /// The no-op services with the camera allowed, unless [permissions] says

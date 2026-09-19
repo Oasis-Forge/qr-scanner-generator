@@ -404,6 +404,60 @@ abstract class AppLocalizations {
   /// **'Restore purchase'**
   String get settingsRestorePurchase;
 
+  /// PRO-4, PRO-5. Second line under Remove ads once the store's own price has loaded; replaces settingsRemoveAdsSubtitle. Also the label of the Pro prompt's buy button once a price is known. The placeholder is the store's own localised price string, never reformatted.
+  ///
+  /// In en, this message translates to:
+  /// **'One-time purchase · {price}'**
+  String settingsRemoveAdsPrice(String price);
+
+  /// PRO-2, PRO-4, SET-5. Replaces settingsRemoveAds and settingsRemoveAdsSubtitle once Pro is owned; there is nothing left to buy or restore.
+  ///
+  /// In en, this message translates to:
+  /// **'Ads removed'**
+  String get settingsProOwned;
+
+  /// PRO-1. Snackbar when a purchase attempt errored or the store was unavailable; a cancelled or still-pending purchase shows nothing.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not complete the purchase. Try again.'**
+  String get proBuyFailed;
+
+  /// PRO-6. Snackbar after Restore purchase found the product owned.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase restored.'**
+  String get proRestoreSuccess;
+
+  /// PRO-6. Snackbar after Restore purchase reached the store but found nothing owned.
+  ///
+  /// In en, this message translates to:
+  /// **'No previous purchase was found.'**
+  String get proRestoreNotFound;
+
+  /// PRO-6. Snackbar after Restore purchase could not reach the store at all, e.g. offline.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not check the store. Try again.'**
+  String get proRestoreFailed;
+
+  /// PRO-4. Heading of the one dismissible Pro prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove ads?'**
+  String get proPromptTitle;
+
+  /// PRO-1, PRO-4. Body text of the Pro prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'A one-time purchase, never a subscription.'**
+  String get proPromptBody;
+
+  /// PRO-4, A11Y-1. Screen-reader name of the Pro prompt's close icon button.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get proPromptDismissTooltip;
+
   /// SET-8, SET-5. Settings row that opens the feedback form.
   ///
   /// In en, this message translates to:
@@ -433,6 +487,77 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{version} ({build})'**
   String settingsVersionValue(String version, String build);
+
+  /// SET-6. Snackbar when the privacy policy could not be opened: no app can show a web link, or the hand-off failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the link.'**
+  String get settingsLinkOpenFailed;
+
+  /// SET-8. Heading above the feedback screen's category chips.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get feedbackCategoryLabel;
+
+  /// SET-8. Feedback category chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning'**
+  String get feedbackCategoryScanning;
+
+  /// SET-8. Feedback category chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Results'**
+  String get feedbackCategoryResults;
+
+  /// SET-8. Feedback category chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating codes'**
+  String get feedbackCategoryCreatingCodes;
+
+  /// SET-8. Feedback category chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Ads'**
+  String get feedbackCategoryAds;
+
+  /// SET-8. Feedback category chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get feedbackCategoryOther;
+
+  /// SET-8. Hint text inside the feedback screen's empty text box.
+  ///
+  /// In en, this message translates to:
+  /// **'What happened, and what did you expect?'**
+  String get feedbackMessageHint;
+
+  /// SET-8. Largest button on the feedback screen; opens the email app and sends nothing itself. Disabled until a category is chosen.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get feedbackSendButton;
+
+  /// SET-8, RES-14. Snackbar when no installed app can compose an email.
+  ///
+  /// In en, this message translates to:
+  /// **'No email app is set up on this device.'**
+  String get feedbackSendNoHandler;
+
+  /// SET-8. Subject line of the feedback email, with the app and Android versions. androidVersion already reads like "Android 14"; nothing else adds the word "Android".
+  ///
+  /// In en, this message translates to:
+  /// **'{appTitle} feedback ({version}+{build}, {androidVersion})'**
+  String feedbackEmailSubject(
+    String appTitle,
+    String version,
+    String build,
+    String androidVersion,
+  );
 
   /// SET-1. Theme choice that follows the phone setting; the initial choice.
   ///

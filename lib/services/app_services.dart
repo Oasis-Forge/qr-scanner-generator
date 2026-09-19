@@ -5,6 +5,7 @@ import 'package:qrscanner/core/services/consent_service.dart';
 import 'package:qrscanner/core/services/crash_reporter.dart';
 import 'package:qrscanner/core/services/link_opener.dart';
 import 'package:qrscanner/core/services/share_service.dart';
+import 'package:qrscanner/services/app_version_info.dart';
 import 'package:qrscanner/services/camera_scanner.dart';
 import 'package:qrscanner/services/image_decoder.dart';
 import 'package:qrscanner/services/permission_service.dart';
@@ -35,6 +36,7 @@ class AppServices {
     required this.linkOpener,
     required this.systemIntents,
     required this.wifi,
+    required this.versionInfo,
   });
 
   /// The no-op set: a fake for every capability, none of which does any I/O.
@@ -58,6 +60,7 @@ class AppServices {
     linkOpener: NoopLinkOpener(),
     systemIntents: NoopSystemIntents(),
     wifi: NoopWifiService(),
+    versionInfo: NoopAppVersionInfo(),
   );
 
   /// The live camera (SCAN, RUN).
@@ -102,6 +105,9 @@ class AppServices {
   /// Joining a scanned network (RES-5).
   final WifiService wifi;
 
+  /// The app and Android versions, for About and feedback (SET-5, SET-8).
+  final AppVersionInfo versionInfo;
+
   /// This set with the given capabilities swapped in and every other one kept.
   ///
   /// The entry point starts from [AppServices.fakes] and swaps in each real
@@ -123,6 +129,7 @@ class AppServices {
     LinkOpener? linkOpener,
     SystemIntents? systemIntents,
     WifiService? wifi,
+    AppVersionInfo? versionInfo,
   }) => AppServices(
     cameraScanner: cameraScanner ?? this.cameraScanner,
     imageDecoder: imageDecoder ?? this.imageDecoder,
@@ -138,5 +145,6 @@ class AppServices {
     linkOpener: linkOpener ?? this.linkOpener,
     systemIntents: systemIntents ?? this.systemIntents,
     wifi: wifi ?? this.wifi,
+    versionInfo: versionInfo ?? this.versionInfo,
   );
 }
