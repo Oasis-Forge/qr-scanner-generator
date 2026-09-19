@@ -35,6 +35,17 @@ void main() {
         expect(_qr('file:///sdcard/secret.txt'), ParsedType.url);
         expect(_qr('intent://scan/#Intent;scheme=zxing;end'), ParsedType.url);
         expect(_qr('content://com.example.provider/item/1'), ParsedType.url);
+        // Every case is blocked, not just a lower-case prefix match.
+        expect(_qr('DATA:text/plain,hi'), ParsedType.url);
+        expect(_qr('File:///sdcard/secret.txt'), ParsedType.url);
+        expect(_qr('INTENT://scan/#Intent;scheme=zxing;end'), ParsedType.url);
+        expect(_qr('Content://com.example.provider/item/1'), ParsedType.url);
+      });
+
+      test('a non-default port does not change the type; it is still a link '
+          '(LINK-1; the port itself is a LINK-3 check)', () {
+        expect(_qr('http://example.com:8080/'), ParsedType.url);
+        expect(_qr('https://example.com:8443/'), ParsedType.url);
       });
 
       test(
@@ -357,7 +368,18 @@ void main() {
         'does, for every kind this file exercises', () {
       const List<(String, Symbology)> samples = <(String, Symbology)>[
         ('https://example.com', Symbology.qr),
+        // LINK-1: userinfo, IP hosts (v4 and bracketed v6) and a
+        // non-default port, none of which change the type.
+        ('https://user@example.com', Symbology.qr),
+        ('http://192.168.1.1:8080/x', Symbology.qr),
+        ('https://[2001:db8::1]/', Symbology.qr),
+        // LINK-5: every blocked scheme, both cases.
         ('javascript:alert(1)', Symbology.qr),
+        ('JavaScript:alert(1)', Symbology.qr),
+        ('data:text/plain;base64,SGVsbG8=', Symbology.qr),
+        ('file:///sdcard/secret.txt', Symbology.qr),
+        ('intent://scan/#Intent;scheme=zxing;end', Symbology.qr),
+        ('content://com.example.provider/item/1', Symbology.qr),
         ('WIFI:T:WPA;S:Home;P:secret;;', Symbology.qr),
         ('BEGIN:VCARD\nFN:Ada\nEND:VCARD', Symbology.qr),
         ('MECARD:N:Lovelace,Ada;TEL:+441234;;', Symbology.qr),

@@ -659,6 +659,65 @@
     "description": "RES-9, RES-14. One-line reason shown when Search the web is disabled."
   },
 
+  "resultLinkOpenButton": "Open",
+  "@resultLinkOpenButton": {
+    "description": "LINK-3, LINK-8. Primary action of a link result with no checks triggered; opens the link in Custom Tabs."
+  },
+  "resultLinkReviewButton": "Review",
+  "@resultLinkReviewButton": {
+    "description": "LINK-3, LINK-4. Primary action of a link result with any check triggered; opens the warning sheet."
+  },
+  "resultLinkWarningTitle": "Before you open this link",
+  "@resultLinkWarningTitle": {
+    "description": "LINK-4. Title at the top of the warning sheet."
+  },
+  "resultLinkCheckIpAddressHost": "The address is a raw IP number, not a name",
+  "@resultLinkCheckIpAddressHost": {
+    "description": "LINK-3, LINK-4. Plain-language line on the warning sheet for the ipAddressHost check."
+  },
+  "resultLinkCheckUserinfo": "It contains a user name before the site name",
+  "@resultLinkCheckUserinfo": {
+    "description": "LINK-3, LINK-4. Plain-language line on the warning sheet for the userinfo check."
+  },
+  "resultLinkCheckInsecureScheme": "It isn''t encrypted (http)",
+  "@resultLinkCheckInsecureScheme": {
+    "description": "LINK-3, LINK-4. Plain-language line on the warning sheet for the insecureScheme check."
+  },
+  "resultLinkCheckNonDefaultPort": "It uses an unusual port",
+  "@resultLinkCheckNonDefaultPort": {
+    "description": "LINK-3, LINK-4. Plain-language line on the warning sheet for the nonDefaultPort check."
+  },
+  "resultLinkCheckLongUrl": "It''s unusually long",
+  "@resultLinkCheckLongUrl": {
+    "description": "LINK-3, LINK-4. Plain-language line on the warning sheet for the longUrl check."
+  },
+  "resultLinkCopyWithoutOpeningButton": "Copy without opening",
+  "@resultLinkCopyWithoutOpeningButton": {
+    "description": "LINK-4. Filled button on the warning sheet; copies the link's exact text without opening it."
+  },
+  "resultLinkOpenAnywayButton": "Open anyway",
+  "@resultLinkOpenAnywayButton": {
+    "description": "LINK-4, LINK-8. Outlined button on the warning sheet; opens the link in Custom Tabs despite the checks."
+  },
+  "resultLinkBlockedNotice": "{scheme} links can''t be opened here.",
+  "@resultLinkBlockedNotice": {
+    "description": "LINK-5. Shown instead of Open or Review when the link's scheme is blocked; only Copy and Share remain.",
+    "placeholders": {
+      "scheme": {
+        "type": "String",
+        "example": "javascript"
+      }
+    }
+  },
+  "resultLinkCalloutMessage": "This app checks links before opening them, so you can see where they lead first.",
+  "@resultLinkCalloutMessage": {
+    "description": "RUN-8, LINK-3. One-time callout shown above the actions on the first link result ever shown."
+  },
+  "resultLinkCalloutDismissTooltip": "Dismiss",
+  "@resultLinkCalloutDismissTooltip": {
+    "description": "RUN-8, A11Y-1. Screen-reader label for the callout's close button; one tap dismisses it for good."
+  },
+
   "resultWifiNetworkNameLabel": "Network name",
   "@resultWifiNetworkNameLabel": {
     "description": "RES-4. Label above a Wi-Fi result's network name."

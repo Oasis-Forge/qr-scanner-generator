@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import '../core/services/clipboard_service.dart';
 import '../core/services/link_opener.dart';
 import '../core/services/share_service.dart';
+import '../models/link_check.dart';
 import '../models/parsed_payload.dart';
 import '../parsers/payload_parser.dart';
 import '../services/system_intents.dart';
@@ -67,6 +68,15 @@ class ResultState extends ChangeNotifier {
        _share = share,
        _systemIntents = systemIntents,
        _linkOpener = linkOpener {
+    final ParsedPayload p = payload;
+    // LINK-9: computed once here, from the payload this instance was built
+    // for — a History reopen builds a fresh ResultState and runs this again,
+    // so nothing is ever cached across screens. Never asked for a blocked
+    // link (LINK-5): the result offers no Open or Review for one, so nothing
+    // reads this list for it either.
+    _linkChecks = p is Link && !p.isBlocked
+        ? checkLink(p.uri, p.url)
+        : const <LinkCheck>[];
     unawaited(_loadAvailability());
   }
 
@@ -100,6 +110,12 @@ class ResultState extends ChangeNotifier {
   bool _canComposeSms = true;
   bool _canComposeEmail = true;
   bool _canSearchTheWeb = true;
+  bool _canOpenLink = true;
+
+  /// LINK-3, LINK-9: every on-device check the link trips, in LINK-3's order
+  /// (empty for a payload that isn't a [Link], and for a blocked one). See
+  /// the constructor body for when and how this is computed.
+  late final List<LinkCheck> _linkChecks;
 
   /// RES-4, RES-14: whether any app can open Wi-Fi settings.
   bool get canOpenWifiSettings => _canOpenWifiSettings;
@@ -121,6 +137,24 @@ class ResultState extends ChangeNotifier {
 
   /// RES-9, RES-14: whether any app can show a web search.
   bool get canSearchTheWeb => _canSearchTheWeb;
+
+  /// LINK-3, LINK-8, RES-14: whether any app can show a web link — what
+  /// "Open" needs directly, and what "Review"'s "Open anyway" would need in
+  /// turn, so the one primary-action slot (whichever of the two it holds)
+  /// is gated on this rather than on two separate checks. Never asked for a
+  /// blocked link (LINK-5): [LinkOpener] is never called for one.
+  bool get canOpenLink => _canOpenLink;
+
+  /// LINK-1, LINK-5: whether the payload is a [Link] with a scheme LINK-5
+  /// blocks. `false` for every other payload, including a [Link] that isn't
+  /// blocked.
+  bool get isLinkBlocked => payload is Link && (payload as Link).isBlocked;
+
+  /// LINK-3: every check [linkChecks] lists, in LINK-3's stable order. Empty
+  /// means the primary action is "Open"; any entry means it's "Review"
+  /// (LINK-4). Always empty for a blocked link (LINK-5) or a payload that
+  /// isn't a [Link].
+  List<LinkCheck> get linkChecks => _linkChecks;
 
   /// RES-4, DATA-5: whether the Wi-Fi password is shown in the clear. A
   /// local, per-screen toggle: it starts masked every time this screen opens
@@ -248,6 +282,14 @@ class ResultState extends ChangeNotifier {
     );
   }
 
+  /// LINK-3, LINK-8: opens the link through [LinkOpener] (Custom Tabs,
+  /// falling back to the browser). Called for "Open" with no checks
+  /// triggered, and for "Open anyway" on the warning sheet with any — both
+  /// take the exact same route (LINK-4). Only ever called for a [Link]
+  /// payload that isn't blocked; LINK-5 leaves [LinkOpener] untouched for
+  /// one that is.
+  Future<LinkOpenOutcome> openLink() => _linkOpener.open((payload as Link).uri);
+
   /// RES-9: opens a web search for the product's number, using the search
   /// engine chosen in Settings (SET-4). Only ever called for a [Product]
   /// payload. No product database, no shopping action: this is a plain web
@@ -271,8 +313,11 @@ class ResultState extends ChangeNotifier {
 
   /// RES-14: the one `canHandle`/`canOpenWebLinks` call this type's primary
   /// action needs, asked once, right away. A type with no primary hand-off
-  /// yet (Link, plain text, Unknown, a location) asks nothing, so its
-  /// [SystemIntents] and [LinkOpener] see no call at all (RES-2).
+  /// at all (plain text, Unknown, a location) asks nothing, so its
+  /// [SystemIntents] and [LinkOpener] see no call at all (RES-2). A blocked
+  /// [Link] (LINK-5) asks nothing either: its result offers no Open or
+  /// Review, so [LinkOpener] is never called for one, [canOpenWebLinks]
+  /// included.
   Future<void> _loadAvailability() async {
     final bool? result = switch (payload) {
       Wifi() => await _systemIntents.canHandle(SystemHandOff.wifiSettings),
@@ -284,6 +329,7 @@ class ResultState extends ChangeNotifier {
       Sms() => await _systemIntents.canHandle(SystemHandOff.sms),
       Email() => await _systemIntents.canHandle(SystemHandOff.email),
       Product() => await _linkOpener.canOpenWebLinks(),
+      Link link when !link.isBlocked => await _linkOpener.canOpenWebLinks(),
       Link() || PlainText() || Location() || Unknown() => null,
     };
     if (result == null || _disposed) {
@@ -304,6 +350,8 @@ class ResultState extends ChangeNotifier {
         _canComposeEmail = result;
       case Product():
         _canSearchTheWeb = result;
+      case Link link when !link.isBlocked:
+        _canOpenLink = result;
       case Link() || PlainText() || Location() || Unknown():
         break;
     }

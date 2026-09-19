@@ -78,6 +78,9 @@ class SettingsState extends ChangeNotifier {
   /// Stores the crash-report opt-in (PRIV-3).
   static const String sendCrashReportsKey = 'settings.send_crash_reports';
 
+  /// Stores whether the RUN-8 link-check callout has been dismissed.
+  static const String linkCalloutSeenKey = 'settings.link_callout_seen';
+
   /// Theme: System default is the initial choice (SET-1).
   static const ThemeMode defaultThemeMode = ThemeMode.system;
 
@@ -99,6 +102,9 @@ class SettingsState extends ChangeNotifier {
   /// Send crash reports: off until the user turns it on (PRIV-3).
   static const bool defaultSendCrashReports = false;
 
+  /// Link callout seen: false until the user dismisses it once (RUN-8).
+  static const bool defaultLinkCalloutSeen = false;
+
   final KeyValueStore _store;
 
   ThemeMode _themeMode = defaultThemeMode;
@@ -109,6 +115,7 @@ class SettingsState extends ChangeNotifier {
   SearchEngine _searchEngine = defaultSearchEngine;
   bool _saveHistory = defaultSaveHistory;
   bool _sendCrashReports = defaultSendCrashReports;
+  bool _linkCalloutSeen = defaultLinkCalloutSeen;
   bool _isLoaded = false;
 
   /// System default, Light or Dark (SET-1).
@@ -137,6 +144,11 @@ class SettingsState extends ChangeNotifier {
   /// Whether the user has opted in to crash reports (PRIV-3).
   bool get sendCrashReports => _sendCrashReports;
 
+  /// Whether the RUN-8 link-check callout has been dismissed. `false` shows
+  /// it on the next link result; a link result never shows it a second time
+  /// once this is `true`.
+  bool get linkCalloutSeen => _linkCalloutSeen;
+
   /// Whether [load] has finished. Until then every getter reads its documented
   /// default.
   bool get isLoaded => _isLoaded;
@@ -156,6 +168,7 @@ class SettingsState extends ChangeNotifier {
     final engine = SearchEngine.fromId(await _store.getString(searchEngineKey));
     final saveHistory = await _store.getBool(saveHistoryKey);
     final crashReports = await _store.getBool(sendCrashReportsKey);
+    final linkCalloutSeen = await _store.getBool(linkCalloutSeenKey);
 
     _themeMode = themeMode;
     _localeOverride = locale;
@@ -165,6 +178,7 @@ class SettingsState extends ChangeNotifier {
     _searchEngine = engine;
     _saveHistory = saveHistory ?? defaultSaveHistory;
     _sendCrashReports = crashReports ?? defaultSendCrashReports;
+    _linkCalloutSeen = linkCalloutSeen ?? defaultLinkCalloutSeen;
     _isLoaded = true;
     notifyListeners();
   }
@@ -233,6 +247,15 @@ class SettingsState extends ChangeNotifier {
     changed: enabled != _sendCrashReports,
     persist: () => _store.setBool(sendCrashReportsKey, value: enabled),
     assign: () => _sendCrashReports = enabled,
+  );
+
+  /// Stores the RUN-8 callout as dismissed. Written before the field
+  /// changes and listeners are told, so the callout only ever hides once
+  /// the dismissal has actually landed.
+  Future<void> dismissLinkCallout() => _apply(
+    changed: !_linkCalloutSeen,
+    persist: () => _store.setBool(linkCalloutSeenKey, value: true),
+    assign: () => _linkCalloutSeen = true,
   );
 
   /// The theme stored as [id], [defaultThemeMode] when the value is missing or

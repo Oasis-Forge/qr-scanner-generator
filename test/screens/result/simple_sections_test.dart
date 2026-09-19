@@ -20,49 +20,6 @@ import 'section_test_helpers.dart';
 /// primary action, and Share is the one secondary (RES-1, LINK-1, RES-8,
 /// RES-13).
 void main() {
-  group('LinkSection', () {
-    testWidgets('shows the URL, Copy as primary and Share as secondary', (
-      WidgetTester tester,
-    ) async {
-      final ResultState state = resultStateFor(
-        outcomeFor('https://example.com/a', parsedType: ParsedType.url),
-      );
-      await pumpSection(
-        tester,
-        state,
-        LinkSection(link: state.payload as Link),
-      );
-
-      expect(find.text('https://example.com/a'), findsOneWidget);
-      final FilledButton primary = tester.widget<FilledButton>(
-        find.widgetWithText(FilledButton, 'Copy'),
-      );
-      expect(primary.onPressed, isNotNull);
-      expect(find.text('Share'), findsOneWidget);
-    });
-
-    testWidgets('Copy on the primary button copies the exact URL', (
-      WidgetTester tester,
-    ) async {
-      final NoopClipboardService clipboard = NoopClipboardService();
-      final ResultState state = resultStateFor(
-        outcomeFor('https://example.com/a', parsedType: ParsedType.url),
-        clipboard: clipboard,
-      );
-      await pumpSection(
-        tester,
-        state,
-        LinkSection(link: state.payload as Link),
-      );
-
-      await tester.tap(find.widgetWithText(FilledButton, 'Copy'));
-      await tester.pumpAndSettle();
-
-      expect(clipboard.calls, <String>['copyText: https://example.com/a']);
-      expect(find.text('Copied the link'), findsOneWidget);
-    });
-  });
-
   group('PlainTextSection', () {
     testWidgets('shows the text, and reports content, not a link, when '
         'copied', (WidgetTester tester) async {

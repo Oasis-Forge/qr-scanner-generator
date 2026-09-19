@@ -1,5 +1,6 @@
 import '../parsers/product_parser.dart'
     show hasValidGtinCheckDigit, isValidProductCode;
+import 'parsed_payload.dart' show isLinkUri;
 import 'record_enums.dart';
 import 'scan_record.dart';
 
@@ -188,16 +189,6 @@ const Set<Symbology> _productSymbologies = <Symbology>{
   Symbology.upcE,
 };
 
-/// The schemes LINK-5 blocks. They are still links (LINK-1), so the result
-/// screen can say so.
-const Set<String> _blockedSchemes = <String>{
-  'javascript',
-  'data',
-  'file',
-  'intent',
-  'content',
-};
-
 /// A bare address: no scheme, no spaces, one `@`, and a domain with a dot.
 ///
 /// A colon or slash before the `@` means a scheme or a path, which LINK-1
@@ -206,17 +197,11 @@ final RegExp _bareEmail = RegExp(r'^[^\s@:/]+@[^\s@:/]+\.[^\s@:/.]+$');
 
 final RegExp _digitsOnly = RegExp(r'^[0-9]+$');
 
-/// LINK-1: Dart's [Uri] decides, never a raw string match.
+/// LINK-1: Dart's [Uri] decides, never a raw string match. [isLinkUri]
+/// (`lib/models/parsed_payload.dart`) is shared with `parsePayload`.
 bool _isLink(String text) {
   final Uri? uri = Uri.tryParse(text);
-  if (uri == null || !uri.hasScheme) {
-    return false;
-  }
-  final String scheme = uri.scheme.toLowerCase();
-  if (_blockedSchemes.contains(scheme)) {
-    return true;
-  }
-  return (scheme == 'http' || scheme == 'https') && uri.host.isNotEmpty;
+  return uri != null && uri.hasScheme && isLinkUri(uri);
 }
 
 /// Drops a leading byte-order mark, which some generators put before a vCard

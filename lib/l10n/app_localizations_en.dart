@@ -501,6 +501,50 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resultUnavailableBrowser => 'No browser is installed.';
 
   @override
+  String get resultLinkOpenButton => 'Open';
+
+  @override
+  String get resultLinkReviewButton => 'Review';
+
+  @override
+  String get resultLinkWarningTitle => 'Before you open this link';
+
+  @override
+  String get resultLinkCheckIpAddressHost =>
+      'The address is a raw IP number, not a name';
+
+  @override
+  String get resultLinkCheckUserinfo =>
+      'It contains a user name before the site name';
+
+  @override
+  String get resultLinkCheckInsecureScheme => 'It isn\'t encrypted (http)';
+
+  @override
+  String get resultLinkCheckNonDefaultPort => 'It uses an unusual port';
+
+  @override
+  String get resultLinkCheckLongUrl => 'It\'s unusually long';
+
+  @override
+  String get resultLinkCopyWithoutOpeningButton => 'Copy without opening';
+
+  @override
+  String get resultLinkOpenAnywayButton => 'Open anyway';
+
+  @override
+  String resultLinkBlockedNotice(String scheme) {
+    return '$scheme links can\'t be opened here.';
+  }
+
+  @override
+  String get resultLinkCalloutMessage =>
+      'This app checks links before opening them, so you can see where they lead first.';
+
+  @override
+  String get resultLinkCalloutDismissTooltip => 'Dismiss';
+
+  @override
   String get resultWifiNetworkNameLabel => 'Network name';
 
   @override

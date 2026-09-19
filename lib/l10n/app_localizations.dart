@@ -896,6 +896,84 @@ abstract class AppLocalizations {
   /// **'No browser is installed.'**
   String get resultUnavailableBrowser;
 
+  /// LINK-3, LINK-8. Primary action of a link result with no checks triggered; opens the link in Custom Tabs.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get resultLinkOpenButton;
+
+  /// LINK-3, LINK-4. Primary action of a link result with any check triggered; opens the warning sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get resultLinkReviewButton;
+
+  /// LINK-4. Title at the top of the warning sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Before you open this link'**
+  String get resultLinkWarningTitle;
+
+  /// LINK-3, LINK-4. Plain-language line on the warning sheet for the ipAddressHost check.
+  ///
+  /// In en, this message translates to:
+  /// **'The address is a raw IP number, not a name'**
+  String get resultLinkCheckIpAddressHost;
+
+  /// LINK-3, LINK-4. Plain-language line on the warning sheet for the userinfo check.
+  ///
+  /// In en, this message translates to:
+  /// **'It contains a user name before the site name'**
+  String get resultLinkCheckUserinfo;
+
+  /// LINK-3, LINK-4. Plain-language line on the warning sheet for the insecureScheme check.
+  ///
+  /// In en, this message translates to:
+  /// **'It isn\'\'t encrypted (http)'**
+  String get resultLinkCheckInsecureScheme;
+
+  /// LINK-3, LINK-4. Plain-language line on the warning sheet for the nonDefaultPort check.
+  ///
+  /// In en, this message translates to:
+  /// **'It uses an unusual port'**
+  String get resultLinkCheckNonDefaultPort;
+
+  /// LINK-3, LINK-4. Plain-language line on the warning sheet for the longUrl check.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'\'s unusually long'**
+  String get resultLinkCheckLongUrl;
+
+  /// LINK-4. Filled button on the warning sheet; copies the link's exact text without opening it.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy without opening'**
+  String get resultLinkCopyWithoutOpeningButton;
+
+  /// LINK-4, LINK-8. Outlined button on the warning sheet; opens the link in Custom Tabs despite the checks.
+  ///
+  /// In en, this message translates to:
+  /// **'Open anyway'**
+  String get resultLinkOpenAnywayButton;
+
+  /// LINK-5. Shown instead of Open or Review when the link's scheme is blocked; only Copy and Share remain.
+  ///
+  /// In en, this message translates to:
+  /// **'{scheme} links can\'\'t be opened here.'**
+  String resultLinkBlockedNotice(String scheme);
+
+  /// RUN-8, LINK-3. One-time callout shown above the actions on the first link result ever shown.
+  ///
+  /// In en, this message translates to:
+  /// **'This app checks links before opening them, so you can see where they lead first.'**
+  String get resultLinkCalloutMessage;
+
+  /// RUN-8, A11Y-1. Screen-reader label for the callout's close button; one tap dismisses it for good.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get resultLinkCalloutDismissTooltip;
+
   /// RES-4. Label above a Wi-Fi result's network name.
   ///
   /// In en, this message translates to:
