@@ -19,15 +19,61 @@ ParsedPayload _parse(
 void main() {
   group('Link (LINK-1)', () {
     test('an http or https URL', () {
-      expect(_parse('https://example.com'), const Link('https://example.com'));
+      expect(_parse('https://example.com'), Link('https://example.com'));
     });
 
     test('a blocked scheme is still a Link (LINK-5)', () {
-      expect(_parse('javascript:alert(1)'), const Link('javascript:alert(1)'));
+      expect(_parse('javascript:alert(1)'), Link('javascript:alert(1)'));
     });
 
     test('agrees with classifyPayload', () {
       expect(_parse('https://example.com').type, ParsedType.url);
+    });
+
+    test('carries the parsed Uri and the full host (LINK-2)', () {
+      final Link link = _parse('https://example.com/path?q=1') as Link;
+      expect(link.uri, Uri.parse('https://example.com/path?q=1'));
+      expect(link.host, 'example.com');
+      expect(link.isBlocked, isFalse);
+    });
+
+    test('userinfo and IP hosts (v4 and bracketed v6) stay in the host '
+        '(LINK-1, LINK-2)', () {
+      expect((_parse('https://user@example.com') as Link).host, 'example.com');
+      expect((_parse('http://192.168.1.1:8080/x') as Link).host, '192.168.1.1');
+      expect((_parse('https://[2001:db8::1]/') as Link).host, '2001:db8::1');
+    });
+
+    test('every blocked scheme is a blocked Link, in any case (LINK-5)', () {
+      for (final String url in <String>[
+        'javascript:alert(1)',
+        'JavaScript:alert(1)',
+        'data:text/plain;base64,SGVsbG8=',
+        'file:///sdcard/secret.txt',
+        'intent://scan/#Intent;scheme=zxing;end',
+        'content://com.example.provider/item/1',
+      ]) {
+        final ParsedPayload result = _parse(url);
+        expect(result, isA<Link>(), reason: url);
+        expect((result as Link).isBlocked, isTrue, reason: url);
+        expect(result.type, ParsedType.url, reason: url);
+      }
+    });
+
+    test('an http (not https) Link is not blocked', () {
+      expect((_parse('http://example.com') as Link).isBlocked, isFalse);
+    });
+
+    test('a bare domain with no scheme is text, never a Link (LINK-1)', () {
+      expect(_parse('example.com'), const PlainText('example.com'));
+    });
+
+    test('building a Link directly from text with no scheme never throws '
+        '(no parser would build one this way, but the constructor stays '
+        'safe)', () {
+      final Link link = Link('not a url');
+      expect(link.host, isEmpty);
+      expect(link.isBlocked, isFalse);
     });
   });
 

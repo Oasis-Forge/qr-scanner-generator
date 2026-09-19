@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:qrscanner/core/services/clipboard_service.dart';
 import 'package:qrscanner/core/services/link_opener.dart';
 import 'package:qrscanner/core/services/share_service.dart';
+import 'package:qrscanner/models/link_check.dart';
 import 'package:qrscanner/models/parsed_payload.dart';
 import 'package:qrscanner/models/record_enums.dart';
 import 'package:qrscanner/services/system_intents.dart';
@@ -57,7 +58,7 @@ void main() {
     });
 
     test(
-      'a link asks nothing at all (RES-2): no primary hand-off yet',
+      'a non-blocked link asks canOpenWebLinks, not SystemIntents (LINK-8)',
       () async {
         final NoopSystemIntents intents = NoopSystemIntents();
         final NoopLinkOpener linkOpener = NoopLinkOpener();
@@ -69,9 +70,37 @@ void main() {
         await pumpEventQueue();
 
         expect(intents.calls, isEmpty);
-        expect(linkOpener.calls, isEmpty);
+        expect(linkOpener.calls, <String>['canOpenWebLinks']);
       },
     );
+
+    test('a blocked link asks nothing at all (LINK-5): LinkOpener is never '
+        'called for one', () async {
+      final NoopSystemIntents intents = NoopSystemIntents();
+      final NoopLinkOpener linkOpener = NoopLinkOpener();
+      _stateFor(
+        'javascript:alert(1)',
+        systemIntents: intents,
+        linkOpener: linkOpener,
+      );
+      await pumpEventQueue();
+
+      expect(intents.calls, isEmpty);
+      expect(linkOpener.calls, isEmpty);
+    });
+
+    test('canOpenLink starts true and flips to false once the check answers '
+        'no (RES-14)', () async {
+      final ResultState state = _stateFor(
+        'https://example.com',
+        linkOpener: NoopLinkOpener(canOpen: false),
+      );
+      expect(state.canOpenLink, isTrue);
+
+      await pumpEventQueue();
+
+      expect(state.canOpenLink, isFalse);
+    });
 
     test('a product asks canOpenWebLinks, not SystemIntents', () async {
       final NoopSystemIntents intents = NoopSystemIntents();
@@ -481,6 +510,79 @@ void main() {
 
       expect(linkOpener.openedUrls.single.host, 'duckduckgo.com');
     });
+  });
+
+  group('LINK-1 to LINK-9: link checks, blocking and opening', () {
+    test('a clean https link has no checks and is not blocked', () {
+      final ResultState state = _stateFor('https://example.com');
+
+      expect(state.linkChecks, isEmpty);
+      expect(state.isLinkBlocked, isFalse);
+    });
+
+    test("a link with checks reports them in LINK-3's stable order", () {
+      final ResultState state = _stateFor('http://user@192.168.1.1:8080/x');
+
+      expect(state.linkChecks, <LinkCheck>[
+        LinkCheck.ipAddressHost,
+        LinkCheck.userinfo,
+        LinkCheck.insecureScheme,
+        LinkCheck.nonDefaultPort,
+      ]);
+    });
+
+    test('the long-url check counts the exact scanned text, not a '
+        're-encoded form of the parsed Uri', () {
+      final String longUrl = 'https://example.com/${'a' * 200}';
+      final ResultState state = _stateFor(longUrl);
+
+      expect(state.linkChecks, <LinkCheck>[LinkCheck.longUrl]);
+    });
+
+    test('a blocked link reports isLinkBlocked and no checks (LINK-5)', () {
+      final ResultState state = _stateFor('javascript:alert(1)');
+
+      expect(state.isLinkBlocked, isTrue);
+      expect(state.linkChecks, isEmpty);
+    });
+
+    test('a non-Link payload is never blocked and has no link checks', () {
+      final ResultState state = _stateFor(
+        'tel:+15551234567',
+        parsedType: ParsedType.phone,
+      );
+
+      expect(state.isLinkBlocked, isFalse);
+      expect(state.linkChecks, isEmpty);
+    });
+
+    test('LINK-9: a fresh ResultState over the same link recomputes the '
+        'checks rather than reusing a cached value', () {
+      const String url = 'http://192.168.1.1/';
+      final List<LinkCheck> first = _stateFor(url).linkChecks;
+      final List<LinkCheck> second = _stateFor(url).linkChecks;
+
+      expect(first, second);
+      expect(first, isNot(same(second)));
+    });
+
+    test(
+      'openLink hands the exact parsed Uri to LinkOpener (LINK-8)',
+      () async {
+        final NoopLinkOpener linkOpener = NoopLinkOpener();
+        final ResultState state = _stateFor(
+          'https://example.com/a?q=1',
+          linkOpener: linkOpener,
+        );
+
+        final LinkOpenOutcome outcome = await state.openLink();
+
+        expect(outcome, LinkOpenOutcome.customTab);
+        expect(linkOpener.openedUrls, <Uri>[
+          Uri.parse('https://example.com/a?q=1'),
+        ]);
+      },
+    );
   });
 }
 

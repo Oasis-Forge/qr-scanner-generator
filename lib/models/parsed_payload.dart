@@ -23,16 +23,61 @@ sealed class ParsedPayload {
   ParsedType get type;
 }
 
+/// The schemes LINK-5 blocks, compared case-insensitively. A blocked link is
+/// still a [Link] (LINK-1), so the result screen can say so instead of
+/// falling back to text.
+const Set<String> blockedLinkSchemes = <String>{
+  'javascript',
+  'data',
+  'file',
+  'intent',
+  'content',
+};
+
+/// LINK-1: whether [uri] — already parsed, with a scheme — is a Link: an
+/// `http`/`https` scheme with a host (userinfo and IP hosts included), or a
+/// blocked scheme (LINK-5).
+///
+/// Shared by `classifyPayload` (`lib/models/payload_classifier.dart`) and
+/// `parsePayload` (`lib/parsers/payload_parser.dart`), so the two are
+/// structurally unable to disagree about what counts as a link — there is
+/// still a test sweep, but it is no longer the only thing keeping them in
+/// step.
+bool isLinkUri(Uri uri) {
+  final String scheme = uri.scheme.toLowerCase();
+  if (blockedLinkSchemes.contains(scheme)) {
+    return true;
+  }
+  return (scheme == 'http' || scheme == 'https') && uri.host.isNotEmpty;
+}
+
 /// An `http` or `https` link, or one with a blocked scheme (LINK-1, LINK-5).
 ///
 /// [url] is the payload exactly as decoded, never re-encoded or normalised:
-/// LINK-2 shows it monospace and selectable, and the host it is judged by
-/// (LINK-3) is worked out from it when the link is shown, not here.
+/// LINK-2 shows it monospace and selectable. [uri] is [url], trimmed, parsed
+/// by [Uri]; classification already proved that succeeds with an
+/// `http`/`https` scheme and a host, or with a blocked scheme, for every
+/// [Link] a parser builds, so [isBlocked] and [host] — both read straight off
+/// [uri] — are never wrong for one. A [Link] built directly from text no
+/// parser validated (a test, say) falls back to an empty [Uri] instead of
+/// throwing, matching this codebase's never-throw parsers.
 final class Link extends ParsedPayload {
-  const Link(this.url);
+  Link(this.url) : uri = Uri.tryParse(url.trim()) ?? Uri();
 
   /// The full URL as scanned.
   final String url;
+
+  /// [url], trimmed, parsed by [Uri] (LINK-1).
+  final Uri uri;
+
+  /// Whether [uri]'s scheme is one LINK-5 blocks: the result says the link
+  /// type is blocked and offers Copy only, instead of Open.
+  bool get isBlocked => blockedLinkSchemes.contains(uri.scheme.toLowerCase());
+
+  /// [uri]'s host, exactly as [Uri] reports it — the full host LINK-2
+  /// emphasises until spike S11 finds a registrable-domain source. Empty
+  /// when the link carries none (a blocked scheme without one).
+  String get host => uri.host;
 
   @override
   ParsedType get type => ParsedType.url;

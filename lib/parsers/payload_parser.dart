@@ -271,24 +271,9 @@ String _withoutLeadingMark(String payload) =>
 /// A bare address: no scheme, no spaces, one `@`, and a domain with a dot.
 final RegExp _bareEmail = RegExp(r'^[^\s@:/]+@[^\s@:/]+\.[^\s@:/.]+$');
 
-/// The schemes LINK-5 blocks. They are still links (LINK-1).
-const Set<String> _blockedSchemes = <String>{
-  'javascript',
-  'data',
-  'file',
-  'intent',
-  'content',
-};
-
-/// LINK-1: [Uri] decides, never a raw string match.
+/// LINK-1: [Uri] decides, never a raw string match. [isLinkUri]
+/// (`lib/models/parsed_payload.dart`) is shared with `classifyPayload`.
 bool _isLink(String text) {
   final Uri? uri = Uri.tryParse(text);
-  if (uri == null || !uri.hasScheme) {
-    return false;
-  }
-  final String scheme = uri.scheme.toLowerCase();
-  if (_blockedSchemes.contains(scheme)) {
-    return true;
-  }
-  return (scheme == 'http' || scheme == 'https') && uri.host.isNotEmpty;
+  return uri != null && uri.hasScheme && isLinkUri(uri);
 }

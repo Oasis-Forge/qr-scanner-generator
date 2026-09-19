@@ -455,7 +455,11 @@ void main() {
 
         expect(find.byType(ResultScreen), findsOneWidget);
         final AppServices services = scanner.services;
-        expect((services.linkOpener as NoopLinkOpener).calls, isEmpty);
+        // Only the RES-14 availability probe; nothing was opened.
+        expect(
+          (services.linkOpener as NoopLinkOpener).calls,
+          everyElement('canOpenWebLinks'),
+        );
         expect((services.systemIntents as NoopSystemIntents).calls, isEmpty);
         expect((services.share as NoopShareService).calls, isEmpty);
         expect((services.clipboard as NoopClipboardService).calls, isEmpty);

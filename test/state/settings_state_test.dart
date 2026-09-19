@@ -137,6 +137,12 @@ void main() {
       expect(settings.sendCrashReports, isFalse);
     });
 
+    test('the link callout has not been seen yet (RUN-8)', () async {
+      await settings.load();
+
+      expect(settings.linkCalloutSeen, isFalse);
+    });
+
     test('a default is not written to the store', () async {
       await settings.load();
 
@@ -150,6 +156,7 @@ void main() {
       expect(settings.vibrateOnScan, isTrue);
       expect(settings.saveHistory, isTrue);
       expect(settings.sendCrashReports, isFalse);
+      expect(settings.linkCalloutSeen, isFalse);
     });
   });
 
@@ -164,6 +171,7 @@ void main() {
         SettingsState.searchEngineKey: 'ecosia',
         SettingsState.saveHistoryKey: '0',
         SettingsState.sendCrashReportsKey: '1',
+        SettingsState.linkCalloutSeenKey: '1',
       });
       settings = SettingsState(store);
 
@@ -177,6 +185,7 @@ void main() {
       expect(settings.searchEngine, SearchEngine.ecosia);
       expect(settings.saveHistory, isFalse);
       expect(settings.sendCrashReports, isTrue);
+      expect(settings.linkCalloutSeen, isTrue);
       expect(settings.isLoaded, isTrue);
     });
 
@@ -279,6 +288,40 @@ void main() {
       expect(notifications, 1);
     });
 
+    test('dismissLinkCallout stores it seen, for good (RUN-8)', () async {
+      await loadAndListen();
+
+      await settings.dismissLinkCallout();
+
+      expect(settings.linkCalloutSeen, isTrue);
+      expect(store.values[SettingsState.linkCalloutSeenKey], '1');
+      expect(notifications, 1);
+    });
+
+    test(
+      'dismissLinkCallout a second time writes nothing more (RUN-8)',
+      () async {
+        await loadAndListen();
+        await settings.dismissLinkCallout();
+
+        await settings.dismissLinkCallout();
+
+        expect(store.writes, hasLength(1));
+        expect(notifications, 1);
+      },
+    );
+
+    test('a dismissal survives a reload (RUN-8)', () async {
+      await settings.load();
+      await settings.dismissLinkCallout();
+
+      final SettingsState reloaded = SettingsState(store);
+      await reloaded.load();
+
+      expect(reloaded.linkCalloutSeen, isTrue);
+      reloaded.dispose();
+    });
+
     test('a language is stored as a tag (LANG-1)', () async {
       await loadAndListen();
 
@@ -352,6 +395,17 @@ void main() {
       );
 
       expect(settings.sendCrashReports, isFalse);
+      expect(store.values, isEmpty);
+      expect(notifications, 0);
+    });
+
+    test('leaves the link callout unseen (RUN-8)', () async {
+      await loadAndListen();
+      store.failingKeys.add(SettingsState.linkCalloutSeenKey);
+
+      await expectLater(settings.dismissLinkCallout(), throwsStateError);
+
+      expect(settings.linkCalloutSeen, isFalse);
       expect(store.values, isEmpty);
       expect(notifications, 0);
     });

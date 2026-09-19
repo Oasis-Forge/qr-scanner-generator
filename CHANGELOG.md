@@ -4,6 +4,16 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-09-20
+
+### Added
+- Links show where they go before anything opens: the whole address, with the site's name in large bold type above the buttons.
+- The app checks every link on your phone, with nothing sent anywhere. It flags a raw number instead of a site name, a user name hidden before the site, an unencrypted (http) address, an unusual port, or an unusually long address.
+- A clean link opens with "Open". A flagged one says "Review" instead and lists what looks wrong, with "Copy without opening" and "Open anyway" side by side.
+- Links that can't be opened safely (javascript:, data:, file:, intent:, content:) are marked as blocked, and can only be copied.
+- Links open in Custom Tabs, never inside the app.
+- The first link you scan carries a short note about these checks. One tap hides it for good.
+
 ## [0.4.0] - 2026-09-19
 
 ### Added

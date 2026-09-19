@@ -447,6 +447,48 @@ class AppLocalizationsAr extends AppLocalizations {
   String get resultUnavailableBrowser => 'لا يوجد متصفّح مثبَّت.';
 
   @override
+  String get resultLinkOpenButton => 'فتح';
+
+  @override
+  String get resultLinkReviewButton => 'مراجعة';
+
+  @override
+  String get resultLinkWarningTitle => 'قبل فتح هذا الرابط';
+
+  @override
+  String get resultLinkCheckIpAddressHost => 'العنوان رقم IP خام وليس اسمًا';
+
+  @override
+  String get resultLinkCheckUserinfo => 'يحتوي على اسم مستخدم قبل اسم الموقع';
+
+  @override
+  String get resultLinkCheckInsecureScheme => 'غير مشفّر (http)';
+
+  @override
+  String get resultLinkCheckNonDefaultPort => 'يستخدم منفذًا غير معتاد';
+
+  @override
+  String get resultLinkCheckLongUrl => 'طويل بشكل غير معتاد';
+
+  @override
+  String get resultLinkCopyWithoutOpeningButton => 'نسخ بدون فتح';
+
+  @override
+  String get resultLinkOpenAnywayButton => 'فتح رغم ذلك';
+
+  @override
+  String resultLinkBlockedNotice(String scheme) {
+    return 'روابط $scheme لا يمكن فتحها هنا.';
+  }
+
+  @override
+  String get resultLinkCalloutMessage =>
+      'يتحقق هذا التطبيق من الروابط قبل فتحها، لتعرف وجهتها أولًا.';
+
+  @override
+  String get resultLinkCalloutDismissTooltip => 'إغلاق';
+
+  @override
   String get resultWifiNetworkNameLabel => 'اسم الشبكة';
 
   @override

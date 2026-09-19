@@ -54,8 +54,10 @@ void main() {
         'AppTheme.minTapTargetSize tall', (WidgetTester tester) async {
       await pumpApp(tester, ResultScreen(outcome: _outcome()));
 
+      // This link is over 200 characters, so its primary action is Review
+      // (LINK-3); either way it is the one filled button.
       final Size primary = tester.getSize(
-        find.widgetWithText(FilledButton, 'Copy'),
+        find.widgetWithText(FilledButton, 'Review'),
       );
       expect(
         primary.height,
@@ -84,13 +86,14 @@ void main() {
           Directionality.of(tester.element(find.byType(ResultScreen))),
           TextDirection.rtl,
         );
-        expect(
-          tester.widget<PayloadText>(find.byType(PayloadText)).direction,
-          TextDirection.ltr,
-        );
+        // The URL itself (LINK-2 also shows the host above the actions).
         expect(
           tester
-              .widget<SelectableText>(find.byType(SelectableText))
+              .widget<SelectableText>(
+                find.byWidgetPredicate(
+                  (Widget w) => w is SelectableText && w.data == longLink,
+                ),
+              )
               .textDirection,
           TextDirection.ltr,
         );
@@ -149,7 +152,11 @@ void main() {
         final NoopClipboardService clipboard =
             app.services.clipboard as NoopClipboardService;
 
-        await tester.tap(find.widgetWithText(FilledButton, 'Copy'));
+        // On a link, Copy is a secondary action (Open is primary, LINK-3).
+        final Finder copy = find.widgetWithText(OutlinedButton, 'Copy');
+        await tester.ensureVisible(copy);
+        await tester.pumpAndSettle();
+        await tester.tap(copy);
         await tester.pumpAndSettle();
 
         expect(clipboard.calls, <String>['copyText: $longLink']);
@@ -184,7 +191,10 @@ void main() {
           ResultScreen(outcome: _outcome()),
         );
 
-        await tester.tap(find.widgetWithText(OutlinedButton, 'Share'));
+        final Finder share = find.widgetWithText(OutlinedButton, 'Share');
+        await tester.ensureVisible(share);
+        await tester.pumpAndSettle();
+        await tester.tap(share);
         await tester.pumpAndSettle();
 
         expect((app.services.share as NoopShareService).calls, <String>[
@@ -199,7 +209,7 @@ void main() {
       await pumpApp(tester, ResultScreen(outcome: _outcome()));
 
       for (final Finder finder in <Finder>[
-        find.widgetWithText(FilledButton, 'Copy'),
+        find.widgetWithText(OutlinedButton, 'Copy'),
         find.widgetWithText(OutlinedButton, 'Share'),
       ]) {
         final Size size = tester.getSize(finder);
@@ -248,7 +258,10 @@ void main() {
         findsOneWidget,
       );
 
-      await tester.tap(find.widgetWithText(FilledButton, 'Copy'));
+      final Finder copy = find.widgetWithText(OutlinedButton, 'Copy');
+      await tester.ensureVisible(copy);
+      await tester.pumpAndSettle();
+      await tester.tap(copy);
       await tester.pumpAndSettle();
       expect((app.services.clipboard as NoopClipboardService).calls, <String>[
         'copyText: $longLink',
@@ -321,7 +334,11 @@ void main() {
       final AppServices services = app.services;
 
       expect(find.byType(ResultScreen), findsOneWidget);
-      expect((services.linkOpener as NoopLinkOpener).calls, isEmpty);
+      // Only the RES-14 availability probe; nothing was opened.
+      expect(
+        (services.linkOpener as NoopLinkOpener).calls,
+        everyElement('canOpenWebLinks'),
+      );
       expect((services.systemIntents as NoopSystemIntents).calls, isEmpty);
       expect((services.share as NoopShareService).calls, isEmpty);
       expect((services.clipboard as NoopClipboardService).calls, isEmpty);
