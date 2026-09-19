@@ -1,21 +1,26 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../core/theme/app_theme.dart';
 import '../l10n/app_localizations.dart';
-import '../state/settings_state.dart';
+import 'ads/ad_banner_slot.dart';
+import 'pro/pro_prompt.dart';
+import 'settings/about_section.dart';
+import 'settings/general_section.dart';
+import 'settings/pro_section.dart';
+import 'settings/privacy_section.dart';
+import '../state/ads_state.dart';
 
-/// The Settings tab (SCAN-1).
+/// The Settings tab (SCAN-1, SET-5).
 ///
-/// For now it holds the theme (SET-1) and language (LANG-1) switchers the
-/// Phase 1 home screen had, unchanged; the settings PR adds SET-5's groups
-/// and the rest of its rows.
+/// Four groups, in order: General (SET-1, SET-2, SET-3, LANG-1), Privacy
+/// (HIS-8, PRIV-2, PRIV-3), Pro (PRO-1, PRO-4, PRO-5, PRO-6) and About (SET-6,
+/// SET-7, SET-8). The one Pro prompt (PRO-4) sits above them, and the ADS-1
+/// banner slot is fixed at the bottom of this screen only — never inside the
+/// scrolling groups (ADS-3).
 ///
-/// Presentational only (`CLAUDE.md`): it reads [SettingsState] with
-/// `context.watch`, calls its setters with `context.read`, and touches no store,
-/// no database and no device service.
+/// Presentational only (`CLAUDE.md`): each group reads its own slice of state
+/// with `context.read`/`context.watch` and touches no store, no database and
+/// no device service directly; this screen itself lays them out and nothing
+/// more.
 ///
 /// Every string comes from the message files (LANG-2) and every edge inset is
 /// directional, so Arabic mirrors the whole screen (LANG-5). The back gesture
@@ -23,224 +28,40 @@ import '../state/settings_state.dart';
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
-  /// The theme choice that follows the phone's setting (SET-1).
-  static const Key systemThemeKey = Key('settings.theme.system');
-
-  /// The Light theme choice (SET-1).
-  static const Key lightThemeKey = Key('settings.theme.light');
-
-  /// The Dark theme choice (SET-1).
-  static const Key darkThemeKey = Key('settings.theme.dark');
-
-  /// The language choice that follows the device language (LANG-1).
-  static const Key systemLanguageKey = Key('settings.language.system');
-
-  /// The English language choice (LANG-1).
-  static const Key englishLanguageKey = Key('settings.language.en');
-
-  /// The Arabic language choice (LANG-1).
-  static const Key arabicLanguageKey = Key('settings.language.ar');
-
-  /// The locale the English choice sets (LANG-1).
-  static const Locale english = Locale('en');
-
-  /// The locale the Arabic choice sets (LANG-1).
-  static const Locale arabic = Locale('ar');
-
   @override
   Widget build(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context);
-    final SettingsState settings = context.watch<SettingsState>();
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.navSettings)),
-      body: SafeArea(
+      body: const SafeArea(
         top: false,
-        child: SingleChildScrollView(
-          padding: const EdgeInsetsDirectional.fromSTEB(24, 16, 24, 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              _ChoiceGroup<ThemeMode>(
-                title: l10n.settingsTheme,
-                selected: settings.themeMode,
-                onSelected: (ThemeMode mode) =>
-                    context.read<SettingsState>().setThemeMode(mode),
-                options: <_Choice<ThemeMode>>[
-                  _Choice<ThemeMode>(
-                    buttonKey: systemThemeKey,
-                    value: ThemeMode.system,
-                    label: l10n.themeSystemDefault,
-                  ),
-                  _Choice<ThemeMode>(
-                    buttonKey: lightThemeKey,
-                    value: ThemeMode.light,
-                    label: l10n.themeLight,
-                  ),
-                  _Choice<ThemeMode>(
-                    buttonKey: darkThemeKey,
-                    value: ThemeMode.dark,
-                    label: l10n.themeDark,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 32),
-              _ChoiceGroup<Locale?>(
-                title: l10n.settingsLanguage,
-                selected: settings.localeOverride,
-                onSelected: (Locale? locale) =>
-                    context.read<SettingsState>().setLocaleOverride(locale),
-                options: <_Choice<Locale?>>[
-                  _Choice<Locale?>(
-                    buttonKey: systemLanguageKey,
-                    value: null,
-                    label: l10n.languageSystemDefault,
-                  ),
-                  _Choice<Locale?>(
-                    buttonKey: englishLanguageKey,
-                    value: english,
-                    label: l10n.languageEnglish,
-                  ),
-                  _Choice<Locale?>(
-                    buttonKey: arabicLanguageKey,
-                    value: arabic,
-                    label: l10n.languageArabic,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// One option of a switcher: which value it sets, what the user reads, and the
-/// key a widget test taps it by.
-class _Choice<T> {
-  const _Choice({
-    required this.buttonKey,
-    required this.value,
-    required this.label,
-  });
-
-  final Key buttonKey;
-  final T value;
-
-  /// Straight from the message files (LANG-2).
-  final String label;
-}
-
-/// A heading and the row of options under it.
-///
-/// The row wraps instead of overflowing, so a long translation at 2.0× text
-/// still fits on a phone (LANG-6, A11Y-4).
-class _ChoiceGroup<T> extends StatelessWidget {
-  const _ChoiceGroup({
-    required this.title,
-    required this.options,
-    required this.selected,
-    required this.onSelected,
-  });
-
-  final String title;
-  final List<_Choice<T>> options;
-  final T selected;
-  final Future<void> Function(T value) onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Semantics(
-          header: true,
-          child: Text(title, style: Theme.of(context).textTheme.titleMedium),
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
+        child: Column(
           children: <Widget>[
-            for (final _Choice<T> option in options)
-              _ChoiceButton(
-                key: option.buttonKey,
-                label: option.label,
-                selected: option.value == selected,
-                onPressed: () => unawaited(
-                  _applyChoice(context, () => onSelected(option.value)),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsetsDirectional.fromSTEB(24, 16, 24, 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    ProPrompt(),
+                    GeneralSection(),
+                    SizedBox(height: 32),
+                    PrivacySection(),
+                    SizedBox(height: 32),
+                    ProSection(),
+                    SizedBox(height: 32),
+                    AboutSection(),
+                  ],
                 ),
               ),
+            ),
+            // Fixed and non-scrolling, separated from the groups above by its
+            // own divider, and clear of the app shell's bottom navigation bar
+            // below (ADS-1, ADS-3).
+            AdBannerSlot(slot: AdSlots.settings),
           ],
         ),
-      ],
-    );
-  }
-
-  /// Writes the choice, and says so when the write fails.
-  ///
-  /// Reliable writes (`CLAUDE.md`): [SettingsState] stores the value before it
-  /// changes anything in memory and lets a failure through, so the screen is
-  /// what tells the user nothing was saved, using the message files (LANG-2).
-  /// The messenger and the strings are read before the `await`, so no
-  /// `BuildContext` is used across it.
-  static Future<void> _applyChoice(
-    BuildContext context,
-    Future<void> Function() write,
-  ) async {
-    final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
-    final String failed = AppLocalizations.of(context).errorSaveFailed;
-    try {
-      await write();
-    } on Object {
-      messenger.showSnackBar(SnackBar(content: Text(failed)));
-    }
-  }
-}
-
-/// One tappable option.
-///
-/// [MergeSemantics] folds the button and its label into a single node, so a
-/// screen reader reads one control with the name the user sees and whether it is
-/// the chosen one (A11Y-1). The chosen option carries a tick as well as the
-/// filled colour, so the state is never colour alone (A11Y-6), and the style
-/// holds the tap target at [AppTheme.minTapTargetSize] (A11Y-2).
-class _ChoiceButton extends StatelessWidget {
-  const _ChoiceButton({
-    required this.label,
-    required this.selected,
-    required this.onPressed,
-    super.key,
-  });
-
-  static const ButtonStyle _style = ButtonStyle(
-    minimumSize: WidgetStatePropertyAll<Size>(
-      Size(AppTheme.minTapTargetSize, AppTheme.minTapTargetSize),
-    ),
-    padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(
-      EdgeInsetsDirectional.symmetric(horizontal: 20),
-    ),
-  );
-
-  final String label;
-  final bool selected;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final Widget text = Text(label);
-    return MergeSemantics(
-      child: Semantics(
-        selected: selected,
-        child: selected
-            ? FilledButton.icon(
-                onPressed: onPressed,
-                style: _style,
-                icon: const Icon(Icons.check),
-                label: text,
-              )
-            : OutlinedButton(onPressed: onPressed, style: _style, child: text),
       ),
     );
   }

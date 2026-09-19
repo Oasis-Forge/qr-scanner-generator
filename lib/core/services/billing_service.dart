@@ -71,7 +71,9 @@ abstract class BillingService {
   Future<PurchaseResult> buy(String productId);
 
   /// Re-queries the store for what this account owns, behind "Restore purchase"
-  /// and at every start when online (PRO-6). Returns the ids owned.
+  /// and at every start when online (PRO-6). Returns the ids owned, and
+  /// throws when the store can't answer (offline, refused), so the caller
+  /// keeps its cached ownership (PRO-7).
   Future<Set<String>> restorePurchases();
 
   /// Whether [productId] is owned, answered from the cache when offline

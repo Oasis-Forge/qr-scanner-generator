@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:provider/provider.dart';
+import 'package:qrscanner/core/services/ads_service.dart';
+import 'package:qrscanner/core/services/consent_service.dart';
 import 'package:qrscanner/db/record_dao.dart';
 import 'package:qrscanner/models/record_enums.dart';
 import 'package:qrscanner/models/scan_record.dart';
 import 'package:qrscanner/screens/history/history_date_header.dart';
 import 'package:qrscanner/screens/history/history_empty_state.dart';
 import 'package:qrscanner/screens/history_screen.dart';
+import 'package:qrscanner/screens/pro/pro_prompt.dart';
 import 'package:qrscanner/screens/result_screen.dart';
+import 'package:qrscanner/services/app_services.dart';
 import 'package:qrscanner/state/history_state.dart';
 import 'package:qrscanner/state/settings_state.dart';
+import 'package:qrscanner/state/success_counts.dart';
 
 import '../helpers/fake_stores.dart';
 import '../helpers/memory_record_dao.dart';
@@ -430,5 +435,103 @@ void main() {
         expect(find.text('https://example.com/rtl-swipe'), findsNothing);
       },
     );
+  });
+
+  group('ADS-1, PRO-4: the banner and the Pro prompt', () {
+    Future<SuccessCounts> countsAt(int successes) async {
+      final SuccessCounts counts = SuccessCounts(FakeKeyValueStore());
+      await counts.load();
+      for (var i = 0; i < successes; i++) {
+        await counts.recordSuccessfulScan();
+      }
+      addTearDown(counts.dispose);
+      return counts;
+    }
+
+    AppServices adsAllowed(NoopAdsService ads) => AppServices.fakes().copyWith(
+      ads: ads,
+      consent: NoopConsentService(seededStatus: ConsentStatus.notNeeded),
+    );
+
+    testWidgets('a banner below the list, outside it, once the first success '
+        'has happened (ADS-1, ADS-3)', (WidgetTester tester) async {
+      await insertScan('https://example.com/banner', at: clock);
+      final NoopAdsService ads = NoopAdsService();
+      await pumpApp(
+        tester,
+        wrap(),
+        settings: settings,
+        services: adsAllowed(ads),
+        successCounts: await countsAt(1),
+      );
+
+      expect(ads.calls.last, startsWith('loadBanner: history'));
+      final Finder divider = find.byType(Divider);
+      expect(divider, findsOneWidget);
+      expect(
+        find.ancestor(of: divider, matching: find.byType(ListView)),
+        findsNothing,
+      );
+      expect(
+        tester.getTopLeft(divider).dy,
+        greaterThan(tester.getBottomLeft(find.byType(ListView)).dy - 1),
+      );
+    });
+
+    testWidgets('no banner and no ad request before the first success '
+        '(ADS-6)', (WidgetTester tester) async {
+      await insertScan('https://example.com/no-banner', at: clock);
+      final NoopAdsService ads = NoopAdsService();
+      await pumpApp(
+        tester,
+        wrap(),
+        settings: settings,
+        services: adsAllowed(ads),
+        successCounts: await countsAt(0),
+      );
+
+      expect(find.byType(Divider), findsNothing);
+      expect(ads.calls, isEmpty);
+    });
+
+    testWidgets('the Pro prompt sits above the list after the 5th success, '
+        'and not while rows are selected (PRO-4)', (WidgetTester tester) async {
+      final ScanRecord record = await insertScan(
+        'https://example.com/pro',
+        at: clock,
+      );
+      await pumpApp(
+        tester,
+        wrap(),
+        settings: settings,
+        successCounts: await countsAt(5),
+      );
+
+      expect(find.byKey(ProPrompt.buyButtonKey), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.byKey(ProPrompt.buyButtonKey)).dy,
+        lessThan(
+          tester.getTopLeft(find.byKey(HistoryScreen.segmentedControlKey)).dy,
+        ),
+      );
+
+      await tester.longPress(find.byKey(HistoryScreen.rowKey(record.id)));
+      await tester.pumpAndSettle();
+      expect(find.byKey(ProPrompt.buyButtonKey), findsNothing);
+    });
+
+    testWidgets('no Pro prompt before the 5th success (PRO-4)', (
+      WidgetTester tester,
+    ) async {
+      await insertScan('https://example.com/no-pro', at: clock);
+      await pumpApp(
+        tester,
+        wrap(),
+        settings: settings,
+        successCounts: await countsAt(4),
+      );
+
+      expect(find.byKey(ProPrompt.buyButtonKey), findsNothing);
+    });
   });
 }

@@ -205,6 +205,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsRestorePurchase => 'Restore purchase';
 
   @override
+  String settingsRemoveAdsPrice(String price) {
+    return 'One-time purchase · $price';
+  }
+
+  @override
+  String get settingsProOwned => 'Ads removed';
+
+  @override
+  String get proBuyFailed => 'Could not complete the purchase. Try again.';
+
+  @override
+  String get proRestoreSuccess => 'Purchase restored.';
+
+  @override
+  String get proRestoreNotFound => 'No previous purchase was found.';
+
+  @override
+  String get proRestoreFailed => 'Could not check the store. Try again.';
+
+  @override
+  String get proPromptTitle => 'Remove ads?';
+
+  @override
+  String get proPromptBody => 'A one-time purchase, never a subscription.';
+
+  @override
+  String get proPromptDismissTooltip => 'Dismiss';
+
+  @override
   String get settingsFeedback => 'Feedback';
 
   @override
@@ -219,6 +248,46 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String settingsVersionValue(String version, String build) {
     return '$version ($build)';
+  }
+
+  @override
+  String get settingsLinkOpenFailed => 'Could not open the link.';
+
+  @override
+  String get feedbackCategoryLabel => 'Category';
+
+  @override
+  String get feedbackCategoryScanning => 'Scanning';
+
+  @override
+  String get feedbackCategoryResults => 'Results';
+
+  @override
+  String get feedbackCategoryCreatingCodes => 'Creating codes';
+
+  @override
+  String get feedbackCategoryAds => 'Ads';
+
+  @override
+  String get feedbackCategoryOther => 'Other';
+
+  @override
+  String get feedbackMessageHint => 'What happened, and what did you expect?';
+
+  @override
+  String get feedbackSendButton => 'Send';
+
+  @override
+  String get feedbackSendNoHandler => 'No email app is set up on this device.';
+
+  @override
+  String feedbackEmailSubject(
+    String appTitle,
+    String version,
+    String build,
+    String androidVersion,
+  ) {
+    return '$appTitle feedback ($version+$build, $androidVersion)';
   }
 
   @override

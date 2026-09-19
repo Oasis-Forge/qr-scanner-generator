@@ -6,11 +6,15 @@ import 'package:provider/provider.dart';
 import '../core/theme/app_theme.dart';
 import '../l10n/app_localizations.dart';
 import '../models/scan_record.dart';
+import '../state/ads_state.dart';
 import '../state/history_state.dart';
+import '../state/pro_state.dart';
 import '../state/scan_outcome.dart';
+import 'ads/ad_banner_slot.dart';
 import 'history/history_date_header.dart';
 import 'history/history_empty_state.dart';
 import 'history/history_row.dart';
+import 'pro/pro_prompt.dart';
 import 'result_screen.dart';
 
 /// The History tab (HIS-1, HIS-3, HIS-4, HIS-5, HIS-7, HIS-11): every live
@@ -234,7 +238,15 @@ class _HistoryScreenState extends State<HistoryScreen>
             : AppBar(title: Text(l10n.navHistory)),
         body: SafeArea(
           top: false,
-          child: _body(l10n, history, selectionMode, selectedIds),
+          child: Column(
+            children: <Widget>[
+              Expanded(child: _body(l10n, history, selectionMode, selectedIds)),
+              // Fixed and non-scrolling, below the list and clear of the
+              // bottom navigation bar (ADS-1, ADS-3). It shows nothing before
+              // the first success, for a Pro owner, or without consent.
+              const AdBannerSlot(slot: AdSlots.history),
+            ],
+          ),
         ),
       ),
     );
@@ -283,8 +295,17 @@ class _HistoryScreenState extends State<HistoryScreen>
         onSettings: widget.onSwitchToSettings,
       );
     }
+    // The one Pro prompt, once, after the 5th success (PRO-4); never while
+    // rows are being selected.
+    final bool offerPro =
+        !selectionMode && context.watch<ProState>().shouldOfferPrompt;
     return Column(
       children: <Widget>[
+        if (offerPro)
+          const Padding(
+            padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
+            child: ProPrompt(),
+          ),
         Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 4),
           child: SegmentedButton<HistorySegment>(

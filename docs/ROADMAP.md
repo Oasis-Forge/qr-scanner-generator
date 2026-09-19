@@ -77,7 +77,8 @@ In dependency order, one theme per PR. Everything else in Phase 2 arrives during
   - GEN-1, GEN-3, GEN-5, GEN-6 (closed-test fields), GEN-7, GEN-8, GEN-12, GEN-13 (every created code is saved until HIS-8's switch ships in 2b)
   - STY-1, STY-5 (if S2 fails, STY-5 moves to v1 and the listing doesn't claim a scan check)
   - SAVE-1, SAVE-2, SAVE-4, SAVE-5
-- [ ] **Ads, consent, Pro, crash reports, settings:** ADS-1–ADS-8, PRO-1–PRO-7, PRIV-1–PRIV-8, SET-1 (Settings row), SET-2, SET-3, SET-5–SET-8, with spike S14 (no Firebase traffic before opt-in). Testing builds use Google's test ad units.
+- [x] **Ads, consent, Pro, settings:** ADS-1–ADS-8, PRO-1–PRO-7, PRIV-1, PRIV-2, PRIV-4–PRIV-8, SET-1 (Settings row), SET-2, SET-3, SET-5–SET-8. Release builds request the app's own banner unit (created 2026-09-19); debug builds use Google's test unit.
+- [ ] **Crash reports:** PRIV-3 with spike S14 (no Firebase traffic before opt-in), once `google-services.json` arrives. The Settings row stays hidden until then (`crashReportsAvailable` in `lib/screens/settings/privacy_section.dart`).
 - [ ] Internal-testing AAB uploaded by hand by Oct 2. The first upload can't go through the API, and the `remove_ads` product needs an uploaded build with the billing permission.
 - [ ] Right after that upload: the `remove_ads` product at US$1.99 and license testers (PRO-1, PRO-3), so the Pro PR is driven with a test purchase before Oct 9
 - [ ] Spikes S5 (Wi-Fi join) and S6 (cold start to first scan) on real phones, Sep 28 – Oct 2; S12 (share-target permissions) before Oct 19
@@ -98,7 +99,7 @@ Play needs most of this before the closed-test release can be reviewed, so it ov
 - [ ] Launcher icons and splash screen, generated from one committed source (`docs/STACK_NOTES.md`)
 - [ ] Store IDs, permanent after the first upload and free of personal names: `com.oasisforge.qrscanner`
 - [ ] Privacy policy published on Pages, linked from Settings (SET-6) and Play, and updated for every feature that touches user data (PRIV-6)
-- [ ] The release build declares only the permissions the listing admits to (RUN-2). Fill `ALLOWED` in `release.yml` with the camera, internet, network state, billing, the ad ID, and those the ads SDK adds, checked with `aapt2`.
+- [x] The release build declares only the permissions the listing admits to (RUN-2). Fill `ALLOWED` in `release.yml` with the camera, internet, network state, billing, the ad ID, and those the ads SDK adds, checked with `aapt2`.
 - [ ] Play app content: data safety, ads declaration, content rating, target audience 13+, app access (no login)
 - [ ] Store listing in English and Arabic: short and full description, icon, feature graphic, phone screenshots
 - [ ] `app-ads.txt` published at the root of the developer website on the listing (`docs/RELEASING.md`)
