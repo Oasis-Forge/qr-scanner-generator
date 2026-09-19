@@ -693,4 +693,140 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get resultLocationNameLabel => 'Name';
+
+  @override
+  String get createSubtitle => 'Choose what to create';
+
+  @override
+  String get createUrlFieldLabel => 'Web address';
+
+  @override
+  String get createUrlFieldHint => 'example.com';
+
+  @override
+  String createUrlHelperText(String url) {
+    return 'The code opens $url';
+  }
+
+  @override
+  String get createTextFieldLabel => 'Text';
+
+  @override
+  String get createTextFieldHint => 'Anything you want the code to say';
+
+  @override
+  String get createWifiSsidLabel => 'Network name';
+
+  @override
+  String get createWifiSecurityLabel => 'Security';
+
+  @override
+  String get createWifiSecurityWpaWpa2 => 'WPA/WPA2';
+
+  @override
+  String get createWifiSecurityWepInsecure => 'WEP (insecure)';
+
+  @override
+  String get createWifiPasswordLabel => 'Password';
+
+  @override
+  String get createWifiHiddenLabel => 'Hidden network';
+
+  @override
+  String get createContactNameLabel => 'Name';
+
+  @override
+  String get createContactPhoneLabel => 'Phone (optional)';
+
+  @override
+  String get createContactEmailLabel => 'Email (optional)';
+
+  @override
+  String get createContactOrganisationLabel => 'Organisation (optional)';
+
+  @override
+  String get createPhoneFieldLabel => 'Phone number';
+
+  @override
+  String get createEmailToLabel => 'Email address';
+
+  @override
+  String get createEmailSubjectLabel => 'Subject (optional)';
+
+  @override
+  String get createEmailBodyLabel => 'Message (optional)';
+
+  @override
+  String get createSmsNumberLabel => 'Phone number';
+
+  @override
+  String get createSmsMessageLabel => 'Message (optional)';
+
+  @override
+  String get createFieldErrorRequired => 'This field is required.';
+
+  @override
+  String get createFieldErrorInvalidUrl =>
+      'Enter a web address starting with http:// or https://.';
+
+  @override
+  String get createFieldErrorInvalidEmail => 'Enter a valid email address.';
+
+  @override
+  String get createFieldErrorInvalidPhone =>
+      'Enter a phone number with 3 to 15 digits.';
+
+  @override
+  String createCapacityMeterLabel(int percent) {
+    return '$percent% of capacity used';
+  }
+
+  @override
+  String get createCapacityOverLimit =>
+      'This is too much content for a QR code. Shorten it to continue.';
+
+  @override
+  String get createButtonLabel => 'Create';
+
+  @override
+  String get createCheckingMessage => 'Checking the code scans correctly';
+
+  @override
+  String get createContentLabel => 'Content';
+
+  @override
+  String get createCodeImageLabel => 'The created QR code';
+
+  @override
+  String get createCheckFailedRenderFailed =>
+      'The code could not be created. Shorten the content and try again.';
+
+  @override
+  String get createCheckFailedDecodeFailed =>
+      'This code could not be checked. Save and Share are turned off.';
+
+  @override
+  String get createCheckFailedMismatch =>
+      'This code did not match what you entered. Save and Share are turned off.';
+
+  @override
+  String get createNotSavedToHistory =>
+      'This code could not be saved to History.';
+
+  @override
+  String get createSaveButton => 'Save';
+
+  @override
+  String get createShareButton => 'Share';
+
+  @override
+  String get createSavedSnackbarNoName => 'Code saved';
+
+  @override
+  String createSavedSnackbar(String name) {
+    return 'Saved as $name';
+  }
+
+  @override
+  String get createShareFailed => 'Could not open sharing. Try again.';
 }

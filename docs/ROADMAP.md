@@ -73,7 +73,7 @@ In dependency order, one theme per PR. Everything else in Phase 2 arrives during
 - [x] **Result screens and parsers:** RES-1–RES-4, RES-6, RES-7, RES-9, RES-13, RES-14. Each payload parser is pure Dart with its own tests.
 - [x] **Link safety:** LINK-1–LINK-5, LINK-8, LINK-9 (LINK-2 bolds the full host until S11), and the one-time link callout RUN-8, so every tester sees it on their first link
 - [x] **History and delete:** HIS-1 (segments), HIS-3–HIS-5, HIS-7, HIS-11, DEL-2, DEL-4
-- [ ] **Generator and save:**
+- [x] **Generator and save:**
   - GEN-1, GEN-3, GEN-5, GEN-6 (closed-test fields), GEN-7, GEN-8, GEN-12, GEN-13 (every created code is saved until HIS-8's switch ships in 2b)
   - STY-1, STY-5 (if S2 fails, STY-5 moves to v1 and the listing doesn't claim a scan check)
   - SAVE-1, SAVE-2, SAVE-4, SAVE-5

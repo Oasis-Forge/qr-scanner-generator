@@ -930,5 +930,188 @@
   "resultLocationNameLabel": "Name",
   "@resultLocationNameLabel": {
     "description": "RES-8. Label above a location result's optional place name."
+  },
+
+  "createSubtitle": "Choose what to create",
+  "@createSubtitle": {
+    "description": "GEN-1. One line above the Create type picker's grid."
+  },
+  "createUrlFieldLabel": "Web address",
+  "@createUrlFieldLabel": {
+    "description": "GEN-3. Label of the URL form's one field."
+  },
+  "createUrlFieldHint": "example.com",
+  "@createUrlFieldHint": {
+    "description": "GEN-3. Hint inside the empty URL field."
+  },
+  "createUrlHelperText": "The code opens {url}",
+  "@createUrlHelperText": {
+    "description": "GEN-3. Helper text under the URL field showing the address that will actually be encoded, https:// added when the user left out a scheme.",
+    "placeholders": {
+      "url": {
+        "type": "String",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "createTextFieldLabel": "Text",
+  "@createTextFieldLabel": {
+    "description": "GEN-8. Label of the Text form's one field."
+  },
+  "createTextFieldHint": "Anything you want the code to say",
+  "@createTextFieldHint": {
+    "description": "GEN-8. Hint inside the empty Text field."
+  },
+  "createWifiSsidLabel": "Network name",
+  "@createWifiSsidLabel": {
+    "description": "GEN-5. Label of the Wi-Fi form's network name field."
+  },
+  "createWifiSecurityLabel": "Security",
+  "@createWifiSecurityLabel": {
+    "description": "GEN-5. Label of the Wi-Fi form's security choice."
+  },
+  "createWifiSecurityWpaWpa2": "WPA/WPA2",
+  "@createWifiSecurityWpaWpa2": {
+    "description": "GEN-5. The WPA/WPA2 choice in the Wi-Fi form's security list, which writes T:WPA."
+  },
+  "createWifiSecurityWepInsecure": "WEP (insecure)",
+  "@createWifiSecurityWepInsecure": {
+    "description": "GEN-5. The WEP choice in the Wi-Fi form's security list, labelled insecure unlike the plain WEP shown on a result."
+  },
+  "createWifiPasswordLabel": "Password",
+  "@createWifiPasswordLabel": {
+    "description": "GEN-5. Label of the Wi-Fi form's password field, masked with a reveal button."
+  },
+  "createWifiHiddenLabel": "Hidden network",
+  "@createWifiHiddenLabel": {
+    "description": "GEN-5. Label of the Wi-Fi form's hidden-network switch."
+  },
+  "createContactNameLabel": "Name",
+  "@createContactNameLabel": {
+    "description": "GEN-6. Label of the Contact form's required name field."
+  },
+  "createContactPhoneLabel": "Phone (optional)",
+  "@createContactPhoneLabel": {
+    "description": "GEN-6. Label of the Contact form's optional phone field."
+  },
+  "createContactEmailLabel": "Email (optional)",
+  "@createContactEmailLabel": {
+    "description": "GEN-6. Label of the Contact form's optional email field."
+  },
+  "createContactOrganisationLabel": "Organisation (optional)",
+  "@createContactOrganisationLabel": {
+    "description": "GEN-6. Label of the Contact form's optional organisation field."
+  },
+  "createPhoneFieldLabel": "Phone number",
+  "@createPhoneFieldLabel": {
+    "description": "GEN-7. Label of the Phone form's one field."
+  },
+  "createEmailToLabel": "Email address",
+  "@createEmailToLabel": {
+    "description": "GEN-8. Label of the Email form's required recipient field."
+  },
+  "createEmailSubjectLabel": "Subject (optional)",
+  "@createEmailSubjectLabel": {
+    "description": "GEN-8. Label of the Email form's optional subject field."
+  },
+  "createEmailBodyLabel": "Message (optional)",
+  "@createEmailBodyLabel": {
+    "description": "GEN-8. Label of the Email form's optional body field."
+  },
+  "createSmsNumberLabel": "Phone number",
+  "@createSmsNumberLabel": {
+    "description": "GEN-7, GEN-8. Label of the SMS form's required number field."
+  },
+  "createSmsMessageLabel": "Message (optional)",
+  "@createSmsMessageLabel": {
+    "description": "GEN-8. Label of the SMS form's optional message field."
+  },
+  "createFieldErrorRequired": "This field is required.",
+  "@createFieldErrorRequired": {
+    "description": "GEN-1. Inline error under a required field left empty."
+  },
+  "createFieldErrorInvalidUrl": "Enter a web address starting with http:// or https://.",
+  "@createFieldErrorInvalidUrl": {
+    "description": "GEN-3. Inline error under the URL field when it has no http/https scheme at all."
+  },
+  "createFieldErrorInvalidEmail": "Enter a valid email address.",
+  "@createFieldErrorInvalidEmail": {
+    "description": "GEN-8. Inline error under an email field that fails validation."
+  },
+  "createFieldErrorInvalidPhone": "Enter a phone number with 3 to 15 digits.",
+  "@createFieldErrorInvalidPhone": {
+    "description": "GEN-7. Inline error under a phone field that fails validation."
+  },
+  "createCapacityMeterLabel": "{percent}% of capacity used",
+  "@createCapacityMeterLabel": {
+    "description": "GEN-12. Line under the capacity meter, shown above 80% of the QR byte-mode limit.",
+    "placeholders": {
+      "percent": {
+        "type": "int",
+        "example": "82"
+      }
+    }
+  },
+  "createCapacityOverLimit": "This is too much content for a QR code. Shorten it to continue.",
+  "@createCapacityOverLimit": {
+    "description": "GEN-12. Message replacing Create's enabled state once content is over the QR byte-mode limit."
+  },
+  "createButtonLabel": "Create",
+  "@createButtonLabel": {
+    "description": "GEN-1. Largest control on a Create form, disabled until the form is valid and within capacity."
+  },
+  "createCheckingMessage": "Checking the code scans correctly",
+  "@createCheckingMessage": {
+    "description": "STY-5, A11Y-1. Screen-reader name of the progress indicator shown on the created-code screen while the self-check runs."
+  },
+  "createContentLabel": "Content",
+  "@createContentLabel": {
+    "description": "STY-1. Label above the exact text a created code encodes, on the created-code screen."
+  },
+  "createCodeImageLabel": "The created QR code",
+  "@createCodeImageLabel": {
+    "description": "STY-1, A11Y-1. Screen-reader description of the rendered code image on the created-code screen."
+  },
+  "createCheckFailedRenderFailed": "The code could not be created. Shorten the content and try again.",
+  "@createCheckFailedRenderFailed": {
+    "description": "STY-5. Shown on the created-code screen when the encoder itself failed; Save and Share stay disabled. GEN-12 normally blocks Create before this can happen."
+  },
+  "createCheckFailedDecodeFailed": "This code could not be checked. Save and Share are turned off.",
+  "@createCheckFailedDecodeFailed": {
+    "description": "STY-5. Shown on the created-code screen when the rendered code could not be read back at all; Save and Share stay disabled."
+  },
+  "createCheckFailedMismatch": "This code did not match what you entered. Save and Share are turned off.",
+  "@createCheckFailedMismatch": {
+    "description": "STY-5. Shown on the created-code screen when the rendered code read back as something other than the content it was encoded from; Save and Share stay disabled."
+  },
+  "createNotSavedToHistory": "This code could not be saved to History.",
+  "@createNotSavedToHistory": {
+    "description": "GEN-13, DATA-6. Shown on the created-code screen when Save history is on but writing the created code failed; the code still works."
+  },
+  "createSaveButton": "Save",
+  "@createSaveButton": {
+    "description": "SAVE-1. One of the created-code screen's two equal, largest buttons."
+  },
+  "createShareButton": "Share",
+  "@createShareButton": {
+    "description": "SAVE-1, SAVE-5. The other of the created-code screen's two equal, largest buttons; sends the exact file Save writes."
+  },
+  "createSavedSnackbarNoName": "Code saved",
+  "@createSavedSnackbarNoName": {
+    "description": "SAVE-2. Snackbar confirming a successful save when the system picker gives no file name back."
+  },
+  "createSavedSnackbar": "Saved as {name}",
+  "@createSavedSnackbar": {
+    "description": "SAVE-2. Snackbar confirming a successful save, naming the SAVE-4 file name it was saved under.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "wifi-home-20261016-101500.png"
+      }
+    }
+  },
+  "createShareFailed": "Could not open sharing. Try again.",
+  "@createShareFailed": {
+    "description": "SAVE-1. Snackbar when the system share sheet could not be opened for a created code."
   }
 }

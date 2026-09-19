@@ -4,6 +4,20 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-09-21
+
+### Added
+- Create codes: a link, text, Wi-Fi network, contact, phone number, email or text message.
+- Each form checks what you type before Create turns on. A web address gets `https://` added where you can see it, and a phone number takes an optional + and 3 to 15 digits.
+- Wi-Fi passwords are hidden as you type, with a button to show them, and WEP is labelled insecure.
+- Close to the size limit, a meter shows how full the code is. Over it, Create says to shorten the content, and nothing is ever cut off.
+- A created code is a plain black-on-white QR code. Before you can save or share it, the app scans its own image to check it reads back exactly what you typed.
+- Save writes a 1024 × 1024 PNG wherever you pick, named after the code's type, a name from it (never a password) and the time. Share sends the same file.
+- Created codes appear in History under Created.
+
+### Fixed
+- The release version check no longer makes a full local clone shallow.
+
 ## [0.6.0] - 2026-09-20
 
 ### Added
@@ -13,6 +27,7 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 - Links that can't be opened safely (javascript:, data:, file:, intent:, content:) are marked as blocked, and can only be copied.
 - Links open in Custom Tabs, never inside the app.
 - The first link you scan carries a short note about these checks. One tap hides it for good.
+
 ## [0.5.0] - 2026-09-20
 
 ### Added
