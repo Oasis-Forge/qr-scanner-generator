@@ -1261,6 +1261,252 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Name'**
   String get resultLocationNameLabel;
+
+  /// GEN-1. One line above the Create type picker's grid.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what to create'**
+  String get createSubtitle;
+
+  /// GEN-3. Label of the URL form's one field.
+  ///
+  /// In en, this message translates to:
+  /// **'Web address'**
+  String get createUrlFieldLabel;
+
+  /// GEN-3. Hint inside the empty URL field.
+  ///
+  /// In en, this message translates to:
+  /// **'example.com'**
+  String get createUrlFieldHint;
+
+  /// GEN-3. Helper text under the URL field showing the address that will actually be encoded, https:// added when the user left out a scheme.
+  ///
+  /// In en, this message translates to:
+  /// **'The code opens {url}'**
+  String createUrlHelperText(String url);
+
+  /// GEN-8. Label of the Text form's one field.
+  ///
+  /// In en, this message translates to:
+  /// **'Text'**
+  String get createTextFieldLabel;
+
+  /// GEN-8. Hint inside the empty Text field.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything you want the code to say'**
+  String get createTextFieldHint;
+
+  /// GEN-5. Label of the Wi-Fi form's network name field.
+  ///
+  /// In en, this message translates to:
+  /// **'Network name'**
+  String get createWifiSsidLabel;
+
+  /// GEN-5. Label of the Wi-Fi form's security choice.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get createWifiSecurityLabel;
+
+  /// GEN-5. The WPA/WPA2 choice in the Wi-Fi form's security list, which writes T:WPA.
+  ///
+  /// In en, this message translates to:
+  /// **'WPA/WPA2'**
+  String get createWifiSecurityWpaWpa2;
+
+  /// GEN-5. The WEP choice in the Wi-Fi form's security list, labelled insecure unlike the plain WEP shown on a result.
+  ///
+  /// In en, this message translates to:
+  /// **'WEP (insecure)'**
+  String get createWifiSecurityWepInsecure;
+
+  /// GEN-5. Label of the Wi-Fi form's password field, masked with a reveal button.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get createWifiPasswordLabel;
+
+  /// GEN-5. Label of the Wi-Fi form's hidden-network switch.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden network'**
+  String get createWifiHiddenLabel;
+
+  /// GEN-6. Label of the Contact form's required name field.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get createContactNameLabel;
+
+  /// GEN-6. Label of the Contact form's optional phone field.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone (optional)'**
+  String get createContactPhoneLabel;
+
+  /// GEN-6. Label of the Contact form's optional email field.
+  ///
+  /// In en, this message translates to:
+  /// **'Email (optional)'**
+  String get createContactEmailLabel;
+
+  /// GEN-6. Label of the Contact form's optional organisation field.
+  ///
+  /// In en, this message translates to:
+  /// **'Organisation (optional)'**
+  String get createContactOrganisationLabel;
+
+  /// GEN-7. Label of the Phone form's one field.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number'**
+  String get createPhoneFieldLabel;
+
+  /// GEN-8. Label of the Email form's required recipient field.
+  ///
+  /// In en, this message translates to:
+  /// **'Email address'**
+  String get createEmailToLabel;
+
+  /// GEN-8. Label of the Email form's optional subject field.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject (optional)'**
+  String get createEmailSubjectLabel;
+
+  /// GEN-8. Label of the Email form's optional body field.
+  ///
+  /// In en, this message translates to:
+  /// **'Message (optional)'**
+  String get createEmailBodyLabel;
+
+  /// GEN-7, GEN-8. Label of the SMS form's required number field.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number'**
+  String get createSmsNumberLabel;
+
+  /// GEN-8. Label of the SMS form's optional message field.
+  ///
+  /// In en, this message translates to:
+  /// **'Message (optional)'**
+  String get createSmsMessageLabel;
+
+  /// GEN-1. Inline error under a required field left empty.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required.'**
+  String get createFieldErrorRequired;
+
+  /// GEN-3. Inline error under the URL field when it has no http/https scheme at all.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a web address starting with http:// or https://.'**
+  String get createFieldErrorInvalidUrl;
+
+  /// GEN-8. Inline error under an email field that fails validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address.'**
+  String get createFieldErrorInvalidEmail;
+
+  /// GEN-7. Inline error under a phone field that fails validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a phone number with 3 to 15 digits.'**
+  String get createFieldErrorInvalidPhone;
+
+  /// GEN-12. Line under the capacity meter, shown above 80% of the QR byte-mode limit.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% of capacity used'**
+  String createCapacityMeterLabel(int percent);
+
+  /// GEN-12. Message replacing Create's enabled state once content is over the QR byte-mode limit.
+  ///
+  /// In en, this message translates to:
+  /// **'This is too much content for a QR code. Shorten it to continue.'**
+  String get createCapacityOverLimit;
+
+  /// GEN-1. Largest control on a Create form, disabled until the form is valid and within capacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get createButtonLabel;
+
+  /// STY-5, A11Y-1. Screen-reader name of the progress indicator shown on the created-code screen while the self-check runs.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking the code scans correctly'**
+  String get createCheckingMessage;
+
+  /// STY-1. Label above the exact text a created code encodes, on the created-code screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Content'**
+  String get createContentLabel;
+
+  /// STY-1, A11Y-1. Screen-reader description of the rendered code image on the created-code screen.
+  ///
+  /// In en, this message translates to:
+  /// **'The created QR code'**
+  String get createCodeImageLabel;
+
+  /// STY-5. Shown on the created-code screen when the encoder itself failed; Save and Share stay disabled. GEN-12 normally blocks Create before this can happen.
+  ///
+  /// In en, this message translates to:
+  /// **'The code could not be created. Shorten the content and try again.'**
+  String get createCheckFailedRenderFailed;
+
+  /// STY-5. Shown on the created-code screen when the rendered code could not be read back at all; Save and Share stay disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'This code could not be checked. Save and Share are turned off.'**
+  String get createCheckFailedDecodeFailed;
+
+  /// STY-5. Shown on the created-code screen when the rendered code read back as something other than the content it was encoded from; Save and Share stay disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'This code did not match what you entered. Save and Share are turned off.'**
+  String get createCheckFailedMismatch;
+
+  /// GEN-13, DATA-6. Shown on the created-code screen when Save history is on but writing the created code failed; the code still works.
+  ///
+  /// In en, this message translates to:
+  /// **'This code could not be saved to History.'**
+  String get createNotSavedToHistory;
+
+  /// SAVE-1. One of the created-code screen's two equal, largest buttons.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get createSaveButton;
+
+  /// SAVE-1, SAVE-5. The other of the created-code screen's two equal, largest buttons; sends the exact file Save writes.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get createShareButton;
+
+  /// SAVE-2. Snackbar confirming a successful save when the system picker gives no file name back.
+  ///
+  /// In en, this message translates to:
+  /// **'Code saved'**
+  String get createSavedSnackbarNoName;
+
+  /// SAVE-2. Snackbar confirming a successful save, naming the SAVE-4 file name it was saved under.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved as {name}'**
+  String createSavedSnackbar(String name);
+
+  /// SAVE-1. Snackbar when the system share sheet could not be opened for a created code.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open sharing. Try again.'**
+  String get createShareFailed;
 }
 
 class _AppLocalizationsDelegate

@@ -52,7 +52,15 @@ case "${1:-}" in
   check)
     last_tag=$(git ls-remote --tags --refs origin 'v*' | sed -n 's|.*refs/tags/||p' | sort -V | tail -n 1)
     if [ -n "$last_tag" ]; then
-      git fetch --quiet --depth=1 origin "+refs/tags/$last_tag:refs/tags/$last_tag"
+      # CI's checkout is shallow, so the tag's commit may be missing there and
+      # a depth-1 fetch is enough. On a full local clone the same fetch would
+      # mark the tag's commit as a history boundary (.git/shallow) and make
+      # main look diverged, so fetch normally there.
+      if [ "$(git rev-parse --is-shallow-repository)" = "true" ]; then
+        git fetch --quiet --depth=1 origin "+refs/tags/$last_tag:refs/tags/$last_tag"
+      else
+        git fetch --quiet origin "+refs/tags/$last_tag:refs/tags/$last_tag"
+      fi
       read -r last_name last_build < <(git show "$last_tag:$file" 2>/dev/null | parse "$file") || true
       last_name=${last_name:-${last_tag#v}}
       last_build=${last_build:-0}

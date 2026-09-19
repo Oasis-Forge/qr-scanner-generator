@@ -141,6 +141,11 @@ void main() {
         (_parse('WIFI:T:WPA3;S:A;P:x;;') as Wifi).security,
         WifiSecurity.wpa3,
       );
+      // Android's own Wi-Fi QR format writes WPA3 as SAE.
+      expect(
+        (_parse('WIFI:T:SAE;S:A;P:x;;') as Wifi).security,
+        WifiSecurity.wpa3,
+      );
     });
 
     test('H:true is a hidden network', () {

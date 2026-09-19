@@ -47,7 +47,7 @@ WifiSecurity _securityOf(String? raw, {required bool hasPassword}) {
   return switch (value) {
     'WPA' => WifiSecurity.wpa,
     'WPA2' => WifiSecurity.wpa2,
-    'WPA3' => WifiSecurity.wpa3,
+    'WPA3' || 'SAE' => WifiSecurity.wpa3,
     'WEP' => WifiSecurity.wep,
     'NOPASS' || '' => hasPassword ? WifiSecurity.wpa : WifiSecurity.none,
     _ => hasPassword ? WifiSecurity.wpa : WifiSecurity.none,
