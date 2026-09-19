@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/test_app.dart';
+import 'harness_screens.dart';
 
 /// The shared text-size harness.
 ///
@@ -10,13 +11,14 @@ import '../helpers/test_app.dart';
 /// user needs may be clipped. This renders every screen the app has today in
 /// every combination and fails when a box overflowed.
 ///
-/// A screen PR adds its screen to `harnessScreens` and is covered here without
-/// touching this file.
+/// A screen PR adds its screen to `harnessScreens` (or, for a screen that reads
+/// `ScannerState`, to `scannerHarnessScreens` in `harness_screens.dart`) and is
+/// covered here without touching this file.
 ///
 /// The last group proves the check bites: it is handed a row that cannot fit the
 /// phone, and must fail naming that row.
 void main() {
-  for (final HarnessScreen screen in harnessScreens) {
+  for (final HarnessScreen screen in allHarnessScreens) {
     for (final Locale locale in harnessLocales) {
       for (final double textScale in harnessTextScales) {
         testWidgets(

@@ -1,32 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:qrscanner/core/db/app_database.dart';
 import 'package:qrscanner/core/db/migration.dart';
-import 'package:qrscanner/core/store/key_value_store.dart';
 import 'package:qrscanner/core/theme/app_theme.dart';
 import 'package:qrscanner/db/migrations/migrations.dart';
 import 'package:qrscanner/db/record_dao.dart';
 import 'package:qrscanner/main.dart';
-import 'package:qrscanner/screens/home_screen.dart';
+import 'package:qrscanner/screens/app_shell.dart';
+import 'package:qrscanner/screens/settings_screen.dart';
 import 'package:qrscanner/services/app_services.dart';
 import 'package:qrscanner/state/settings_state.dart';
 import 'package:qrscanner/state/success_counts.dart';
 
-/// The English app name, as the message files spell it (LANG-2).
-const String englishAppName = 'QR Scanner + Generator';
+import '../helpers/fake_stores.dart';
 
-/// The Arabic app name, as the message files spell it (LANG-2).
-const String arabicAppName = 'ماسح ومنشئ رموز QR';
-
+/// The Settings tab, driven through the shell that ships (`QrScannerApp`): the
+/// providers, the language resolution and the themes are the real ones, and
+/// the test reaches Settings the way the user does, from the bottom bar
+/// (SCAN-1).
 void main() {
-  group('HomeScreen', () {
-    testWidgets('LANG-2: shows the app name and both switchers in English', (
+  group('SettingsScreen', () {
+    testWidgets('LANG-2: shows both switchers in English', (
       WidgetTester tester,
     ) async {
-      await _pumpApp(tester);
+      await _pumpSettings(tester);
 
-      expect(find.text(englishAppName), findsOneWidget);
       expect(find.text('Theme'), findsOneWidget);
       expect(find.text('Light'), findsOneWidget);
       expect(find.text('Dark'), findsOneWidget);
@@ -35,37 +35,35 @@ void main() {
       expect(find.text('العربية'), findsOneWidget);
       // "System default" is one choice in each switcher.
       expect(find.text('System default'), findsNWidgets(2));
+      // The screen's title and its bottom-bar label.
+      expect(find.text('Settings'), findsNWidgets(2));
     });
 
     testWidgets(
       'LANG-1, LANG-5: a stored Arabic language shows Arabic text and lays the '
       'screen out right to left',
       (WidgetTester tester) async {
-        await _pumpApp(
+        await _pumpSettings(
           tester,
           stored: <String, String>{SettingsState.localeKey: 'ar'},
         );
 
-        expect(find.text(arabicAppName), findsOneWidget);
-        expect(find.text(englishAppName), findsNothing);
+        expect(find.text('Theme'), findsNothing);
         expect(find.text('المظهر'), findsOneWidget);
         expect(find.text('فاتح'), findsOneWidget);
         expect(find.text('داكن'), findsOneWidget);
         expect(find.text('اللغة'), findsOneWidget);
-        expect(
-          Directionality.of(tester.element(find.byType(HomeScreen))),
-          TextDirection.rtl,
-        );
+        expect(_directionOnScreen(tester), TextDirection.rtl);
       },
     );
 
     testWidgets(
       'SET-1: choosing Dark stores the theme and repaints the app dark',
       (WidgetTester tester) async {
-        final _Harness harness = await _pumpApp(tester);
+        final _Harness harness = await _pumpSettings(tester);
         expect(_brightnessOnScreen(tester), Brightness.light);
 
-        await tester.tap(find.byKey(HomeScreen.darkThemeKey));
+        await tester.tap(find.byKey(SettingsScreen.darkThemeKey));
         await tester.pumpAndSettle();
 
         expect(harness.settings.themeMode, ThemeMode.dark);
@@ -74,7 +72,7 @@ void main() {
         // The chosen option is not colour alone: it carries a tick (A11Y-6).
         expect(
           find.descendant(
-            of: find.byKey(HomeScreen.darkThemeKey),
+            of: find.byKey(SettingsScreen.darkThemeKey),
             matching: find.byIcon(Icons.check),
           ),
           findsOneWidget,
@@ -86,19 +84,18 @@ void main() {
       'LANG-1: choosing العربية stores the language and the app follows it '
       'without a restart',
       (WidgetTester tester) async {
-        final _Harness harness = await _pumpApp(tester);
-        expect(find.text(englishAppName), findsOneWidget);
+        final _Harness harness = await _pumpSettings(tester);
+        expect(find.text('Language'), findsOneWidget);
 
-        await tester.tap(find.byKey(HomeScreen.arabicLanguageKey));
+        await tester.tap(find.byKey(SettingsScreen.arabicLanguageKey));
         await tester.pumpAndSettle();
 
         expect(harness.settings.localeOverride, const Locale('ar'));
         expect(harness.store.writes, contains('set settings.language=ar'));
-        expect(find.text(arabicAppName), findsOneWidget);
-        expect(
-          Directionality.of(tester.element(find.byType(HomeScreen))),
-          TextDirection.rtl,
-        );
+        expect(find.text('اللغة'), findsOneWidget);
+        // The bottom bar follows too, and Settings stays the open tab.
+        expect(find.text('الإعدادات'), findsNWidgets(2));
+        expect(_directionOnScreen(tester), TextDirection.rtl);
       },
     );
 
@@ -106,12 +103,13 @@ void main() {
       'LANG-1: choosing System default removes the stored language, so the '
       'device language is followed again',
       (WidgetTester tester) async {
-        final _Harness harness = await _pumpApp(
+        final _Harness harness = await _pumpSettings(
           tester,
           stored: <String, String>{SettingsState.localeKey: 'ar'},
+          deviceLanguages: const <Locale>[Locale('en')],
         );
 
-        await tester.tap(find.byKey(HomeScreen.systemLanguageKey));
+        await tester.tap(find.byKey(SettingsScreen.systemLanguageKey));
         await tester.pumpAndSettle();
 
         expect(harness.settings.localeOverride, isNull);
@@ -120,7 +118,7 @@ void main() {
           harness.store.values.containsKey(SettingsState.localeKey),
           isFalse,
         );
-        expect(find.text(englishAppName), findsOneWidget);
+        expect(find.text('Language'), findsOneWidget);
       },
     );
 
@@ -130,18 +128,14 @@ void main() {
       (WidgetTester tester) async {
         // The message files list Arabic first, so Flutter's own fallback would
         // hand this phone a right-to-left Arabic app.
-        await _pumpApp(
+        await _pumpSettings(
           tester,
           deviceLanguages: const <Locale>[Locale('fr', 'FR'), Locale('de')],
         );
 
-        expect(find.text(englishAppName), findsOneWidget);
-        expect(find.text(arabicAppName), findsNothing);
         expect(find.text('Language'), findsOneWidget);
-        expect(
-          Directionality.of(tester.element(find.byType(HomeScreen))),
-          TextDirection.ltr,
-        );
+        expect(find.text('اللغة'), findsNothing);
+        expect(_directionOnScreen(tester), TextDirection.ltr);
       },
     );
 
@@ -149,18 +143,14 @@ void main() {
       'LANG-1: a device set to a country the message files do not name still '
       'gets that language',
       (WidgetTester tester) async {
-        await _pumpApp(
+        await _pumpSettings(
           tester,
           deviceLanguages: const <Locale>[Locale('ar', 'EG')],
         );
 
-        expect(find.text(arabicAppName), findsOneWidget);
-        expect(find.text(englishAppName), findsNothing);
         expect(find.text('اللغة'), findsOneWidget);
-        expect(
-          Directionality.of(tester.element(find.byType(HomeScreen))),
-          TextDirection.rtl,
-        );
+        expect(find.text('Language'), findsNothing);
+        expect(_directionOnScreen(tester), TextDirection.rtl);
       },
     );
 
@@ -170,19 +160,15 @@ void main() {
       (WidgetTester tester) async {
         // Arabic is what the device asks for first, and the app has it, so only
         // the stored choice can put the app into English.
-        await _pumpApp(
+        await _pumpSettings(
           tester,
           stored: <String, String>{SettingsState.localeKey: 'en'},
           deviceLanguages: const <Locale>[Locale('ar'), Locale('en')],
         );
 
-        expect(find.text(englishAppName), findsOneWidget);
-        expect(find.text(arabicAppName), findsNothing);
         expect(find.text('Language'), findsOneWidget);
-        expect(
-          Directionality.of(tester.element(find.byType(HomeScreen))),
-          TextDirection.ltr,
-        );
+        expect(find.text('اللغة'), findsNothing);
+        expect(_directionOnScreen(tester), TextDirection.ltr);
       },
     );
 
@@ -191,15 +177,15 @@ void main() {
       // Released inside the test body: the framework checks for live handles
       // before tearDowns run.
       final SemanticsHandle semantics = tester.ensureSemantics();
-      await _pumpApp(tester);
+      await _pumpSettings(tester);
 
       const List<(Key, String)> expected = <(Key, String)>[
-        (HomeScreen.systemThemeKey, 'System default'),
-        (HomeScreen.lightThemeKey, 'Light'),
-        (HomeScreen.darkThemeKey, 'Dark'),
-        (HomeScreen.systemLanguageKey, 'System default'),
-        (HomeScreen.englishLanguageKey, 'English'),
-        (HomeScreen.arabicLanguageKey, 'العربية'),
+        (SettingsScreen.systemThemeKey, 'System default'),
+        (SettingsScreen.lightThemeKey, 'Light'),
+        (SettingsScreen.darkThemeKey, 'Dark'),
+        (SettingsScreen.systemLanguageKey, 'System default'),
+        (SettingsScreen.englishLanguageKey, 'English'),
+        (SettingsScreen.arabicLanguageKey, 'العربية'),
       ];
       for (final (Key key, String label) in expected) {
         expect(
@@ -210,11 +196,11 @@ void main() {
       }
       // The chosen option announces that it is the chosen one.
       expect(
-        tester.getSemantics(find.byKey(HomeScreen.systemThemeKey)),
+        tester.getSemantics(find.byKey(SettingsScreen.systemThemeKey)),
         isSemantics(isSelected: true),
       );
       expect(
-        tester.getSemantics(find.byKey(HomeScreen.darkThemeKey)),
+        tester.getSemantics(find.byKey(SettingsScreen.darkThemeKey)),
         isSemantics(isSelected: false),
       );
       semantics.dispose();
@@ -223,15 +209,15 @@ void main() {
     testWidgets('A11Y-2: every switcher option is at least 48 x 48 dp', (
       WidgetTester tester,
     ) async {
-      await _pumpApp(tester);
+      await _pumpSettings(tester);
 
       const List<Key> options = <Key>[
-        HomeScreen.systemThemeKey,
-        HomeScreen.lightThemeKey,
-        HomeScreen.darkThemeKey,
-        HomeScreen.systemLanguageKey,
-        HomeScreen.englishLanguageKey,
-        HomeScreen.arabicLanguageKey,
+        SettingsScreen.systemThemeKey,
+        SettingsScreen.lightThemeKey,
+        SettingsScreen.darkThemeKey,
+        SettingsScreen.systemLanguageKey,
+        SettingsScreen.englishLanguageKey,
+        SettingsScreen.arabicLanguageKey,
       ];
       for (final Key option in options) {
         final Size size = tester.getSize(find.byKey(option));
@@ -251,10 +237,10 @@ void main() {
     testWidgets(
       'a write that fails changes nothing and says so in the app language',
       (WidgetTester tester) async {
-        final _Harness harness = await _pumpApp(tester);
+        final _Harness harness = await _pumpSettings(tester);
         harness.store.failingKeys.add(SettingsState.themeModeKey);
 
-        await tester.tap(find.byKey(HomeScreen.darkThemeKey));
+        await tester.tap(find.byKey(SettingsScreen.darkThemeKey));
         await tester.pumpAndSettle();
 
         expect(harness.settings.themeMode, ThemeMode.system);
@@ -274,12 +260,13 @@ class _Harness {
   const _Harness({required this.settings, required this.store});
 
   final SettingsState settings;
-  final _FakeKeyValueStore store;
+  final FakeKeyValueStore store;
 }
 
 /// Builds the real app shell over an in-memory store and the no-op services,
-/// so a test drives the widget tree that ships.
-Future<_Harness> _pumpApp(
+/// then opens the Settings tab from the bottom bar, so a test drives the widget
+/// tree that ships.
+Future<_Harness> _pumpSettings(
   WidgetTester tester, {
   Map<String, String>? stored,
   List<Locale>? deviceLanguages,
@@ -290,13 +277,13 @@ Future<_Harness> _pumpApp(
     tester.platformDispatcher.localesTestValue = deviceLanguages;
     addTearDown(tester.platformDispatcher.clearLocalesTestValue);
   }
-  final _FakeKeyValueStore store = _FakeKeyValueStore(stored);
+  final FakeKeyValueStore store = FakeKeyValueStore(stored);
   final SettingsState settings = SettingsState(store);
   await settings.load();
   final SuccessCounts successCounts = SuccessCounts(store);
   await successCounts.load();
-  // The screen under test reads no records; the DAO is here because the shell
-  // provides it, and its database is never opened.
+  // Nothing here reads records; the DAO is here because the shell provides
+  // it, and its database is never opened.
   final RecordDao records = RecordDao(
     AppDatabase(
       directory: 'unopened-in-a-widget-test',
@@ -315,81 +302,19 @@ Future<_Harness> _pumpApp(
     ),
   );
   await tester.pumpAndSettle();
+  // SCAN-1: the app opens on the scanner; Settings is one tap away.
+  expect(find.byType(SettingsScreen), findsNothing);
+  await tester.tap(find.byKey(AppShell.settingsTabKey));
+  await tester.pumpAndSettle();
+  expect(find.byType(SettingsScreen), findsOneWidget);
 
   return _Harness(settings: settings, store: store);
 }
 
 /// The brightness the screen is actually painted with (SET-1).
 Brightness _brightnessOnScreen(WidgetTester tester) =>
-    Theme.of(tester.element(find.byType(HomeScreen))).brightness;
+    Theme.of(tester.element(find.byType(SettingsScreen))).brightness;
 
-/// An in-memory [KeyValueStore] that records its writes and can be told to fail
-/// one, standing in for a full or locked database.
-///
-/// It decodes the way `SqfliteKeyValueStore` does — ints as decimal text, bools
-/// as `'1'` or `'0'` — so the screen sees the values the real store would hand
-/// back.
-class _FakeKeyValueStore implements KeyValueStore {
-  _FakeKeyValueStore([Map<String, String>? initial])
-    : values = <String, String>{...?initial};
-
-  /// The rows the store holds, as the database would.
-  final Map<String, String> values;
-
-  /// Keys whose writes throw.
-  final Set<String> failingKeys = <String>{};
-
-  /// Every write that happened, as `'set settings.theme_mode=dark'` or
-  /// `'remove settings.language'`.
-  final List<String> writes = <String>[];
-
-  @override
-  Future<String?> getString(String key) async => values[key];
-
-  @override
-  Future<void> setString(String key, String value) async {
-    _failIfAsked(key);
-    writes.add('set $key=$value');
-    values[key] = value;
-  }
-
-  @override
-  Future<int?> getInt(String key) async => int.tryParse(values[key] ?? '');
-
-  @override
-  Future<void> setInt(String key, int value) => setString(key, '$value');
-
-  @override
-  Future<bool?> getBool(String key) async => switch (values[key]) {
-    '1' => true,
-    '0' => false,
-    _ => null,
-  };
-
-  @override
-  Future<void> setBool(String key, {required bool value}) =>
-      setString(key, value ? '1' : '0');
-
-  @override
-  Future<int> increment(String key, {int by = 1}) async {
-    final int next = (int.tryParse(values[key] ?? '') ?? 0) + by;
-    await setString(key, '$next');
-    return next;
-  }
-
-  @override
-  Future<void> remove(String key) async {
-    _failIfAsked(key);
-    writes.add('remove $key');
-    values.remove(key);
-  }
-
-  @override
-  Future<Map<String, String>> all() async => Map<String, String>.from(values);
-
-  void _failIfAsked(String key) {
-    if (failingKeys.contains(key)) {
-      throw StateError('the database refused to write $key');
-    }
-  }
-}
+/// The direction the screen is laid out in (LANG-5).
+TextDirection _directionOnScreen(WidgetTester tester) =>
+    Directionality.of(tester.element(find.byType(SettingsScreen)));

@@ -14,6 +14,8 @@ import 'package:qrscanner/services/app_services.dart';
 import 'package:qrscanner/services/camera_scanner.dart';
 import 'package:qrscanner/services/image_decoder.dart';
 import 'package:qrscanner/services/permission_service.dart';
+import 'package:qrscanner/services/photo_picker.dart';
+import 'package:qrscanner/services/scan_feedback.dart';
 import 'package:qrscanner/services/system_intents.dart';
 import 'package:qrscanner/services/wifi_service.dart';
 
@@ -25,6 +27,8 @@ void main() {
       expect(services.cameraScanner, isA<NoopCameraScanner>());
       expect(services.imageDecoder, isA<NoopImageDecoder>());
       expect(services.permissions, isA<NoopPermissionService>());
+      expect(services.photoPicker, isA<NoopPhotoPicker>());
+      expect(services.scanFeedback, isA<NoopScanFeedback>());
       expect(services.clipboard, isA<NoopClipboardService>());
       expect(services.share, isA<NoopShareService>());
       expect(services.crashReporter, isA<NoopCrashReporter>());
@@ -44,6 +48,8 @@ void main() {
         await services.cameraScanner.start();
         await services.imageDecoder.decodeFile('/does/not/exist.png');
         await services.permissions.cameraStatus();
+        await services.photoPicker.pickImagePath();
+        await services.scanFeedback.success(vibrate: true, sound: false);
         await services.clipboard.copyText('text');
         await services.share.shareText('text');
         await services.crashReporter.setCollectionEnabled(enabled: false);
@@ -59,6 +65,8 @@ void main() {
             ...(services.cameraScanner as NoopCameraScanner).calls,
             ...(services.imageDecoder as NoopImageDecoder).calls,
             ...(services.permissions as NoopPermissionService).calls,
+            ...(services.photoPicker as NoopPhotoPicker).calls,
+            ...(services.scanFeedback as NoopScanFeedback).calls,
             ...(services.clipboard as NoopClipboardService).calls,
             ...(services.share as NoopShareService).calls,
             ...(services.crashReporter as NoopCrashReporter).calls,
@@ -73,6 +81,8 @@ void main() {
             'start',
             'decodeFile: /does/not/exist.png',
             'cameraStatus',
+            'pickImagePath',
+            'success (vibrate: true, sound: false)',
             'copyText: text',
             'shareText: text',
             'setCollectionEnabled: false',
@@ -104,6 +114,72 @@ void main() {
         expect((second.clipboard as NoopClipboardService).calls, isEmpty);
       },
     );
+
+    test('copyWith swaps in only the capabilities it is given', () {
+      final AppServices fakes = AppServices.fakes();
+      final NoopPermissionService granted = NoopPermissionService(
+        initialState: CameraPermissionState.granted,
+      );
+      final NoopPhotoPicker backsOut = NoopPhotoPicker(path: null);
+
+      final AppServices swapped = fakes.copyWith(
+        permissions: granted,
+        photoPicker: backsOut,
+      );
+
+      expect(swapped.permissions, same(granted));
+      expect(swapped.photoPicker, same(backsOut));
+      expect(swapped.cameraScanner, same(fakes.cameraScanner));
+      expect(swapped.imageDecoder, same(fakes.imageDecoder));
+      expect(swapped.scanFeedback, same(fakes.scanFeedback));
+      expect(swapped.clipboard, same(fakes.clipboard));
+      expect(swapped.share, same(fakes.share));
+      expect(swapped.crashReporter, same(fakes.crashReporter));
+      expect(swapped.ads, same(fakes.ads));
+      expect(swapped.consent, same(fakes.consent));
+      expect(swapped.billing, same(fakes.billing));
+      expect(swapped.linkOpener, same(fakes.linkOpener));
+      expect(swapped.systemIntents, same(fakes.systemIntents));
+      expect(swapped.wifi, same(fakes.wifi));
+    });
+  });
+
+  group('NoopPhotoPicker', () {
+    test(
+      'hands back the seeded photo and records the pick (SCAN-11)',
+      () async {
+        final NoopPhotoPicker picker = NoopPhotoPicker(
+          path: '/photos/wifi-code.png',
+        );
+
+        expect(await picker.pickImagePath(), '/photos/wifi-code.png');
+        expect(picker.calls, <String>['pickImagePath']);
+      },
+    );
+
+    test(
+      'a user backing out of the picker comes back as no photo (SCAN-11)',
+      () async {
+        final NoopPhotoPicker picker = NoopPhotoPicker(path: null);
+
+        expect(await picker.pickImagePath(), isNull);
+        expect(picker.calls, <String>['pickImagePath']);
+      },
+    );
+  });
+
+  group('NoopScanFeedback', () {
+    test('records the vibration and sound settings each scan carried (SCAN-5, SET-2)', () async {
+      final NoopScanFeedback feedback = NoopScanFeedback();
+
+      await feedback.success(vibrate: true, sound: false);
+      await feedback.success(vibrate: false, sound: true);
+
+      expect(feedback.calls, <String>[
+        'success (vibrate: true, sound: false)',
+        'success (vibrate: false, sound: true)',
+      ]);
+    });
   });
 
   group('NoopClipboardService', () {
@@ -379,7 +455,7 @@ void main() {
       () async {
         final decoder = NoopImageDecoder(
           result: const ImageDecodeResult(<CodeDetection>[
-            CodeDetection(payload: 'https://example.com', symbology: 'qrCode'),
+            CodeDetection(payload: 'https://example.com', symbology: 'qr'),
             CodeDetection(payload: '5901234123457', symbology: 'ean13'),
           ]),
         );
@@ -401,7 +477,7 @@ void main() {
       () async {
         const detection = CodeDetection(
           payload: 'https://example.com',
-          symbology: 'qrCode',
+          symbology: 'qr',
         );
         final scanner = NoopCameraScanner();
         final passes = <List<CodeDetection>>[];
@@ -468,6 +544,26 @@ void main() {
 
         await scanner.setScanWindow(target);
         expect(scanner.scanWindow, target);
+      },
+    );
+
+    test(
+      'auto-zoom starts on, and records being turned off and on again (SCAN-7)',
+      () async {
+        final scanner = NoopCameraScanner();
+        addTearDown(scanner.dispose);
+
+        expect(scanner.autoZoomEnabled, isTrue);
+
+        await scanner.setAutoZoom(enabled: false);
+        expect(scanner.autoZoomEnabled, isFalse);
+
+        await scanner.setAutoZoom(enabled: true);
+        expect(scanner.autoZoomEnabled, isTrue);
+        expect(scanner.calls, <String>[
+          'setAutoZoom: false',
+          'setAutoZoom: true',
+        ]);
       },
     );
 

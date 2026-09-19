@@ -21,11 +21,16 @@ class CodeDetection {
   /// screen shows "Binary data, N bytes" from [rawBytes] instead (RES-13).
   final String payload;
 
-  /// The barcode format as the decoder names it (`qrCode`, `ean13`, ...), which
-  /// the parse layer maps to a stored symbology id (DATA-1, DATA-2, SCAN-9).
+  /// The code's format as the app's fixed symbology id (`qr`, `ean13`,
+  /// `data_matrix`...: `Symbology.id` in `lib/models/record_enums.dart`), so it
+  /// is stored as is and read back with `Symbology.fromId` (DATA-1, DATA-2).
+  ///
+  /// A device decoder hands over only SCAN-9's formats; a code in any other
+  /// format never becomes a detection (SCAN-9).
   final String symbology;
 
-  /// The raw bytes, kept when the payload isn't valid UTF-8 (DATA-2).
+  /// The raw bytes, kept only when the content isn't text, so a text code never
+  /// stores a second copy of itself (DATA-2).
   final Uint8List? rawBytes;
 
   /// Whether [payload] is the whole content as valid UTF-8 text.
@@ -117,6 +122,14 @@ abstract class CameraScanner {
   /// Zooms to [zoom], clamped to 1.0 ... [maxZoom] (SCAN-7).
   Future<void> setZoom(double zoom);
 
+  /// Turns auto-zoom on or off (SCAN-7).
+  ///
+  /// With it on, the camera steps in by itself when a code is seen but too
+  /// small to read. SCAN-7 turns it off at the first manual zoom (slider, pinch
+  /// or double-tap) and back on when the scanner is reopened; the caller decides
+  /// when, this only applies it. It is on until the first call.
+  Future<void> setAutoZoom({required bool enabled});
+
   /// Releases the camera and closes [detections].
   Future<void> dispose();
 }
@@ -150,10 +163,15 @@ class NoopCameraScanner implements CameraScanner {
   bool _running = false;
   bool _detecting = false;
   double _zoom = 1;
+  bool _autoZoom = true;
   Rect? _scanWindow;
 
   /// The scan window last set, so a test can assert SCAN-4's target.
   Rect? get scanWindow => _scanWindow;
+
+  /// Whether auto-zoom is on, so a test can assert that a manual zoom turned it
+  /// off and reopening the scanner turned it back on (SCAN-7).
+  bool get autoZoomEnabled => _autoZoom;
 
   /// Delivers one detection pass to [detections], as the camera would.
   void emit(List<CodeDetection> pass) {
@@ -232,6 +250,12 @@ class NoopCameraScanner implements CameraScanner {
   Future<void> setZoom(double zoom) async {
     calls.add('setZoom: $zoom');
     _zoom = zoom.clamp(1.0, maxZoom);
+  }
+
+  @override
+  Future<void> setAutoZoom({required bool enabled}) async {
+    calls.add('setAutoZoom: $enabled');
+    _autoZoom = enabled;
   }
 
   @override

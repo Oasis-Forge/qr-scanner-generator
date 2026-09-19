@@ -14,8 +14,17 @@ import 'package:qrscanner/core/theme/app_theme.dart';
 import 'package:qrscanner/db/migrations/migrations.dart';
 import 'package:qrscanner/db/record_dao.dart';
 import 'package:qrscanner/l10n/app_localizations.dart';
-import 'package:qrscanner/screens/home_screen.dart';
+import 'package:qrscanner/screens/app_shell.dart';
+import 'package:qrscanner/core/services/device/flutter_clipboard_service.dart';
+import 'package:qrscanner/core/services/device/share_plus_service.dart';
 import 'package:qrscanner/services/app_services.dart';
+import 'package:qrscanner/services/device/device_permission_service.dart';
+import 'package:qrscanner/services/device/haptic_scan_feedback.dart';
+import 'package:qrscanner/services/device/image_picker_photo_picker.dart';
+import 'package:qrscanner/services/device/mlkit_image_decoder.dart';
+import 'package:qrscanner/services/device/mobile_scanner_camera.dart';
+import 'package:qrscanner/services/permission_service.dart';
+import 'package:qrscanner/state/scanner_state.dart';
 import 'package:qrscanner/state/settings_state.dart';
 import 'package:qrscanner/state/success_counts.dart';
 
@@ -30,8 +39,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await _layOutUnderTheSystemBars();
 
-  final AppServices services = _deviceServices();
-
   try {
     final Directory supportDirectory = await getApplicationSupportDirectory();
     final AppDatabase database = AppDatabase(
@@ -44,6 +51,7 @@ Future<void> main() async {
     await database.open();
 
     final KeyValueStore store = SqfliteKeyValueStore(database.database);
+    final AppServices services = _deviceServices(store);
     final SettingsState settings = SettingsState(store);
     final SuccessCounts successCounts = SuccessCounts(store);
     // Loaded together, not one after the other: the two read disjoint keys
@@ -81,16 +89,24 @@ Future<void> main() async {
 
 /// Every device capability the app will use, built once (`CLAUDE.md`).
 ///
-/// Each one is still the no-op fake: Phase 1 wires the layers, and the real
-/// plugin arrives with the PR that needs it — the camera scanner, image decoder
-/// and permissions with **Scanner and permissions** (RUN-1, SCAN-1); the
-/// clipboard and system intents with **Result screens and parsers** (RES-1,
-/// RES-4); the link opener with **Link safety** (LINK-8); share with
-/// **Generator and save** (SAVE-1); ads, consent, billing and crash reports
-/// with **Ads, consent, Pro, crash reports, settings** (ADS-1, PRIV-1, PRO-1,
-/// PRIV-3); and Wi-Fi with RES-5 in Phase 2b. Until then the app runs end to
-/// end and no plugin does any I/O.
-AppServices _deviceServices() => AppServices.fakes();
+/// Real now: the camera scanner, image decoder, permissions, photo picker and
+/// scan feedback (**Scanner and permissions**: RUN-1, SCAN-1, SCAN-11), plus
+/// the clipboard and share sheet the result screen's Copy and Share need
+/// (RES-1). Still the no-op fake until their PR: system intents (RES-4), the
+/// link opener (LINK-8), saving a file (SAVE-2), ads, consent, billing and
+/// crash reports (ADS-1, PRIV-1, PRO-1, PRIV-3), and Wi-Fi (RES-5).
+AppServices _deviceServices(KeyValueStore store) {
+  final PermissionService permissions = DevicePermissionService(store: store);
+  return AppServices.fakes().copyWith(
+    cameraScanner: MobileScannerCamera(permissions: permissions),
+    imageDecoder: MlkitImageDecoder(),
+    permissions: permissions,
+    photoPicker: ImagePickerPhotoPicker(),
+    scanFeedback: const HapticScanFeedback(),
+    clipboard: const FlutterClipboardService(),
+    share: const SharePlusService(),
+  );
+}
 
 /// Lays the app out under the status and navigation bars.
 ///
@@ -184,6 +200,21 @@ class QrScannerApp extends StatelessWidget {
         ChangeNotifierProvider<SuccessCounts>.value(value: successCounts),
         Provider<RecordDao>.value(value: records),
         Provider<AppServices>.value(value: services),
+        // The scanner (SCAN-1, RUN-1 to RUN-7), built from the same services,
+        // records and settings every other screen reads. It lives as long as
+        // the app; the scanner screen enters and leaves it.
+        ChangeNotifierProvider<ScannerState>(
+          create: (BuildContext context) => ScannerState(
+            permissions: services.permissions,
+            camera: services.cameraScanner,
+            imageDecoder: services.imageDecoder,
+            photoPicker: services.photoPicker,
+            feedback: services.scanFeedback,
+            records: records,
+            settings: settings,
+            successCounts: successCounts,
+          ),
+        ),
       ],
       // The device's own palette, where Android offers one (SET-1). The schemes
       // are null until the platform answers, and on any device below Android 12,
@@ -227,7 +258,7 @@ class _MaterialShell extends StatelessWidget {
       theme: AppTheme.light(dynamicScheme: lightDynamic),
       darkTheme: AppTheme.dark(dynamicScheme: darkDynamic),
       themeMode: settings.themeMode,
-      home: const HomeScreen(),
+      home: const AppShell(),
     );
   }
 }

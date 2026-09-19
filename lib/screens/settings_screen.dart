@@ -7,41 +7,39 @@ import '../core/theme/app_theme.dart';
 import '../l10n/app_localizations.dart';
 import '../state/settings_state.dart';
 
-/// The app's first screen until Phase 2a puts the scanner here.
+/// The Settings tab (SCAN-1).
+///
+/// For now it holds the theme (SET-1) and language (LANG-1) switchers the
+/// Phase 1 home screen had, unchanged; the settings PR adds SET-5's groups
+/// and the rest of its rows.
 ///
 /// Presentational only (`CLAUDE.md`): it reads [SettingsState] with
 /// `context.watch`, calls its setters with `context.read`, and touches no store,
-/// no database and no device service. What it shows is the wiring Phase 1 built,
-/// so the theme (SET-1) and the language (LANG-1) can be driven by hand on a
-/// device before there is a viewfinder.
+/// no database and no device service.
 ///
 /// Every string comes from the message files (LANG-2) and every edge inset is
-/// directional, so Arabic mirrors the whole screen (LANG-5). [SafeArea] keeps
-/// the content out from under the system bars while the app lays out
-/// edge to edge. [PopScope] leaves the back gesture to Android, which is what
-/// makes the predictive-back animation run (paired with
-/// `android:enableOnBackInvokedCallback`; the flag alone can swallow back
-/// events, flutter/flutter#135815).
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+/// directional, so Arabic mirrors the whole screen (LANG-5). The back gesture
+/// belongs to the app shell, which returns to Scan before it leaves the app.
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
 
   /// The theme choice that follows the phone's setting (SET-1).
-  static const Key systemThemeKey = Key('home.theme.system');
+  static const Key systemThemeKey = Key('settings.theme.system');
 
   /// The Light theme choice (SET-1).
-  static const Key lightThemeKey = Key('home.theme.light');
+  static const Key lightThemeKey = Key('settings.theme.light');
 
   /// The Dark theme choice (SET-1).
-  static const Key darkThemeKey = Key('home.theme.dark');
+  static const Key darkThemeKey = Key('settings.theme.dark');
 
   /// The language choice that follows the device language (LANG-1).
-  static const Key systemLanguageKey = Key('home.language.system');
+  static const Key systemLanguageKey = Key('settings.language.system');
 
   /// The English language choice (LANG-1).
-  static const Key englishLanguageKey = Key('home.language.en');
+  static const Key englishLanguageKey = Key('settings.language.en');
 
   /// The Arabic language choice (LANG-1).
-  static const Key arabicLanguageKey = Key('home.language.ar');
+  static const Key arabicLanguageKey = Key('settings.language.ar');
 
   /// The locale the English choice sets (LANG-1).
   static const Locale english = Locale('en');
@@ -53,71 +51,64 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context);
     final SettingsState settings = context.watch<SettingsState>();
-    final TextTheme textTheme = Theme.of(context).textTheme;
 
-    return PopScope(
-      // Nothing on this screen has unsaved work to guard, so the pop goes
-      // through: Android runs its own predictive-back animation instead of the
-      // app swallowing the gesture (flutter/flutter#135815).
-      canPop: true,
-      child: Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsetsDirectional.fromSTEB(24, 32, 24, 32),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(l10n.appTitle, style: textTheme.headlineMedium),
-                const SizedBox(height: 32),
-                _ChoiceGroup<ThemeMode>(
-                  title: l10n.settingsTheme,
-                  selected: settings.themeMode,
-                  onSelected: (ThemeMode mode) =>
-                      context.read<SettingsState>().setThemeMode(mode),
-                  options: <_Choice<ThemeMode>>[
-                    _Choice<ThemeMode>(
-                      buttonKey: systemThemeKey,
-                      value: ThemeMode.system,
-                      label: l10n.themeSystemDefault,
-                    ),
-                    _Choice<ThemeMode>(
-                      buttonKey: lightThemeKey,
-                      value: ThemeMode.light,
-                      label: l10n.themeLight,
-                    ),
-                    _Choice<ThemeMode>(
-                      buttonKey: darkThemeKey,
-                      value: ThemeMode.dark,
-                      label: l10n.themeDark,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 32),
-                _ChoiceGroup<Locale?>(
-                  title: l10n.settingsLanguage,
-                  selected: settings.localeOverride,
-                  onSelected: (Locale? locale) =>
-                      context.read<SettingsState>().setLocaleOverride(locale),
-                  options: <_Choice<Locale?>>[
-                    _Choice<Locale?>(
-                      buttonKey: systemLanguageKey,
-                      value: null,
-                      label: l10n.languageSystemDefault,
-                    ),
-                    _Choice<Locale?>(
-                      buttonKey: englishLanguageKey,
-                      value: english,
-                      label: l10n.languageEnglish,
-                    ),
-                    _Choice<Locale?>(
-                      buttonKey: arabicLanguageKey,
-                      value: arabic,
-                      label: l10n.languageArabic,
-                    ),
-                  ],
-                ),
-              ],
-            ),
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.navSettings)),
+      body: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          padding: const EdgeInsetsDirectional.fromSTEB(24, 16, 24, 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _ChoiceGroup<ThemeMode>(
+                title: l10n.settingsTheme,
+                selected: settings.themeMode,
+                onSelected: (ThemeMode mode) =>
+                    context.read<SettingsState>().setThemeMode(mode),
+                options: <_Choice<ThemeMode>>[
+                  _Choice<ThemeMode>(
+                    buttonKey: systemThemeKey,
+                    value: ThemeMode.system,
+                    label: l10n.themeSystemDefault,
+                  ),
+                  _Choice<ThemeMode>(
+                    buttonKey: lightThemeKey,
+                    value: ThemeMode.light,
+                    label: l10n.themeLight,
+                  ),
+                  _Choice<ThemeMode>(
+                    buttonKey: darkThemeKey,
+                    value: ThemeMode.dark,
+                    label: l10n.themeDark,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
+              _ChoiceGroup<Locale?>(
+                title: l10n.settingsLanguage,
+                selected: settings.localeOverride,
+                onSelected: (Locale? locale) =>
+                    context.read<SettingsState>().setLocaleOverride(locale),
+                options: <_Choice<Locale?>>[
+                  _Choice<Locale?>(
+                    buttonKey: systemLanguageKey,
+                    value: null,
+                    label: l10n.languageSystemDefault,
+                  ),
+                  _Choice<Locale?>(
+                    buttonKey: englishLanguageKey,
+                    value: english,
+                    label: l10n.languageEnglish,
+                  ),
+                  _Choice<Locale?>(
+                    buttonKey: arabicLanguageKey,
+                    value: arabic,
+                    label: l10n.languageArabic,
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),

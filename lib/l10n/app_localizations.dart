@@ -158,6 +158,156 @@ abstract class AppLocalizations {
   /// **'Type a code'**
   String get typeCodeButton;
 
+  /// SCAN-1. Body of the Create tab until the generator ships: says plainly that it is not in this build yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating codes arrives in the next test build.'**
+  String get placeholderCreateMessage;
+
+  /// SCAN-1, DATA-4. Body of the History tab until the list ships. Scans are written from this build on, so it says they are kept, and only on the phone.
+  ///
+  /// In en, this message translates to:
+  /// **'The History list arrives in the next test build. Your scans are already kept on this phone.'**
+  String get placeholderHistoryMessage;
+
+  /// SCAN-4. One line on the live scanner, under the square target. Detection is automatic: there is no shutter to press.
+  ///
+  /// In en, this message translates to:
+  /// **'Point the camera at a code'**
+  String get scanTargetHint;
+
+  /// The camera is allowed but did not start (no usable back camera, or another app holds it). Shown with Scan a photo and Type a code.
+  ///
+  /// In en, this message translates to:
+  /// **'The camera could not start. Another app may be using it.'**
+  String get scanCameraUnavailable;
+
+  /// SCAN-6, A11Y-1. Screen-reader name and tooltip of the torch button while the torch is off.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on the torch'**
+  String get scanTorchOn;
+
+  /// SCAN-6, A11Y-1. Screen-reader name and tooltip of the torch button while the torch is on.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off the torch'**
+  String get scanTorchOff;
+
+  /// SCAN-7, A11Y-1. Screen-reader name of the zoom slider on the live scanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom'**
+  String get scanZoomLabel;
+
+  /// SCAN-7, LANG-3. The current zoom beside the slider and as its screen-reader value, such as 2× or 1.5×. The number follows the app language and stays left to right (LANG-5).
+  ///
+  /// In en, this message translates to:
+  /// **'{zoom}×'**
+  String scanZoomValue(double zoom);
+
+  /// SCAN-11, A11Y-1. Screen-reader name of the progress indicator shown while a picked photo is decoded.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading the photo'**
+  String get scanReadingPhoto;
+
+  /// SCAN-11. Snackbar when the system photo picker could not be opened.
+  ///
+  /// In en, this message translates to:
+  /// **'The photo picker did not open. Try again.'**
+  String get scanPhotoPickerFailed;
+
+  /// RUN-6. Snackbar when Open settings could not open the app permission page.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings did not open. Allow the camera from your phone settings.'**
+  String get scanSettingsDidNotOpen;
+
+  /// A11Y-3. Spoken by screen readers when the camera or a photo reads a code. Both placeholders take already translated labels.
+  ///
+  /// In en, this message translates to:
+  /// **'{format} detected: {type}'**
+  String scanDetectedAnnouncement(String format, String type);
+
+  /// A11Y-3. As scanDetectedAnnouncement, for a code whose format has no name. The placeholder takes an already translated type label.
+  ///
+  /// In en, this message translates to:
+  /// **'{type} detected'**
+  String scanTypeDetectedAnnouncement(String type);
+
+  /// A11Y-3, SCAN-13. Spoken by screen readers when one pass finds two or more codes and the list opens.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 code detected} other{{count} codes detected}}'**
+  String scanChoicesAnnouncement(int count);
+
+  /// SCAN-13. Heading of the list shown when one pass finds two or more codes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 code found} other{{count} codes found}}'**
+  String scanChoicesTitle(int count);
+
+  /// SCAN-13. One line under the heading of the list of codes.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the code to open.'**
+  String get scanChoicesHint;
+
+  /// RES-13, SCAN-13. Shown instead of a payload that is not valid text, on the result and in the list of codes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Binary data, 1 byte} other{Binary data, {count} bytes}}'**
+  String scanBinaryData(int count);
+
+  /// SCAN-11. Heading shown when a picked photo holds no readable code.
+  ///
+  /// In en, this message translates to:
+  /// **'No code found'**
+  String get noCodeFoundTitle;
+
+  /// SCAN-11. The one hint under No code found.
+  ///
+  /// In en, this message translates to:
+  /// **'Make sure the whole code is in the photo, sharp and well lit.'**
+  String get noCodeFoundHint;
+
+  /// SCAN-11. Largest control on No code found; opens the photo picker again.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another photo'**
+  String get tryAnotherPhotoButton;
+
+  /// A11Y-1. Screen-reader name and tooltip of the close buttons on the list of codes and on No code found.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get actionClose;
+
+  /// SCAN-12. Title of the typed-entry screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a code'**
+  String get manualEntryTitle;
+
+  /// SCAN-12. Label of the multi-line field the content is typed into.
+  ///
+  /// In en, this message translates to:
+  /// **'Code content'**
+  String get manualEntryFieldLabel;
+
+  /// SCAN-12. Hint inside the empty typed-entry field.
+  ///
+  /// In en, this message translates to:
+  /// **'A link, some text or a barcode number'**
+  String get manualEntryFieldHint;
+
+  /// SCAN-12. Largest control on typed entry, disabled while the field is empty; opens the same result as a camera scan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan'**
+  String get manualEntryScanButton;
+
   /// SET-5. First Settings group: theme, language, sound, vibration, copy on scan, search engine.
   ///
   /// In en, this message translates to:
@@ -361,6 +511,216 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Copied {what}'**
   String copiedSnackbar(String what);
+
+  /// SET-3, RES-1. Fills copiedSnackbar after a link was copied.
+  ///
+  /// In en, this message translates to:
+  /// **'the link'**
+  String get copiedWhatLink;
+
+  /// SET-3, RES-1. Fills copiedSnackbar after the decoded content of any other type was copied.
+  ///
+  /// In en, this message translates to:
+  /// **'the content'**
+  String get copiedWhatContent;
+
+  /// RES-1, RES-3. Title of the result screen, whatever the source of the code.
+  ///
+  /// In en, this message translates to:
+  /// **'Result'**
+  String get resultTitle;
+
+  /// RES-1, DATA-1. First line of a result: the type, then the format it was read in. Both placeholders take already translated labels.
+  ///
+  /// In en, this message translates to:
+  /// **'{type} · {format}'**
+  String resultTypeAndFormat(String type, String format);
+
+  /// RES-1. Copies the exact decoded text.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get resultCopyButton;
+
+  /// RES-1. Opens the system share sheet with the exact decoded text.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get resultShareButton;
+
+  /// DATA-4. Shown on a result when Save history is on but writing the scan failed; the result still works.
+  ///
+  /// In en, this message translates to:
+  /// **'This scan could not be saved to History.'**
+  String get resultNotSaved;
+
+  /// RES-1. Snackbar when the clipboard refused the text.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not copy. Try again.'**
+  String get resultCopyFailed;
+
+  /// RES-1. Snackbar when the system share sheet could not be opened.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open sharing. Try again.'**
+  String get resultShareFailed;
+
+  /// DATA-1. Label of the url type, on results and in the list of codes.
+  ///
+  /// In en, this message translates to:
+  /// **'Link'**
+  String get parsedTypeUrl;
+
+  /// DATA-1, RES-4. Label of the wifi type.
+  ///
+  /// In en, this message translates to:
+  /// **'Wi-Fi'**
+  String get parsedTypeWifi;
+
+  /// DATA-1. Label of the text type: plain text that fits no other type.
+  ///
+  /// In en, this message translates to:
+  /// **'Text'**
+  String get parsedTypeText;
+
+  /// DATA-1, RES-6. Label of the contact type (vCard, MeCard).
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get parsedTypeContact;
+
+  /// DATA-1, RES-7. Label of the phone type.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number'**
+  String get parsedTypePhone;
+
+  /// DATA-1, RES-7. Label of the email type.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get parsedTypeEmail;
+
+  /// DATA-1, RES-7. Label of the sms type: a text message with an optional body.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS'**
+  String get parsedTypeSms;
+
+  /// DATA-1, RES-8. Label of the geo type.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get parsedTypeGeo;
+
+  /// DATA-1, RES-6. Label of the event type (iCalendar).
+  ///
+  /// In en, this message translates to:
+  /// **'Event'**
+  String get parsedTypeEvent;
+
+  /// DATA-1, RES-9. Label of the product type (EAN, UPC, ISBN).
+  ///
+  /// In en, this message translates to:
+  /// **'Product'**
+  String get parsedTypeProduct;
+
+  /// DATA-1, GEN-10. Label of the app_store type: a Play Store app.
+  ///
+  /// In en, this message translates to:
+  /// **'App'**
+  String get parsedTypeAppStore;
+
+  /// DATA-1, RES-13. Label of the unknown type: a payload that fits no type.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get parsedTypeUnknown;
+
+  /// DATA-1, SCAN-9. Name of the QR code format.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code'**
+  String get symbologyQr;
+
+  /// DATA-1, SCAN-9. Name of the Data Matrix format; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Matrix'**
+  String get symbologyDataMatrix;
+
+  /// DATA-1, SCAN-9. Name of the PDF417 format; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF417'**
+  String get symbologyPdf417;
+
+  /// DATA-1, SCAN-9. Name of the Aztec format; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'Aztec'**
+  String get symbologyAztec;
+
+  /// DATA-1, SCAN-9. Name of the Code 128 format; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'Code 128'**
+  String get symbologyCode128;
+
+  /// DATA-1, SCAN-9. Name of the Code 39 format; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'Code 39'**
+  String get symbologyCode39;
+
+  /// DATA-1, SCAN-9. Name of the Code 93 format; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'Code 93'**
+  String get symbologyCode93;
+
+  /// DATA-1, SCAN-9. Name of the Codabar format; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'Codabar'**
+  String get symbologyCodabar;
+
+  /// DATA-1, SCAN-9. Name of the ITF (Interleaved 2 of 5) format; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'ITF'**
+  String get symbologyItf;
+
+  /// DATA-1, SCAN-9, RES-9. Name of the EAN-13 format, which also carries ISBN; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'EAN-13'**
+  String get symbologyEan13;
+
+  /// DATA-1, SCAN-9, RES-9. Name of the EAN-8 format; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'EAN-8'**
+  String get symbologyEan8;
+
+  /// DATA-1, SCAN-9, RES-9. Name of the UPC-A format; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'UPC-A'**
+  String get symbologyUpcA;
+
+  /// DATA-1, SCAN-9, RES-9. Name of the UPC-E format; a proper name.
+  ///
+  /// In en, this message translates to:
+  /// **'UPC-E'**
+  String get symbologyUpcE;
+
+  /// DATA-1. Name shown for a format this build cannot name.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown format'**
+  String get symbologyUnknown;
 
   /// LANG-2. Fills the screen when the app database will not open at launch, so the app says what happened instead of crashing or showing a blank frame. Not errorSaveFailed: nothing was being saved.
   ///

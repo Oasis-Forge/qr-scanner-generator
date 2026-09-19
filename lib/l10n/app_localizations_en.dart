@@ -41,6 +41,122 @@ class AppLocalizationsEn extends AppLocalizations {
   String get typeCodeButton => 'Type a code';
 
   @override
+  String get placeholderCreateMessage =>
+      'Creating codes arrives in the next test build.';
+
+  @override
+  String get placeholderHistoryMessage =>
+      'The History list arrives in the next test build. Your scans are already kept on this phone.';
+
+  @override
+  String get scanTargetHint => 'Point the camera at a code';
+
+  @override
+  String get scanCameraUnavailable =>
+      'The camera could not start. Another app may be using it.';
+
+  @override
+  String get scanTorchOn => 'Turn on the torch';
+
+  @override
+  String get scanTorchOff => 'Turn off the torch';
+
+  @override
+  String get scanZoomLabel => 'Zoom';
+
+  @override
+  String scanZoomValue(double zoom) {
+    final intl.NumberFormat zoomNumberFormat = intl.NumberFormat.decimalPattern(
+      localeName,
+    );
+    final String zoomString = zoomNumberFormat.format(zoom);
+
+    return '$zoomString×';
+  }
+
+  @override
+  String get scanReadingPhoto => 'Reading the photo';
+
+  @override
+  String get scanPhotoPickerFailed =>
+      'The photo picker did not open. Try again.';
+
+  @override
+  String get scanSettingsDidNotOpen =>
+      'Settings did not open. Allow the camera from your phone settings.';
+
+  @override
+  String scanDetectedAnnouncement(String format, String type) {
+    return '$format detected: $type';
+  }
+
+  @override
+  String scanTypeDetectedAnnouncement(String type) {
+    return '$type detected';
+  }
+
+  @override
+  String scanChoicesAnnouncement(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count codes detected',
+      one: '1 code detected',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String scanChoicesTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count codes found',
+      one: '1 code found',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get scanChoicesHint => 'Choose the code to open.';
+
+  @override
+  String scanBinaryData(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Binary data, $count bytes',
+      one: 'Binary data, 1 byte',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noCodeFoundTitle => 'No code found';
+
+  @override
+  String get noCodeFoundHint =>
+      'Make sure the whole code is in the photo, sharp and well lit.';
+
+  @override
+  String get tryAnotherPhotoButton => 'Try another photo';
+
+  @override
+  String get actionClose => 'Close';
+
+  @override
+  String get manualEntryTitle => 'Type a code';
+
+  @override
+  String get manualEntryFieldLabel => 'Code content';
+
+  @override
+  String get manualEntryFieldHint => 'A link, some text or a barcode number';
+
+  @override
+  String get manualEntryScanButton => 'Scan';
+
+  @override
   String get settingsGroupGeneral => 'General';
 
   @override
@@ -170,6 +286,113 @@ class AppLocalizationsEn extends AppLocalizations {
   String copiedSnackbar(String what) {
     return 'Copied $what';
   }
+
+  @override
+  String get copiedWhatLink => 'the link';
+
+  @override
+  String get copiedWhatContent => 'the content';
+
+  @override
+  String get resultTitle => 'Result';
+
+  @override
+  String resultTypeAndFormat(String type, String format) {
+    return '$type · $format';
+  }
+
+  @override
+  String get resultCopyButton => 'Copy';
+
+  @override
+  String get resultShareButton => 'Share';
+
+  @override
+  String get resultNotSaved => 'This scan could not be saved to History.';
+
+  @override
+  String get resultCopyFailed => 'Could not copy. Try again.';
+
+  @override
+  String get resultShareFailed => 'Could not open sharing. Try again.';
+
+  @override
+  String get parsedTypeUrl => 'Link';
+
+  @override
+  String get parsedTypeWifi => 'Wi-Fi';
+
+  @override
+  String get parsedTypeText => 'Text';
+
+  @override
+  String get parsedTypeContact => 'Contact';
+
+  @override
+  String get parsedTypePhone => 'Phone number';
+
+  @override
+  String get parsedTypeEmail => 'Email';
+
+  @override
+  String get parsedTypeSms => 'SMS';
+
+  @override
+  String get parsedTypeGeo => 'Location';
+
+  @override
+  String get parsedTypeEvent => 'Event';
+
+  @override
+  String get parsedTypeProduct => 'Product';
+
+  @override
+  String get parsedTypeAppStore => 'App';
+
+  @override
+  String get parsedTypeUnknown => 'Unknown';
+
+  @override
+  String get symbologyQr => 'QR code';
+
+  @override
+  String get symbologyDataMatrix => 'Data Matrix';
+
+  @override
+  String get symbologyPdf417 => 'PDF417';
+
+  @override
+  String get symbologyAztec => 'Aztec';
+
+  @override
+  String get symbologyCode128 => 'Code 128';
+
+  @override
+  String get symbologyCode39 => 'Code 39';
+
+  @override
+  String get symbologyCode93 => 'Code 93';
+
+  @override
+  String get symbologyCodabar => 'Codabar';
+
+  @override
+  String get symbologyItf => 'ITF';
+
+  @override
+  String get symbologyEan13 => 'EAN-13';
+
+  @override
+  String get symbologyEan8 => 'EAN-8';
+
+  @override
+  String get symbologyUpcA => 'UPC-A';
+
+  @override
+  String get symbologyUpcE => 'UPC-E';
+
+  @override
+  String get symbologyUnknown => 'Unknown format';
 
   @override
   String get errorStorageUnavailable =>

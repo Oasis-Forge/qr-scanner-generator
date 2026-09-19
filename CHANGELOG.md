@@ -4,6 +4,18 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-19
+
+### Added
+- The app opens on a live scanner. Point it at a QR code or barcode and the result opens with its type, the full content, and Copy and Share. Nothing opens by itself.
+- Asking for the camera: the app explains why before Android asks, and if you say no you can still scan a photo or type a code. If Android stops asking, the button opens the app's settings instead.
+- Torch (on phones with a flash), zoom by slider, pinch or double-tap, and a square target so codes elsewhere in view are ignored.
+- Scan from a photo with the system photo picker, which needs no access to your photos. "No code found" says so and lets you try another.
+- When a photo or a camera view holds several codes, you pick which one to open.
+- Type a code by hand and get the same result screen.
+- Screen readers announce each code the scanner finds.
+- A bottom bar for Scan, Create, History and Settings. Create and History arrive in the next test builds.
+
 ## [0.2.0] - 2026-09-18
 
 ### Added
