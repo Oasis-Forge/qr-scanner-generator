@@ -106,7 +106,7 @@ enum WifiSecurity {
   /// `T:WPA2`.
   wpa2,
 
-  /// `T:WPA3`.
+  /// `T:SAE` (Android's Wi-Fi QR format), or `T:WPA3`.
   wpa3,
 
   /// `T:WEP` — RES-4 shows a line saying Android can't join WEP networks

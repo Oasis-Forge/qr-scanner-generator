@@ -1036,5 +1036,182 @@
   "resultLocationNameLabel": "الاسم",
   "@resultLocationNameLabel": {
     "description": "RES-8. Label above a location result's optional place name."
+  },
+
+  "createSubtitle": "اختر ما تريد إنشاءه",
+  "@createSubtitle": {
+    "description": "GEN-1. One line above the Create type picker's grid."
+  },
+  "createUrlFieldLabel": "عنوان الويب",
+  "@createUrlFieldLabel": {
+    "description": "GEN-3. Label of the URL form's one field."
+  },
+  "createUrlFieldHint": "example.com",
+  "@createUrlFieldHint": {
+    "description": "GEN-3. Hint inside the empty URL field."
+  },
+  "createUrlHelperText": "يفتح الرمز {url}",
+  "@createUrlHelperText": {
+    "description": "GEN-3. Helper text under the URL field showing the address that will actually be encoded, https:// added when the user left out a scheme.",
+    "placeholders": {
+      "url": {
+        "type": "String",
+        "example": "https://example.com"
+      }
+    }
+  },
+  "createTextFieldLabel": "نص",
+  "@createTextFieldLabel": {
+    "description": "GEN-8. Label of the Text form's one field."
+  },
+  "createTextFieldHint": "أي نص تريد أن يحمله الرمز",
+  "@createTextFieldHint": {
+    "description": "GEN-8. Hint inside the empty Text field."
+  },
+  "createWifiSsidLabel": "اسم الشبكة",
+  "@createWifiSsidLabel": {
+    "description": "GEN-5. Label of the Wi-Fi form's network name field."
+  },
+  "createWifiSecurityLabel": "الحماية",
+  "@createWifiSecurityLabel": {
+    "description": "GEN-5. Label of the Wi-Fi form's security choice."
+  },
+  "createWifiSecurityWpaWpa2": "WPA/WPA2",
+  "createWifiSecurityWepInsecure": "WEP (غير آمنة)",
+  "@createWifiSecurityWepInsecure": {
+    "description": "GEN-5. The WEP choice in the Wi-Fi form's security list, labelled insecure unlike the plain WEP shown on a result."
+  },
+  "createWifiPasswordLabel": "كلمة المرور",
+  "@createWifiPasswordLabel": {
+    "description": "GEN-5. Label of the Wi-Fi form's password field, masked with a reveal button."
+  },
+  "createWifiHiddenLabel": "شبكة مخفية",
+  "@createWifiHiddenLabel": {
+    "description": "GEN-5. Label of the Wi-Fi form's hidden-network switch."
+  },
+  "createContactNameLabel": "الاسم",
+  "@createContactNameLabel": {
+    "description": "GEN-6. Label of the Contact form's required name field."
+  },
+  "createContactPhoneLabel": "الهاتف (اختياري)",
+  "@createContactPhoneLabel": {
+    "description": "GEN-6. Label of the Contact form's optional phone field."
+  },
+  "createContactEmailLabel": "البريد الإلكتروني (اختياري)",
+  "@createContactEmailLabel": {
+    "description": "GEN-6. Label of the Contact form's optional email field."
+  },
+  "createContactOrganisationLabel": "المؤسسة (اختياري)",
+  "@createContactOrganisationLabel": {
+    "description": "GEN-6. Label of the Contact form's optional organisation field."
+  },
+  "createPhoneFieldLabel": "رقم الهاتف",
+  "@createPhoneFieldLabel": {
+    "description": "GEN-7. Label of the Phone form's one field."
+  },
+  "createEmailToLabel": "عنوان البريد الإلكتروني",
+  "@createEmailToLabel": {
+    "description": "GEN-8. Label of the Email form's required recipient field."
+  },
+  "createEmailSubjectLabel": "الموضوع (اختياري)",
+  "@createEmailSubjectLabel": {
+    "description": "GEN-8. Label of the Email form's optional subject field."
+  },
+  "createEmailBodyLabel": "الرسالة (اختياري)",
+  "@createEmailBodyLabel": {
+    "description": "GEN-8. Label of the Email form's optional body field."
+  },
+  "createSmsNumberLabel": "رقم الهاتف",
+  "@createSmsNumberLabel": {
+    "description": "GEN-7, GEN-8. Label of the SMS form's required number field."
+  },
+  "createSmsMessageLabel": "الرسالة (اختياري)",
+  "@createSmsMessageLabel": {
+    "description": "GEN-8. Label of the SMS form's optional message field."
+  },
+  "createFieldErrorRequired": "هذا الحقل مطلوب.",
+  "@createFieldErrorRequired": {
+    "description": "GEN-1. Inline error under a required field left empty."
+  },
+  "createFieldErrorInvalidUrl": "أدخل عنوان ويب يبدأ بـ http:// أو https://.",
+  "@createFieldErrorInvalidUrl": {
+    "description": "GEN-3. Inline error under the URL field when it has no http/https scheme at all."
+  },
+  "createFieldErrorInvalidEmail": "أدخل بريدًا إلكترونيًا صالحًا.",
+  "@createFieldErrorInvalidEmail": {
+    "description": "GEN-8. Inline error under an email field that fails validation."
+  },
+  "createFieldErrorInvalidPhone": "أدخل رقم هاتف من 3 إلى 15 رقمًا.",
+  "@createFieldErrorInvalidPhone": {
+    "description": "GEN-7. Inline error under a phone field that fails validation."
+  },
+  "createCapacityMeterLabel": "{percent}% من السعة مُستخدَمة",
+  "@createCapacityMeterLabel": {
+    "description": "GEN-12. Line under the capacity meter, shown above 80% of the QR byte-mode limit.",
+    "placeholders": {
+      "percent": {
+        "type": "int",
+        "example": "82"
+      }
+    }
+  },
+  "createCapacityOverLimit": "هذا محتوى أكبر من سعة رمز QR. اختصره للمتابعة.",
+  "@createCapacityOverLimit": {
+    "description": "GEN-12. Message replacing Create's enabled state once content is over the QR byte-mode limit."
+  },
+  "createButtonLabel": "إنشاء",
+  "@createButtonLabel": {
+    "description": "GEN-1. Largest control on a Create form, disabled until the form is valid and within capacity."
+  },
+  "createCheckingMessage": "التحقق من أن الرمز يُقرأ بشكل صحيح",
+  "@createCheckingMessage": {
+    "description": "STY-5, A11Y-1. Screen-reader name of the progress indicator shown on the created-code screen while the self-check runs."
+  },
+  "createContentLabel": "المحتوى",
+  "@createContentLabel": {
+    "description": "STY-1. Label above the exact text a created code encodes, on the created-code screen."
+  },
+  "createCodeImageLabel": "رمز QR الذي تم إنشاؤه",
+  "@createCodeImageLabel": {
+    "description": "STY-1, A11Y-1. Screen-reader description of the rendered code image on the created-code screen."
+  },
+  "createCheckFailedRenderFailed": "تعذّر إنشاء الرمز. اختصر المحتوى وحاول مرة أخرى.",
+  "@createCheckFailedRenderFailed": {
+    "description": "STY-5. Shown on the created-code screen when the encoder itself failed; Save and Share stay disabled. GEN-12 normally blocks Create before this can happen."
+  },
+  "createCheckFailedDecodeFailed": "تعذّر التحقق من هذا الرمز. تم إيقاف الحفظ والمشاركة.",
+  "@createCheckFailedDecodeFailed": {
+    "description": "STY-5. Shown on the created-code screen when the rendered code could not be read back at all; Save and Share stay disabled."
+  },
+  "createCheckFailedMismatch": "لم يطابق هذا الرمز ما أدخلته. تم إيقاف الحفظ والمشاركة.",
+  "@createCheckFailedMismatch": {
+    "description": "STY-5. Shown on the created-code screen when the rendered code read back as something other than the content it was encoded from; Save and Share stay disabled."
+  },
+  "createNotSavedToHistory": "تعذّر حفظ هذا الرمز في السجل.",
+  "@createNotSavedToHistory": {
+    "description": "GEN-13, DATA-6. Shown on the created-code screen when Save history is on but writing the created code failed; the code still works."
+  },
+  "createSaveButton": "حفظ",
+  "@createSaveButton": {
+    "description": "SAVE-1. One of the created-code screen's two equal, largest buttons."
+  },
+  "createShareButton": "مشاركة",
+  "@createShareButton": {
+    "description": "SAVE-1, SAVE-5. The other of the created-code screen's two equal, largest buttons; sends the exact file Save writes."
+  },
+  "createSavedSnackbarNoName": "تم حفظ الرمز",
+  "createSavedSnackbar": "تم الحفظ باسم {name}",
+  "@createSavedSnackbar": {
+    "description": "SAVE-2. Snackbar confirming a successful save, naming the SAVE-4 file name it was saved under.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "wifi-home-20261016-101500.png"
+      }
+    }
+  },
+  "createShareFailed": "تعذّر فتح المشاركة. حاول مرة أخرى.",
+  "@createShareFailed": {
+    "description": "SAVE-1. Snackbar when the system share sheet could not be opened for a created code."
   }
 }

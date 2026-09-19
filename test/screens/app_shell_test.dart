@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qrscanner/screens/app_shell.dart';
+import 'package:qrscanner/screens/create_screen.dart';
 import 'package:qrscanner/screens/history_screen.dart';
 import 'package:qrscanner/screens/placeholder_tab.dart';
 import 'package:qrscanner/screens/scanner/scanner_keys.dart';
@@ -10,8 +11,16 @@ import 'package:qrscanner/services/app_services.dart';
 import 'package:qrscanner/services/camera_scanner.dart';
 import 'package:qrscanner/services/permission_service.dart';
 
+import '../harness/generator_scope.dart';
 import '../harness/scanner_scope.dart';
 import '../helpers/test_app.dart';
+
+/// Wraps [child] with both the scanner's and the generator's own state, the
+/// way `main.dart` provides both above the app shell — `AppShell` reads
+/// [ScannerState] via `ScannerScope` and, since GEN-1, [GeneratorState] via
+/// [GeneratorScope] for its Create tab.
+Widget _shell({Widget child = const AppShell()}) =>
+    ScannerScope(child: GeneratorScope(child: child));
 
 void main() {
   group('AppShell (SCAN-1)', () {
@@ -19,7 +28,7 @@ void main() {
       'SCAN-1: the app opens on the scanner, with Scan, Create, History and '
       'Settings in the bottom bar, each with an icon and a label',
       (WidgetTester tester) async {
-        await pumpApp(tester, const ScannerScope(child: AppShell()));
+        await pumpApp(tester, _shell());
 
         expect(find.byType(ScannerScreen), findsOneWidget);
         expect(find.text('Allow camera'), findsOneWidget);
@@ -49,11 +58,7 @@ void main() {
     testWidgets('SCAN-1, LANG-5: the bottom bar reads in Arabic and mirrors', (
       WidgetTester tester,
     ) async {
-      await pumpApp(
-        tester,
-        const ScannerScope(child: AppShell()),
-        locale: const Locale('ar'),
-      );
+      await pumpApp(tester, _shell(), locale: const Locale('ar'));
 
       expect(find.text('مسح'), findsOneWidget);
       expect(find.text('إنشاء'), findsOneWidget);
@@ -67,17 +72,19 @@ void main() {
     });
 
     testWidgets(
-      'SCAN-1: the bottom bar switches tabs, and Create and History say they '
-      'arrive in the next test build',
+      'SCAN-1, GEN-1: the bottom bar switches tabs, Create opens the type '
+      'picker and History its list',
       (WidgetTester tester) async {
-        await pumpApp(tester, const ScannerScope(child: AppShell()));
+        await pumpApp(tester, _shell());
 
         await tester.tap(find.byKey(AppShell.createTabKey));
         await tester.pumpAndSettle();
         expect(find.byType(ScannerScreen), findsNothing);
+        expect(find.byType(CreateScreen), findsOneWidget);
+        expect(find.text('Choose what to create'), findsOneWidget);
         expect(
           find.text('Creating codes arrives in the next test build.'),
-          findsOneWidget,
+          findsNothing,
         );
         expect(
           tester
@@ -105,21 +112,14 @@ void main() {
       },
     );
 
-    testWidgets('SCAN-1: the placeholders read in Arabic', (
+    testWidgets('SCAN-1, GEN-1: Create and History read in Arabic', (
       WidgetTester tester,
     ) async {
-      await pumpApp(
-        tester,
-        const ScannerScope(child: AppShell()),
-        locale: const Locale('ar'),
-      );
+      await pumpApp(tester, _shell(), locale: const Locale('ar'));
 
       await tester.tap(find.byKey(AppShell.createTabKey));
       await tester.pumpAndSettle();
-      expect(
-        find.text('يصل إنشاء الرموز في النسخة التجريبية التالية.'),
-        findsOneWidget,
-      );
+      expect(find.text('اختر ما تريد إنشاءه'), findsOneWidget);
 
       await tester.tap(find.byKey(AppShell.historyTabKey));
       await tester.pumpAndSettle();
@@ -137,7 +137,7 @@ void main() {
         final NoopCameraScanner camera = NoopCameraScanner();
         await pumpApp(
           tester,
-          const ScannerScope(child: AppShell()),
+          _shell(),
           services: AppServices.fakes().copyWith(
             permissions: NoopPermissionService(
               initialState: CameraPermissionState.granted,
@@ -170,7 +170,7 @@ void main() {
     testWidgets('back on another tab returns to Scan instead of leaving', (
       WidgetTester tester,
     ) async {
-      await pumpApp(tester, const ScannerScope(child: AppShell()));
+      await pumpApp(tester, _shell());
 
       await tester.tap(find.byKey(AppShell.historyTabKey));
       await tester.pumpAndSettle();

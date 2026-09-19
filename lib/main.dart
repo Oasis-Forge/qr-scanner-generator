@@ -32,6 +32,7 @@ import 'package:qrscanner/services/device/mlkit_image_decoder.dart';
 import 'package:qrscanner/services/device/mobile_scanner_camera.dart';
 import 'package:qrscanner/services/device/platform_app_version_info.dart';
 import 'package:qrscanner/services/permission_service.dart';
+import 'package:qrscanner/state/generator_state.dart';
 import 'package:qrscanner/state/history_state.dart';
 import 'package:qrscanner/state/pro_state.dart';
 import 'package:qrscanner/state/scanner_state.dart';
@@ -258,6 +259,19 @@ class QrScannerApp extends StatelessWidget {
             records: records,
             settings: settings,
             successCounts: successCounts,
+          ),
+        ),
+        // The generator (GEN-1), over the same records, settings and success
+        // counts, so a created code joins History and counts as a success
+        // (DATA-8). It lives as long as the app, so a half-filled form
+        // survives leaving the Create tab.
+        ChangeNotifierProvider<GeneratorState>(
+          create: (BuildContext context) => GeneratorState(
+            recordDao: records,
+            settings: settings,
+            successCounts: successCounts,
+            imageDecoder: services.imageDecoder,
+            shareService: services.share,
           ),
         ),
         // History (HIS-1). Built at start, not lazily, so DEL-4's purge of

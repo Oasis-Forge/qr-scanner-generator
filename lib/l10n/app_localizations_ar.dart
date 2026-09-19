@@ -782,4 +782,138 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get resultLocationNameLabel => 'الاسم';
+
+  @override
+  String get createSubtitle => 'اختر ما تريد إنشاءه';
+
+  @override
+  String get createUrlFieldLabel => 'عنوان الويب';
+
+  @override
+  String get createUrlFieldHint => 'example.com';
+
+  @override
+  String createUrlHelperText(String url) {
+    return 'يفتح الرمز $url';
+  }
+
+  @override
+  String get createTextFieldLabel => 'نص';
+
+  @override
+  String get createTextFieldHint => 'أي نص تريد أن يحمله الرمز';
+
+  @override
+  String get createWifiSsidLabel => 'اسم الشبكة';
+
+  @override
+  String get createWifiSecurityLabel => 'الحماية';
+
+  @override
+  String get createWifiSecurityWpaWpa2 => 'WPA/WPA2';
+
+  @override
+  String get createWifiSecurityWepInsecure => 'WEP (غير آمنة)';
+
+  @override
+  String get createWifiPasswordLabel => 'كلمة المرور';
+
+  @override
+  String get createWifiHiddenLabel => 'شبكة مخفية';
+
+  @override
+  String get createContactNameLabel => 'الاسم';
+
+  @override
+  String get createContactPhoneLabel => 'الهاتف (اختياري)';
+
+  @override
+  String get createContactEmailLabel => 'البريد الإلكتروني (اختياري)';
+
+  @override
+  String get createContactOrganisationLabel => 'المؤسسة (اختياري)';
+
+  @override
+  String get createPhoneFieldLabel => 'رقم الهاتف';
+
+  @override
+  String get createEmailToLabel => 'عنوان البريد الإلكتروني';
+
+  @override
+  String get createEmailSubjectLabel => 'الموضوع (اختياري)';
+
+  @override
+  String get createEmailBodyLabel => 'الرسالة (اختياري)';
+
+  @override
+  String get createSmsNumberLabel => 'رقم الهاتف';
+
+  @override
+  String get createSmsMessageLabel => 'الرسالة (اختياري)';
+
+  @override
+  String get createFieldErrorRequired => 'هذا الحقل مطلوب.';
+
+  @override
+  String get createFieldErrorInvalidUrl =>
+      'أدخل عنوان ويب يبدأ بـ http:// أو https://.';
+
+  @override
+  String get createFieldErrorInvalidEmail => 'أدخل بريدًا إلكترونيًا صالحًا.';
+
+  @override
+  String get createFieldErrorInvalidPhone => 'أدخل رقم هاتف من 3 إلى 15 رقمًا.';
+
+  @override
+  String createCapacityMeterLabel(int percent) {
+    return '$percent% من السعة مُستخدَمة';
+  }
+
+  @override
+  String get createCapacityOverLimit =>
+      'هذا محتوى أكبر من سعة رمز QR. اختصره للمتابعة.';
+
+  @override
+  String get createButtonLabel => 'إنشاء';
+
+  @override
+  String get createCheckingMessage => 'التحقق من أن الرمز يُقرأ بشكل صحيح';
+
+  @override
+  String get createContentLabel => 'المحتوى';
+
+  @override
+  String get createCodeImageLabel => 'رمز QR الذي تم إنشاؤه';
+
+  @override
+  String get createCheckFailedRenderFailed =>
+      'تعذّر إنشاء الرمز. اختصر المحتوى وحاول مرة أخرى.';
+
+  @override
+  String get createCheckFailedDecodeFailed =>
+      'تعذّر التحقق من هذا الرمز. تم إيقاف الحفظ والمشاركة.';
+
+  @override
+  String get createCheckFailedMismatch =>
+      'لم يطابق هذا الرمز ما أدخلته. تم إيقاف الحفظ والمشاركة.';
+
+  @override
+  String get createNotSavedToHistory => 'تعذّر حفظ هذا الرمز في السجل.';
+
+  @override
+  String get createSaveButton => 'حفظ';
+
+  @override
+  String get createShareButton => 'مشاركة';
+
+  @override
+  String get createSavedSnackbarNoName => 'تم حفظ الرمز';
+
+  @override
+  String createSavedSnackbar(String name) {
+    return 'تم الحفظ باسم $name';
+  }
+
+  @override
+  String get createShareFailed => 'تعذّر فتح المشاركة. حاول مرة أخرى.';
 }

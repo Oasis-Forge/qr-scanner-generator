@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
+import 'create_screen.dart';
 import 'history_screen.dart';
-import 'placeholder_tab.dart';
 import 'scanner_screen.dart';
 import 'settings_screen.dart';
 
@@ -11,9 +11,8 @@ enum AppTab { scan, create, history, settings }
 
 /// The app's home: it opens on the live scanner, and a bottom navigation bar
 /// leads to Scan, Create, History and Settings, each with an icon and a label
-/// (SCAN-1). Create still says plainly that it arrives in the next test build
-/// until its PR lands; History is the real screen (`HistoryScreen`), given the
-/// callbacks that switch this shell's own tab from its empty state (HIS-11).
+/// (SCAN-1). History is given the callbacks that switch this shell's own
+/// tab from its empty state (HIS-11).
 ///
 /// Only the chosen tab is built. Leaving Scan disposes the scanner screen,
 /// which leaves the scanner, so the camera and the torch stop (SCAN-6), and
@@ -64,11 +63,7 @@ class _AppShellState extends State<AppShell> {
       child: Scaffold(
         body: switch (_tab) {
           AppTab.scan => const ScannerScreen(),
-          AppTab.create => PlaceholderTab(
-            title: l10n.navCreate,
-            message: l10n.placeholderCreateMessage,
-            icon: Icons.add_box_outlined,
-          ),
+          AppTab.create => const CreateScreen(),
           AppTab.history => HistoryScreen(
             onSwitchToScan: () => _select(AppTab.scan),
             onSwitchToCreate: () => _select(AppTab.create),

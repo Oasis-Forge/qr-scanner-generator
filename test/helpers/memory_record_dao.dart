@@ -14,9 +14,11 @@ import 'fake_stores.dart';
 ///
 /// The real DAO talks to SQLite on another isolate, and under a widget test's
 /// fake clock those writes never complete. This one answers at once, so a
-/// screen test can insert, list, delete and restore inside `testWidgets`. It
-/// follows the real DAO's rules for what it implements: live records newest
-/// first by `last_seen_at` then `seq` (HIS-1), soft delete and restore
+/// screen test can insert, record, list, delete and restore inside
+/// `testWidgets`. It follows the real DAO's rules for what it implements: a
+/// live duplicate (same kind, format and raw payload) is bumped instead of
+/// inserted (DATA-4), live records come newest first by `last_seen_at` then
+/// `seq` (HIS-1), soft delete and restore
 /// setting and clearing `deleted_at` (DEL-1, REC-4), and the Trash purge
 /// (DEL-4). The database it hands to [RecordDao] is never opened.
 class MemoryRecordDao extends RecordDao {
@@ -77,6 +79,64 @@ class MemoryRecordDao extends RecordDao {
 
   /// Adds [record] as it stands, for a test that builds its own fixture.
   void put(ScanRecord record) => records.add(record);
+
+  @override
+  Future<RecordWrite> recordScan({
+    required RecordKind kind,
+    required RecordSource source,
+    required Symbology symbology,
+    required ParsedType parsedType,
+    required String payloadText,
+    Uint8List? payloadBytes,
+    List<String> sensitiveFields = const <String>[],
+    String? batchSessionId,
+    String? contentJson,
+    String? styleJson,
+    DateTime? at,
+  }) async {
+    final DateTime when = (at ?? _clock()).toUtc();
+    final String key = ScanRecord.duplicateKeyOf(
+      kind: kind,
+      symbology: symbology,
+      payloadText: payloadText,
+      payloadBytes: payloadBytes,
+      batchSessionId: batchSessionId,
+    );
+    for (var i = 0; i < records.length; i++) {
+      final ScanRecord candidate = records[i];
+      if (candidate.deletedAt == null && candidate.duplicateKey == key) {
+        _seq++;
+        final ScanRecord bumped = candidate.copyWith(
+          seq: _seq,
+          duplicateCount: candidate.duplicateCount + 1,
+          lastSeenAt: when,
+          updatedAt: when,
+        );
+        records[i] = bumped;
+        return RecordWrite(record: bumped, isDuplicate: true);
+      }
+    }
+    _seq++;
+    final ScanRecord inserted = aScanRecord(
+      id: 'memory-$_seq',
+      seq: _seq,
+      kind: kind,
+      source: source,
+      symbology: symbology,
+      parsedType: parsedType,
+      payloadText: payloadText,
+      payloadBytes: payloadBytes,
+      sensitiveFields: sensitiveFields,
+      batchSessionId: batchSessionId,
+      contentJson: contentJson,
+      styleJson: styleJson,
+      createdAt: when,
+      updatedAt: when,
+      lastSeenAt: when,
+    );
+    records.add(inserted);
+    return RecordWrite(record: inserted, isDuplicate: false);
+  }
 
   @override
   Future<List<ScanRecord>> liveRecords({int? limit, int? offset}) async {

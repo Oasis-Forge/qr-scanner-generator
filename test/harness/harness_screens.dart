@@ -2,13 +2,14 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:qrscanner/l10n/app_localizations.dart';
 import 'package:qrscanner/models/record_enums.dart';
 import 'package:qrscanner/models/scan_record.dart';
 import 'package:qrscanner/screens/app_shell.dart';
+import 'package:qrscanner/screens/create/create_form_body.dart';
+import 'package:qrscanner/screens/create/created_code_view.dart';
+import 'package:qrscanner/screens/create_screen.dart';
 import 'package:qrscanner/screens/history_screen.dart';
 import 'package:qrscanner/screens/manual_entry_screen.dart';
-import 'package:qrscanner/screens/placeholder_tab.dart';
 import 'package:qrscanner/screens/result_screen.dart';
 import 'package:qrscanner/screens/scanner_screen.dart';
 import 'package:qrscanner/screens/settings_screen.dart';
@@ -16,15 +17,18 @@ import 'package:qrscanner/services/app_services.dart';
 import 'package:qrscanner/services/camera_scanner.dart';
 import 'package:qrscanner/services/image_decoder.dart';
 import 'package:qrscanner/services/permission_service.dart';
+import 'package:qrscanner/state/generator_state.dart';
 import 'package:qrscanner/state/history_state.dart';
 import 'package:qrscanner/state/scan_outcome.dart';
 import 'package:qrscanner/state/scanner_state.dart';
 import 'package:qrscanner/state/settings_state.dart';
 
 import '../helpers/fake_stores.dart';
+import '../helpers/memory_record_dao.dart';
 import '../helpers/test_app.dart';
 import '../screens/history/history_harness_data.dart';
 import '../screens/settings/settings_scope.dart';
+import 'generator_scope.dart';
 import 'scanner_scope.dart';
 
 /// Every screen and sheet the scanner PR adds, for the accessibility and
@@ -188,23 +192,6 @@ final List<HarnessScreen> scannerHarnessScreens = <HarnessScreen>[
     },
   ),
   HarnessScreen(
-    name: 'the Create tab placeholder',
-    build: () => Builder(
-      builder: (BuildContext context) {
-        final AppLocalizations l10n = AppLocalizations.of(context);
-        return PlaceholderTab(
-          title: l10n.navCreate,
-          message: l10n.placeholderCreateMessage,
-          icon: Icons.add_box_outlined,
-        );
-      },
-    ),
-    readableText: const <String, String>{
-      'en': 'Creating codes arrives in the next test build.',
-      'ar': 'يصل إنشاء الرموز في النسخة التجريبية التالية.',
-    },
-  ),
-  HarnessScreen(
     name: 'the History screen, empty (HIS-11)',
     build: () => _historyScreen(const <ScanRecord>[]),
     readableText: const <String, String>{
@@ -245,9 +232,8 @@ void _doNothing() {}
 
 /// The full Settings screen the ads/Pro/settings PR ships, for the
 /// accessibility and text-size harnesses (A11Y-1, A11Y-2, A11Y-4, LANG-6).
-/// Wrapped in `SettingsScope`, which provides the `ProState` and
-/// `AppVersionInfo` that plain `pumpApp` does not, the way
-/// `scannerHarnessScreens` wraps scanner screens in `ScannerScope`.
+///
+/// Wrapped in `SettingsScope`, the way the Settings tests pump it.
 final List<HarnessScreen> settingsHarnessScreens = <HarnessScreen>[
   HarnessScreen(
     name: 'the settings screen in its full form (SET-5)',
@@ -256,11 +242,63 @@ final List<HarnessScreen> settingsHarnessScreens = <HarnessScreen>[
   ),
 ];
 
+/// The generator PR's screens (GEN-1, STY-1, SAVE-1), for the accessibility
+/// and text-size harnesses.
+///
+/// A [GeneratorScope] stands in for the top-level [GeneratorState] provider
+/// `main.dart` builds, the same way [ScannerScope] stands in for
+/// [ScannerState] above. The type picker, one representative form (Wi-Fi,
+/// for its dropdown and its password reveal button) and the created-code
+/// screen are each their own entry, since each is a different screen to the
+/// user.
+final List<HarnessScreen> generatorHarnessScreens = <HarnessScreen>[
+  HarnessScreen(
+    name: 'the Create type picker (GEN-1)',
+    build: () =>
+        GeneratorScope(dao: MemoryRecordDao(), child: const CreateScreen()),
+    readableText: const <String, String>{
+      'en': 'Choose what to create',
+      'ar': 'اختر ما تريد إنشاءه',
+    },
+  ),
+  HarnessScreen(
+    name: 'the Wi-Fi Create form (GEN-5)',
+    build: () => GeneratorScope(
+      dao: MemoryRecordDao(),
+      initialType: ParsedType.wifi,
+      child: const Scaffold(body: CreateFormBody()),
+    ),
+    readableText: const <String, String>{
+      'en': 'Network name',
+      'ar': 'اسم الشبكة',
+    },
+  ),
+  HarnessScreen(
+    name: 'the created-code screen (STY-1, SAVE-1)',
+    build: () => GeneratorScope(
+      dao: MemoryRecordDao(),
+      imageDecoder: NoopImageDecoder(
+        result: const ImageDecodeResult(<CodeDetection>[
+          CodeDetection(payload: 'created code demo', symbology: 'qr'),
+        ]),
+      ),
+      initialType: ParsedType.text,
+      onCreated: (GeneratorState state) async {
+        state.updateText('created code demo');
+        await state.create();
+      },
+      child: const Scaffold(body: CreatedCodeView()),
+    ),
+    readableText: const <String, String>{'en': 'Save', 'ar': 'حفظ'},
+  ),
+];
+
 /// Every screen both harnesses run: the ones `test_app.dart` registers, the
-/// scanner PR's and the settings PR's.
+/// scanner PR's, the generator PR's and the settings PR's.
 List<HarnessScreen> get allHarnessScreens => <HarnessScreen>[
   ...harnessScreens,
   ...scannerHarnessScreens,
+  ...generatorHarnessScreens,
   ...settingsHarnessScreens,
 ];
 
