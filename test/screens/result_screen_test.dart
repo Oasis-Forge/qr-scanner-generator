@@ -8,6 +8,10 @@ import 'package:qrscanner/core/services/share_service.dart';
 import 'package:qrscanner/core/theme/app_theme.dart';
 import 'package:qrscanner/l10n/app_localizations.dart';
 import 'package:qrscanner/models/record_enums.dart';
+import 'package:qrscanner/screens/result/contact_section.dart';
+import 'package:qrscanner/screens/result/product_section.dart';
+import 'package:qrscanner/screens/result/result_actions.dart';
+import 'package:qrscanner/screens/result/wifi_section.dart';
 import 'package:qrscanner/screens/result_screen.dart';
 import 'package:qrscanner/screens/scanner/code_labels.dart';
 import 'package:qrscanner/screens/scanner/payload_text.dart';
@@ -30,17 +34,14 @@ void main() {
   group('ResultScreen (RES-1 to RES-3)', () {
     testWidgets(
       'RES-1: shows the type and format in words, the full content with '
-      'nothing cut, and Copy and Share',
+      'nothing cut, and Copy (primary) and Share',
       (WidgetTester tester) async {
         await pumpApp(tester, ResultScreen(outcome: _outcome()));
 
         expect(find.text('Link · QR code'), findsOneWidget);
         expect(find.text(longLink), findsOneWidget);
         final SelectableText content = tester.widget<SelectableText>(
-          find.descendant(
-            of: find.byKey(ResultScreen.contentKey),
-            matching: find.byType(SelectableText),
-          ),
+          find.byType(SelectableText),
         );
         expect(content.maxLines, isNull);
         expect(find.text('Copy'), findsOneWidget);
@@ -48,6 +49,23 @@ void main() {
         expect(find.text('Result'), findsOneWidget);
       },
     );
+
+    testWidgets('RES-1: the primary action is at least 1.4x '
+        'AppTheme.minTapTargetSize tall', (WidgetTester tester) async {
+      await pumpApp(tester, ResultScreen(outcome: _outcome()));
+
+      final Size primary = tester.getSize(
+        find.widgetWithText(FilledButton, 'Copy'),
+      );
+      expect(
+        primary.height,
+        greaterThanOrEqualTo(ResultPrimaryButton.minHeight - 0.01),
+      );
+      expect(
+        ResultPrimaryButton.minHeight,
+        greaterThanOrEqualTo(AppTheme.minTapTargetSize * 1.4 - 0.01),
+      );
+    });
 
     testWidgets(
       'LANG-5: in Arabic the type line is Arabic, the screen is right to '
@@ -67,9 +85,7 @@ void main() {
           TextDirection.rtl,
         );
         expect(
-          tester
-              .widget<PayloadText>(find.byKey(ResultScreen.contentKey))
-              .direction,
+          tester.widget<PayloadText>(find.byType(PayloadText)).direction,
           TextDirection.ltr,
         );
         expect(
@@ -96,9 +112,7 @@ void main() {
 
         expect(find.text('Text · QR code'), findsOneWidget);
         expect(
-          tester
-              .widget<PayloadText>(find.byKey(ResultScreen.contentKey))
-              .direction,
+          tester.widget<PayloadText>(find.byType(PayloadText)).direction,
           TextDirection.rtl,
         );
       },
@@ -135,7 +149,7 @@ void main() {
         final NoopClipboardService clipboard =
             app.services.clipboard as NoopClipboardService;
 
-        await tester.tap(find.byKey(ResultScreen.copyKey));
+        await tester.tap(find.widgetWithText(FilledButton, 'Copy'));
         await tester.pumpAndSettle();
 
         expect(clipboard.calls, <String>['copyText: $longLink']);
@@ -155,7 +169,7 @@ void main() {
         locale: const Locale('ar'),
       );
 
-      await tester.tap(find.byKey(ResultScreen.copyKey));
+      await tester.tap(find.widgetWithText(FilledButton, 'نسخ'));
       await tester.pumpAndSettle();
 
       expect(find.text('تم نسخ المحتوى'), findsOneWidget);
@@ -170,7 +184,7 @@ void main() {
           ResultScreen(outcome: _outcome()),
         );
 
-        await tester.tap(find.byKey(ResultScreen.shareKey));
+        await tester.tap(find.widgetWithText(OutlinedButton, 'Share'));
         await tester.pumpAndSettle();
 
         expect((app.services.share as NoopShareService).calls, <String>[
@@ -184,11 +198,11 @@ void main() {
     ) async {
       await pumpApp(tester, ResultScreen(outcome: _outcome()));
 
-      for (final Key key in <Key>[
-        ResultScreen.copyKey,
-        ResultScreen.shareKey,
+      for (final Finder finder in <Finder>[
+        find.widgetWithText(FilledButton, 'Copy'),
+        find.widgetWithText(OutlinedButton, 'Share'),
       ]) {
-        final Size size = tester.getSize(find.byKey(key));
+        final Size size = tester.getSize(finder);
         expect(size.width, greaterThanOrEqualTo(AppTheme.minTapTargetSize));
         expect(size.height, greaterThanOrEqualTo(AppTheme.minTapTargetSize));
       }
@@ -234,7 +248,7 @@ void main() {
         findsOneWidget,
       );
 
-      await tester.tap(find.byKey(ResultScreen.copyKey));
+      await tester.tap(find.widgetWithText(FilledButton, 'Copy'));
       await tester.pumpAndSettle();
       expect((app.services.clipboard as NoopClipboardService).calls, <String>[
         'copyText: $longLink',
@@ -249,19 +263,87 @@ void main() {
     });
   });
 
-  group('nothing happens without a tap (RES-2, SET-3)', () {
-    testWidgets(
-      'RES-2: opening a result opens no link, no system app, no share sheet, '
-      'and copies nothing while Copy on scan is off',
-      (WidgetTester tester) async {
-        final TestApp app = await _openThroughARoute(tester);
-        final AppServices services = app.services;
+  group('RES-4 to RES-13: each type opens its own section', () {
+    testWidgets('a Wi-Fi scan opens WifiSection', (WidgetTester tester) async {
+      await pumpApp(
+        tester,
+        ResultScreen(
+          outcome: _outcome(
+            payloadText: 'WIFI:T:WPA;S:Home;P:secret;;',
+            parsedType: ParsedType.wifi,
+          ),
+        ),
+      );
 
-        expect(find.byType(ResultScreen), findsOneWidget);
-        expect((services.linkOpener as NoopLinkOpener).calls, isEmpty);
-        expect((services.systemIntents as NoopSystemIntents).calls, isEmpty);
-        expect((services.share as NoopShareService).calls, isEmpty);
-        expect((services.clipboard as NoopClipboardService).calls, isEmpty);
+      expect(find.byType(WifiSection), findsOneWidget);
+    });
+
+    testWidgets('a contact scan opens ContactSection', (
+      WidgetTester tester,
+    ) async {
+      await pumpApp(
+        tester,
+        ResultScreen(
+          outcome: _outcome(
+            payloadText: 'BEGIN:VCARD\nVERSION:3.0\nFN:Ada\nEND:VCARD',
+            parsedType: ParsedType.contact,
+          ),
+        ),
+      );
+
+      expect(find.byType(ContactSection), findsOneWidget);
+    });
+
+    testWidgets('a product scan opens ProductSection', (
+      WidgetTester tester,
+    ) async {
+      await pumpApp(
+        tester,
+        ResultScreen(
+          outcome: _outcome(
+            payloadText: '4006381333931',
+            parsedType: ParsedType.product,
+            symbology: Symbology.ean13,
+          ),
+        ),
+      );
+
+      expect(find.byType(ProductSection), findsOneWidget);
+    });
+  });
+
+  group('nothing happens without a tap (RES-2, SET-3)', () {
+    testWidgets('RES-2: opening a link result opens no link, no system app, no '
+        'share sheet, and copies nothing while Copy on scan is off', (
+      WidgetTester tester,
+    ) async {
+      final TestApp app = await _openThroughARoute(tester);
+      final AppServices services = app.services;
+
+      expect(find.byType(ResultScreen), findsOneWidget);
+      expect((services.linkOpener as NoopLinkOpener).calls, isEmpty);
+      expect((services.systemIntents as NoopSystemIntents).calls, isEmpty);
+      expect((services.share as NoopShareService).calls, isEmpty);
+      expect((services.clipboard as NoopClipboardService).calls, isEmpty);
+    });
+
+    testWidgets(
+      'RES-2, RES-14: opening a Wi-Fi result asks canHandle once, and takes '
+      'no action itself',
+      (WidgetTester tester) async {
+        final NoopSystemIntents intents = NoopSystemIntents();
+        await pumpApp(
+          tester,
+          ResultScreen(
+            outcome: _outcome(
+              payloadText: 'WIFI:T:WPA;S:Home;P:secret;;',
+              parsedType: ParsedType.wifi,
+            ),
+          ),
+          services: AppServices.fakes().copyWith(systemIntents: intents),
+        );
+
+        expect(intents.calls, <String>['canHandle: wifiSettings']);
       },
     );
 

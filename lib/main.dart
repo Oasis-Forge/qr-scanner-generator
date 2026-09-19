@@ -15,9 +15,11 @@ import 'package:qrscanner/db/migrations/migrations.dart';
 import 'package:qrscanner/db/record_dao.dart';
 import 'package:qrscanner/l10n/app_localizations.dart';
 import 'package:qrscanner/screens/app_shell.dart';
+import 'package:qrscanner/core/services/device/custom_tabs_link_opener.dart';
 import 'package:qrscanner/core/services/device/flutter_clipboard_service.dart';
 import 'package:qrscanner/core/services/device/share_plus_service.dart';
 import 'package:qrscanner/services/app_services.dart';
+import 'package:qrscanner/services/device/android_system_intents.dart';
 import 'package:qrscanner/services/device/device_permission_service.dart';
 import 'package:qrscanner/services/device/haptic_scan_feedback.dart';
 import 'package:qrscanner/services/device/image_picker_photo_picker.dart';
@@ -90,11 +92,11 @@ Future<void> main() async {
 /// Every device capability the app will use, built once (`CLAUDE.md`).
 ///
 /// Real now: the camera scanner, image decoder, permissions, photo picker and
-/// scan feedback (**Scanner and permissions**: RUN-1, SCAN-1, SCAN-11), plus
-/// the clipboard and share sheet the result screen's Copy and Share need
-/// (RES-1). Still the no-op fake until their PR: system intents (RES-4), the
-/// link opener (LINK-8), saving a file (SAVE-2), ads, consent, billing and
-/// crash reports (ADS-1, PRIV-1, PRO-1, PRIV-3), and Wi-Fi (RES-5).
+/// scan feedback (RUN-1, SCAN-1, SCAN-11), the clipboard and share sheet
+/// (RES-1), the system hand-offs (RES-4, RES-6, RES-7) and the Custom Tabs
+/// link opener (LINK-8, RES-9). Still the no-op fake until their PR: saving a
+/// file (SAVE-2), ads, consent, billing and crash reports (ADS-1, PRIV-1,
+/// PRO-1, PRIV-3), and Wi-Fi joining (RES-5).
 AppServices _deviceServices(KeyValueStore store) {
   final PermissionService permissions = DevicePermissionService(store: store);
   return AppServices.fakes().copyWith(
@@ -105,6 +107,8 @@ AppServices _deviceServices(KeyValueStore store) {
     scanFeedback: const HapticScanFeedback(),
     clipboard: const FlutterClipboardService(),
     share: const SharePlusService(),
+    systemIntents: const AndroidSystemIntents(),
+    linkOpener: const CustomTabsLinkOpener(themeColor: AppTheme.seedColor),
   );
 }
 

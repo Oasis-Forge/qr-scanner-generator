@@ -1,3 +1,5 @@
+import '../parsers/product_parser.dart'
+    show hasValidGtinCheckDigit, isValidProductCode;
 import 'record_enums.dart';
 import 'scan_record.dart';
 
@@ -21,8 +23,13 @@ import 'scan_record.dart';
 /// taken for a link, and a link is never taken for text.
 ///
 /// 1. [isBinary], or nothing but whitespace: [ParsedType.unknown] (RES-13).
-/// 2. An EAN-13, EAN-8, UPC-A or UPC-E [symbology]: [ParsedType.product]
-///    (RES-9). ISBN is an EAN-13, so it lands here too.
+/// 2. An EAN-13, EAN-8, UPC-A or UPC-E [symbology] whose check digit is
+///    valid, or whose digits don't match the count that format encodes:
+///    [ParsedType.product] (RES-9). ISBN is an EAN-13, so it lands here
+///    too. A digit-for-digit match against the format's own length with the
+///    wrong check digit is not a product (`isValidProductCode`,
+///    `lib/parsers/product_parser.dart`, which the full parser shares so
+///    the two can never disagree about one).
 /// 3. A header, ignoring case and any leading whitespace or byte-order mark:
 ///    `WIFI:` is [ParsedType.wifi] (RES-4); `BEGIN:VCARD` and `MECARD:` are
 ///    [ParsedType.contact], `BEGIN:VEVENT` and `BEGIN:VCALENDAR` are
@@ -56,7 +63,7 @@ ParsedType classifyPayload(
   if (text.isEmpty) {
     return ParsedType.unknown;
   }
-  if (isProductSymbology(symbology)) {
+  if (isProductSymbology(symbology) && isValidProductCode(text, symbology)) {
     return ParsedType.product;
   }
   final String upper = text.toUpperCase();
@@ -119,7 +126,7 @@ Symbology symbologyFromDecoderName(String name) {
 /// stored payload has to be the number itself.
 Symbology typedSymbologyOf(String typed) {
   final String digits = typed.trim();
-  if (!_digitsOnly.hasMatch(digits) || !_hasValidGtinCheckDigit(digits)) {
+  if (!_digitsOnly.hasMatch(digits) || !hasValidGtinCheckDigit(digits)) {
     return Symbology.unknown;
   }
   return switch (digits.length) {
@@ -216,22 +223,6 @@ bool _isLink(String text) {
 /// or iCalendar header.
 String _withoutLeadingMark(String payload) =>
     payload.startsWith('﻿') ? payload.substring(1) : payload;
-
-/// The GS1 mod-10 check: from the right, the digits before the check digit
-/// are weighted 3, 1, 3, 1 ... (EAN-13, EAN-8, UPC-A).
-bool _hasValidGtinCheckDigit(String digits) {
-  if (digits.length < 2) {
-    return false;
-  }
-  var sum = 0;
-  var weight = 3;
-  for (var i = digits.length - 2; i >= 0; i--) {
-    sum += (digits.codeUnitAt(i) - 0x30) * weight;
-    weight = weight == 3 ? 1 : 3;
-  }
-  final int check = (10 - sum % 10) % 10;
-  return check == digits.codeUnitAt(digits.length - 1) - 0x30;
-}
 
 /// What stands in for a hidden secret in a one-line preview (DATA-5).
 const String maskedSecret = '••••••';

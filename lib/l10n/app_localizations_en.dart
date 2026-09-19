@@ -403,4 +403,182 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get actionRetry => 'Retry';
+
+  @override
+  String get copiedWhatPassword => 'the password';
+
+  @override
+  String get resultHandOffFailed => 'Could not open. Try again.';
+
+  @override
+  String get resultUnavailableWifiSettings =>
+      'Wi-Fi settings can\'t be opened on this device.';
+
+  @override
+  String get resultUnavailableContacts => 'No contacts app is installed.';
+
+  @override
+  String get resultUnavailableCalendar => 'No calendar app is installed.';
+
+  @override
+  String get resultUnavailableDialer => 'No phone app is installed.';
+
+  @override
+  String get resultUnavailableSms => 'No messaging app is installed.';
+
+  @override
+  String get resultUnavailableEmail => 'No email app is installed.';
+
+  @override
+  String get resultUnavailableBrowser => 'No browser is installed.';
+
+  @override
+  String get resultWifiNetworkNameLabel => 'Network name';
+
+  @override
+  String get resultWifiSecurityLabel => 'Security';
+
+  @override
+  String get resultWifiPasswordLabel => 'Password';
+
+  @override
+  String get resultWifiRevealPasswordTooltip => 'Show password';
+
+  @override
+  String get resultWifiHidePasswordTooltip => 'Hide password';
+
+  @override
+  String get resultWifiWepNotice =>
+      'Android can\'t join WEP networks from apps.';
+
+  @override
+  String get resultWifiPrimaryButton => 'Open Wi-Fi settings';
+
+  @override
+  String get resultWifiCopyPasswordButton => 'Copy password';
+
+  @override
+  String get resultWifiSecurityWpa => 'WPA';
+
+  @override
+  String get resultWifiSecurityWpa2 => 'WPA2';
+
+  @override
+  String get resultWifiSecurityWpa3 => 'WPA3';
+
+  @override
+  String get resultWifiSecurityWep => 'WEP';
+
+  @override
+  String get resultWifiSecurityNone => 'Open';
+
+  @override
+  String get resultContactNameLabel => 'Name';
+
+  @override
+  String get resultContactPhoneLabel => 'Phone';
+
+  @override
+  String get resultContactEmailLabel => 'Email';
+
+  @override
+  String get resultContactOrganisationLabel => 'Organisation';
+
+  @override
+  String get resultContactPrimaryButton => 'Add to contacts';
+
+  @override
+  String get resultEventTitleLabel => 'Title';
+
+  @override
+  String get resultEventStartLabel => 'Start';
+
+  @override
+  String get resultEventEndLabel => 'End';
+
+  @override
+  String get resultEventLocationLabel => 'Location';
+
+  @override
+  String get resultEventNotesLabel => 'Notes';
+
+  @override
+  String get resultEventAllDayNotice => 'All-day event.';
+
+  @override
+  String resultEventTimeUtc(String time) {
+    return '$time UTC';
+  }
+
+  @override
+  String resultEventTimeZoned(String time, String zone) {
+    return '$time ($zone)';
+  }
+
+  @override
+  String get resultUnavailableEventNoStart =>
+      'This event has no start time, so it can\'t be added.';
+
+  @override
+  String get resultEventPrimaryButton => 'Add to calendar';
+
+  @override
+  String get resultPhoneNumberLabel => 'Number';
+
+  @override
+  String get resultPhonePrimaryButton => 'Call';
+
+  @override
+  String get resultSmsNumberLabel => 'Number';
+
+  @override
+  String get resultSmsMessageLabel => 'Message';
+
+  @override
+  String get resultSmsPrimaryButton => 'Message';
+
+  @override
+  String get resultEmailToLabel => 'To';
+
+  @override
+  String get resultEmailSubjectLabel => 'Subject';
+
+  @override
+  String get resultEmailBodyLabel => 'Message';
+
+  @override
+  String get resultEmailPrimaryButton => 'Email';
+
+  @override
+  String get resultProductNumberLabel => 'Number';
+
+  @override
+  String get resultProductFormatLabel => 'Format';
+
+  @override
+  String get resultProductFormatEan13 => 'EAN-13';
+
+  @override
+  String get resultProductFormatEan8 => 'EAN-8';
+
+  @override
+  String get resultProductFormatUpcA => 'UPC-A';
+
+  @override
+  String get resultProductFormatUpcE => 'UPC-E';
+
+  @override
+  String get resultProductFormatIsbn => 'ISBN';
+
+  @override
+  String get resultProductSearchButton => 'Search the web';
+
+  @override
+  String get resultLocationLatitudeLabel => 'Latitude';
+
+  @override
+  String get resultLocationLongitudeLabel => 'Longitude';
+
+  @override
+  String get resultLocationNameLabel => 'Name';
 }

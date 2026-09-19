@@ -496,7 +496,11 @@ class ScannerState extends ChangeNotifier {
     });
     _listedKeys = const <String>{};
     _outcome = null;
-    await _resumeDetectionIfIdle();
+    if (_camera.isRunning) {
+      await _resumeDetectionIfIdle();
+    } else {
+      await _startCamera();
+    }
     _notify();
   }
 
@@ -638,6 +642,10 @@ class ScannerState extends ChangeNotifier {
       !_disposed &&
       _onScreen &&
       _inForeground &&
+      // A result is on top: the camera doesn't start underneath it (a typed
+      // or photo result would otherwise stream behind the result screen).
+      // [closeResult] starts it again.
+      _outcome == null &&
       (_phase == ScannerPhase.granted ||
           _phase == ScannerPhase.cameraUnavailable);
 

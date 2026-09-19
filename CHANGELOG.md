@@ -4,6 +4,25 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-09-19
+
+### Added
+- Results made for each kind of code:
+  - A Wi-Fi code shows the network, its security and a hidden password you can reveal, with "Open Wi-Fi settings" and "Copy password". Android can't join WEP networks from apps, and a WEP result says so.
+  - A contact or an event opens Android's own "add" screen, filled in exactly as the code has it. The app needs no access to your contacts or calendar.
+  - A phone number, text message or email opens the dialer, messaging or email app prefilled. Nothing is called or sent for you.
+  - A product barcode shows its number and format, with "Search the web".
+  - A code the app can't read as text shows "Binary data" with its size.
+- When no app on the phone can take an action, it shows greyed out with the reason, and Copy still works.
+- Links open in Custom Tabs, never inside the app.
+
+- Event times read in words in your language ("Thu, Oct 1, 2026 9:00 AM"), exactly as the code has them, with UTC or the time zone named when the code gives one.
+
+### Fixed
+- With "Copy on scan" on, the copy now shows its confirmation, like the Copy button does.
+- The camera no longer keeps running behind a result opened from a typed code or a photo, which wasted battery.
+- An event code with no start time shows no empty rows, and "Add to calendar" explains why it can't be used.
+
 ## [0.3.0] - 2026-09-19
 
 ### Added

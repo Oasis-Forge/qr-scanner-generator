@@ -540,5 +540,256 @@
   "actionRetry": "Retry",
   "@actionRetry": {
     "description": "Button that runs the failed action again, shown with errorSaveFailed."
+  },
+
+  "copiedWhatPassword": "the password",
+  "@copiedWhatPassword": {
+    "description": "SET-3, RES-4. Fills copiedSnackbar after a Wi-Fi password was copied."
+  },
+  "resultHandOffFailed": "Could not open. Try again.",
+  "@resultHandOffFailed": {
+    "description": "RES-6, RES-7, RES-9. Snackbar when a hand-off to a system app, or a web search, could not be started."
+  },
+  "resultUnavailableWifiSettings": "Wi-Fi settings can''t be opened on this device.",
+  "@resultUnavailableWifiSettings": {
+    "description": "RES-4, RES-14. One-line reason shown when Open Wi-Fi settings is disabled."
+  },
+  "resultUnavailableContacts": "No contacts app is installed.",
+  "@resultUnavailableContacts": {
+    "description": "RES-6, RES-14. One-line reason shown when Add to contacts is disabled."
+  },
+  "resultUnavailableCalendar": "No calendar app is installed.",
+  "@resultUnavailableCalendar": {
+    "description": "RES-6, RES-14. One-line reason shown when Add to calendar is disabled."
+  },
+  "resultUnavailableDialer": "No phone app is installed.",
+  "@resultUnavailableDialer": {
+    "description": "RES-7, RES-14. One-line reason shown when Call is disabled."
+  },
+  "resultUnavailableSms": "No messaging app is installed.",
+  "@resultUnavailableSms": {
+    "description": "RES-7, RES-14. One-line reason shown when Message is disabled on an SMS result."
+  },
+  "resultUnavailableEmail": "No email app is installed.",
+  "@resultUnavailableEmail": {
+    "description": "RES-7, RES-14. One-line reason shown when Email is disabled."
+  },
+  "resultUnavailableBrowser": "No browser is installed.",
+  "@resultUnavailableBrowser": {
+    "description": "RES-9, RES-14. One-line reason shown when Search the web is disabled."
+  },
+
+  "resultWifiNetworkNameLabel": "Network name",
+  "@resultWifiNetworkNameLabel": {
+    "description": "RES-4. Label above a Wi-Fi result's network name."
+  },
+  "resultWifiSecurityLabel": "Security",
+  "@resultWifiSecurityLabel": {
+    "description": "RES-4. Label above a Wi-Fi result's security type."
+  },
+  "resultWifiPasswordLabel": "Password",
+  "@resultWifiPasswordLabel": {
+    "description": "RES-4. Label above a Wi-Fi result's password, masked until revealed."
+  },
+  "resultWifiRevealPasswordTooltip": "Show password",
+  "@resultWifiRevealPasswordTooltip": {
+    "description": "RES-4, A11Y-1. Screen-reader label of the icon button that reveals the masked Wi-Fi password."
+  },
+  "resultWifiHidePasswordTooltip": "Hide password",
+  "@resultWifiHidePasswordTooltip": {
+    "description": "RES-4, A11Y-1. Screen-reader label of the same icon button once the password is revealed."
+  },
+  "resultWifiWepNotice": "Android can''t join WEP networks from apps.",
+  "@resultWifiWepNotice": {
+    "description": "RES-4. Note shown under a WEP network's fields."
+  },
+  "resultWifiPrimaryButton": "Open Wi-Fi settings",
+  "@resultWifiPrimaryButton": {
+    "description": "RES-4. Primary action of a Wi-Fi result."
+  },
+  "resultWifiCopyPasswordButton": "Copy password",
+  "@resultWifiCopyPasswordButton": {
+    "description": "RES-4. Secondary action that copies only the password, never the whole payload."
+  },
+  "resultWifiSecurityWpa": "WPA",
+  "@resultWifiSecurityWpa": {
+    "description": "RES-4. Value of the security field for a WPA network; a proper name."
+  },
+  "resultWifiSecurityWpa2": "WPA2",
+  "@resultWifiSecurityWpa2": {
+    "description": "RES-4. Value of the security field for a WPA2 network; a proper name."
+  },
+  "resultWifiSecurityWpa3": "WPA3",
+  "@resultWifiSecurityWpa3": {
+    "description": "RES-4. Value of the security field for a WPA3 network; a proper name."
+  },
+  "resultWifiSecurityWep": "WEP",
+  "@resultWifiSecurityWep": {
+    "description": "RES-4. Value of the security field for a WEP network; a proper name."
+  },
+  "resultWifiSecurityNone": "Open",
+  "@resultWifiSecurityNone": {
+    "description": "RES-4. Value of the security field for a network with no password."
+  },
+
+  "resultContactNameLabel": "Name",
+  "@resultContactNameLabel": {
+    "description": "RES-6. Label above a contact result's name."
+  },
+  "resultContactPhoneLabel": "Phone",
+  "@resultContactPhoneLabel": {
+    "description": "RES-6. Label above each of a contact result's phone numbers."
+  },
+  "resultContactEmailLabel": "Email",
+  "@resultContactEmailLabel": {
+    "description": "RES-6. Label above each of a contact result's email addresses."
+  },
+  "resultContactOrganisationLabel": "Organisation",
+  "@resultContactOrganisationLabel": {
+    "description": "RES-6. Label above a contact result's organisation."
+  },
+  "resultContactPrimaryButton": "Add to contacts",
+  "@resultContactPrimaryButton": {
+    "description": "RES-6. Primary action of a contact result."
+  },
+
+  "resultEventTitleLabel": "Title",
+  "@resultEventTitleLabel": {
+    "description": "RES-6. Label above an event result's title."
+  },
+  "resultEventStartLabel": "Start",
+  "@resultEventStartLabel": {
+    "description": "RES-6. Label above an event result's start, shown exactly as encoded (DATE-3)."
+  },
+  "resultEventEndLabel": "End",
+  "@resultEventEndLabel": {
+    "description": "RES-6. Label above an event result's end, shown exactly as encoded (DATE-3)."
+  },
+  "resultEventLocationLabel": "Location",
+  "@resultEventLocationLabel": {
+    "description": "RES-6. Label above an event result's location."
+  },
+  "resultEventNotesLabel": "Notes",
+  "@resultEventNotesLabel": {
+    "description": "RES-6. Label above an event result's notes."
+  },
+  "resultEventAllDayNotice": "All-day event.",
+  "@resultEventAllDayNotice": {
+    "description": "RES-6. Note shown on an event result whose start has no time part."
+  },
+  "resultEventTimeUtc": "{time} UTC",
+  "@resultEventTimeUtc": {
+    "description": "RES-6, DATE-3. An event time written in UTC, shown as encoded with UTC after it.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "Thu, Oct 1, 2026 9:00 AM"
+      }
+    }
+  },
+  "resultEventTimeZoned": "{time} ({zone})",
+  "@resultEventTimeZoned": {
+    "description": "RES-6, DATE-3. An event time written in a named time zone, shown as encoded with the zone name after it.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "Thu, Oct 1, 2026 9:00 AM"
+      },
+      "zone": {
+        "type": "String",
+        "example": "Europe/Paris"
+      }
+    }
+  },
+  "resultUnavailableEventNoStart": "This event has no start time, so it can''t be added.",
+  "@resultUnavailableEventNoStart": {
+    "description": "RES-6, RES-14. Why Add to calendar is disabled for an event code with no readable start time."
+  },
+  "resultEventPrimaryButton": "Add to calendar",
+  "@resultEventPrimaryButton": {
+    "description": "RES-6. Primary action of an event result."
+  },
+
+  "resultPhoneNumberLabel": "Number",
+  "@resultPhoneNumberLabel": {
+    "description": "RES-7. Label above a phone result's number."
+  },
+  "resultPhonePrimaryButton": "Call",
+  "@resultPhonePrimaryButton": {
+    "description": "RES-7. Primary action of a phone result; opens the dialer prefilled and never calls."
+  },
+  "resultSmsNumberLabel": "Number",
+  "@resultSmsNumberLabel": {
+    "description": "RES-7. Label above an SMS result's recipient number."
+  },
+  "resultSmsMessageLabel": "Message",
+  "@resultSmsMessageLabel": {
+    "description": "RES-7. Label above an SMS result's pre-filled message, when it has one."
+  },
+  "resultSmsPrimaryButton": "Message",
+  "@resultSmsPrimaryButton": {
+    "description": "RES-7. Primary action of an SMS result; opens the messaging app prefilled and never sends."
+  },
+  "resultEmailToLabel": "To",
+  "@resultEmailToLabel": {
+    "description": "RES-7. Label above an email result's recipient address."
+  },
+  "resultEmailSubjectLabel": "Subject",
+  "@resultEmailSubjectLabel": {
+    "description": "RES-7. Label above an email result's subject, when it has one."
+  },
+  "resultEmailBodyLabel": "Message",
+  "@resultEmailBodyLabel": {
+    "description": "RES-7. Label above an email result's body, when it has one."
+  },
+  "resultEmailPrimaryButton": "Email",
+  "@resultEmailPrimaryButton": {
+    "description": "RES-7. Primary action of an email result; opens the email app prefilled and never sends."
+  },
+
+  "resultProductNumberLabel": "Number",
+  "@resultProductNumberLabel": {
+    "description": "RES-9. Label above a product result's number."
+  },
+  "resultProductFormatLabel": "Format",
+  "@resultProductFormatLabel": {
+    "description": "RES-9. Label above a product result's format."
+  },
+  "resultProductFormatEan13": "EAN-13",
+  "@resultProductFormatEan13": {
+    "description": "RES-9. Value of the format field for an EAN-13 product; a proper name."
+  },
+  "resultProductFormatEan8": "EAN-8",
+  "@resultProductFormatEan8": {
+    "description": "RES-9. Value of the format field for an EAN-8 product; a proper name."
+  },
+  "resultProductFormatUpcA": "UPC-A",
+  "@resultProductFormatUpcA": {
+    "description": "RES-9. Value of the format field for a UPC-A product; a proper name."
+  },
+  "resultProductFormatUpcE": "UPC-E",
+  "@resultProductFormatUpcE": {
+    "description": "RES-9. Value of the format field for a UPC-E product; a proper name."
+  },
+  "resultProductFormatIsbn": "ISBN",
+  "@resultProductFormatIsbn": {
+    "description": "RES-9. Value of the format field for an ISBN, an EAN-13 whose digits mark it as one; a proper name."
+  },
+  "resultProductSearchButton": "Search the web",
+  "@resultProductSearchButton": {
+    "description": "RES-9, SET-4. Primary action of a product result; searches with the engine chosen in Settings."
+  },
+
+  "resultLocationLatitudeLabel": "Latitude",
+  "@resultLocationLatitudeLabel": {
+    "description": "RES-8. Label above a location result's latitude."
+  },
+  "resultLocationLongitudeLabel": "Longitude",
+  "@resultLocationLongitudeLabel": {
+    "description": "RES-8. Label above a location result's longitude."
+  },
+  "resultLocationNameLabel": "Name",
+  "@resultLocationNameLabel": {
+    "description": "RES-8. Label above a location result's optional place name."
   }
 }

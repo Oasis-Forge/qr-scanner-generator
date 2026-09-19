@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:qrscanner/models/payload_classifier.dart';
 import 'package:qrscanner/models/record_enums.dart';
 import 'package:qrscanner/models/scan_record.dart';
+import 'package:qrscanner/parsers/payload_parser.dart';
 
 /// The type a QR code carrying [payload] classifies as.
 ParsedType _qr(String payload) =>
@@ -154,6 +155,37 @@ void main() {
           reason: format.id,
         );
       }
+    });
+
+    test('a product symbology with the right digit count but a wrong check '
+        'digit is not a product (RES-9, shared with parsePayload via '
+        'isValidProductCode)', () {
+      // '5901234123457' is a valid EAN-13 (used above); flipping its last
+      // digit breaks the check digit.
+      expect(
+        classifyPayload('5901234123458', symbology: Symbology.ean13),
+        ParsedType.text,
+      );
+      // A valid UPC-A with its check digit flipped.
+      expect(
+        classifyPayload('036000291453', symbology: Symbology.upcA),
+        ParsedType.text,
+      );
+    });
+
+    test('a product symbology whose digit count does not match the format is '
+        'still trusted, check digit unchecked (RES-9)', () {
+      // Same 13-digit payload as the loop above, under formats whose own
+      // length (8 or 12) it doesn't match: still a product, since the
+      // check digit is only verified when the length lines up.
+      expect(
+        classifyPayload('5901234123457', symbology: Symbology.ean8),
+        ParsedType.product,
+      );
+      expect(
+        classifyPayload('5901234123457', symbology: Symbology.upcA),
+        ParsedType.product,
+      );
     });
 
     test('the same digits in a QR code or Code 128 are text (RES-9)', () {
@@ -317,6 +349,42 @@ void main() {
     test('never touches a payload of another type', () {
       const String link = 'https://example.com/?P:secret;x';
       expect(maskSensitive(link, ParsedType.url), link);
+    });
+  });
+
+  group('agrees with parsePayload (lib/parsers/payload_parser.dart)', () {
+    test('the full parser never names a different type than this classifier '
+        'does, for every kind this file exercises', () {
+      const List<(String, Symbology)> samples = <(String, Symbology)>[
+        ('https://example.com', Symbology.qr),
+        ('javascript:alert(1)', Symbology.qr),
+        ('WIFI:T:WPA;S:Home;P:secret;;', Symbology.qr),
+        ('BEGIN:VCARD\nFN:Ada\nEND:VCARD', Symbology.qr),
+        ('MECARD:N:Lovelace,Ada;TEL:+441234;;', Symbology.qr),
+        (
+          'BEGIN:VEVENT\nSUMMARY:Launch\nDTSTART:20261113T090000\nEND:VEVENT',
+          Symbology.qr,
+        ),
+        ('tel:+15551234567', Symbology.qr),
+        ('SMSTO:+15551234567:Running late', Symbology.qr),
+        ('mailto:someone@example.com?subject=Hi', Symbology.qr),
+        ('MATMSG:TO:someone@example.com;SUB:Hi;BODY:Hello;;', Symbology.qr),
+        ('someone@example.com', Symbology.qr),
+        ('geo:37.786971,-122.399677', Symbology.qr),
+        ('Hello, world', Symbology.qr),
+        ('', Symbology.qr),
+        // The check-digit gate both share (isValidProductCode):
+        ('5901234123457', Symbology.ean13),
+        ('5901234123458', Symbology.ean13),
+        ('5901234123457', Symbology.ean8),
+      ];
+      for (final (String payload, Symbology symbology) in samples) {
+        expect(
+          parsePayload(payload, symbology: symbology, isBinary: false).type,
+          classifyPayload(payload, symbology: symbology),
+          reason: '$symbology "$payload"',
+        );
+      }
     });
   });
 }
