@@ -5,6 +5,7 @@ description: Privacy policy and project documents for the QR Scanner + Generator
 theme: jekyll-theme-primer
 # The documents here are for the repository, not the published site.
 exclude:
+  - HANDOFF.md
   - PRODUCT_RULES.md
   - RELEASING.md
   - ROADMAP.md

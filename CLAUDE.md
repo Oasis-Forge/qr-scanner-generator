@@ -61,6 +61,7 @@ Data flows one way: screen → state → storage/service. A write lands first, t
 - `docs/PRODUCT_RULES.md`: behavior rules with IDs. Read the relevant section before implementing or testing a feature.
 - `docs/research/competitor-analysis.md`: what the competitor does. Read before `/spec`.
 - `docs/research/technical-constraints.md`: Flutter-only package plan, Play policy, spikes. Read before `/spec` and before adding a plugin.
+- `docs/HANDOFF.md`: where the project stands, what is waiting on a person, and the traps. Read when picking the project up.
 - `docs/RELEASING.md`: signing, secrets, store release steps.
 - `docs/STACK_NOTES.md`: stack commands, architecture that worked, traps, device drill.
 
