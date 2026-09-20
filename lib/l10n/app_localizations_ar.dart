@@ -318,12 +318,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get languageSystemDefault => 'حسب لغة النظام';
 
   @override
-  String get languageEnglish => 'English';
-
-  @override
-  String get languageArabic => 'العربية';
-
-  @override
   String get historyHeaderToday => 'اليوم';
 
   @override

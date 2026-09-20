@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:provider/provider.dart';
@@ -39,8 +39,18 @@ const double _sizeTolerance = 0.01;
 ///
 /// It reads `AppLocalizations.supportedLocales`, so a language a translation PR
 /// adds joins the harness by itself, which is what LANG-6 asks for: the main
-/// screens are rendered in *every* language.
+/// screens are rendered in *every* language, because how long a label runs is
+/// exactly what differs between them.
 List<Locale> get harnessLocales => AppLocalizations.supportedLocales;
+
+/// The languages the accessibility harness runs (LANG-6, amended 2026-09-21).
+///
+/// What that harness checks — that every control has a screen-reader name and
+/// a large enough target — is the same whatever language the app is in, so
+/// running it in all twenty-one would re-check one fact twenty-one ways for
+/// several minutes. English and Arabic keep a left-to-right and a
+/// right-to-left layout in the set (LANG-5).
+const List<Locale> accessibilityLocales = <Locale>[Locale('en'), Locale('ar')];
 
 /// One screen the shared harness checks.
 class HarnessScreen {
@@ -56,23 +66,18 @@ class HarnessScreen {
   /// Builds the screen: a new instance per test, so nothing leaks between them.
   final Widget Function() build;
 
-  /// A string the user must be able to read on this screen, by language code.
+  /// A string the user must be able to read on this screen, named as the
+  /// message it comes from rather than spelled out per language.
   ///
   /// It keeps the checks honest: a harness that pumped a blank frame would
-  /// otherwise pass every one of them.
-  final Map<String, String> readableText;
+  /// otherwise pass every one of them. Taking it from [AppLocalizations]
+  /// means a new language needs nothing here — twenty-one languages across
+  /// seventeen screens would be over three hundred strings to keep by hand,
+  /// and every one of them a chance to drift from what the screen shows.
+  final String Function(AppLocalizations l10n) readableText;
 
-  /// The string this screen must show in [languageCode].
-  String textIn(String languageCode) {
-    final String? text = readableText[languageCode];
-    if (text == null) {
-      fail(
-        'LANG-6: $name has no expected text for "$languageCode". Add one to '
-        'harnessScreens so the harness covers the new language.',
-      );
-    }
-    return text;
-  }
+  /// The string this screen must show in [locale].
+  String textIn(Locale locale) => readableText(lookupAppLocalizations(locale));
 }
 
 /// Every screen the app has today, for the accessibility and text-size
@@ -84,7 +89,8 @@ final List<HarnessScreen> harnessScreens = <HarnessScreen>[
   HarnessScreen(
     name: 'the settings screen',
     build: () => const SettingsScreen(),
-    readableText: const <String, String>{'en': 'GENERAL', 'ar': 'عام'},
+    readableText: (AppLocalizations l10n) =>
+        l10n.settingsGroupGeneral.toUpperCase(),
   ),
 ];
 

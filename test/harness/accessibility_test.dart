@@ -20,7 +20,7 @@ import 'harness_screens.dart';
 /// the message without a debugger.
 void main() {
   for (final HarnessScreen screen in allHarnessScreens) {
-    for (final Locale locale in harnessLocales) {
+    for (final Locale locale in accessibilityLocales) {
       for (final double textScale in harnessTextScales) {
         final String where =
             '${screen.name} in ${locale.languageCode} at '
@@ -36,7 +36,7 @@ void main() {
             textScale: textScale,
           );
 
-          expect(find.text(screen.textIn(locale.languageCode)), findsOneWidget);
+          expect(find.text(screen.textIn(locale)), findsOneWidget);
           await expectEveryIconHasALabel(tester);
         });
 
@@ -50,7 +50,7 @@ void main() {
             textScale: textScale,
           );
 
-          expect(find.text(screen.textIn(locale.languageCode)), findsOneWidget);
+          expect(find.text(screen.textIn(locale)), findsOneWidget);
           await expectTapTargetsAtLeast48dp(tester);
         });
       }

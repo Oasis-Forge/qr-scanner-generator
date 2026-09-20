@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../../l10n/languages.dart';
 import '../../state/settings_state.dart';
 import 'settings_rows.dart';
 
@@ -31,12 +32,6 @@ class GeneralSection extends StatelessWidget {
   /// The language choice that follows the device language (LANG-1).
   static const Key systemLanguageKey = Key('settings.language.system');
 
-  /// The English language choice (LANG-1).
-  static const Key englishLanguageKey = Key('settings.language.en');
-
-  /// The Arabic language choice (LANG-1).
-  static const Key arabicLanguageKey = Key('settings.language.ar');
-
   /// The sound-on-scan switch (SET-2).
   static const Key soundOnScanKey = Key('settings.sound_on_scan');
 
@@ -46,11 +41,10 @@ class GeneralSection extends StatelessWidget {
   /// The copy-on-scan switch (SET-3).
   static const Key copyOnScanKey = Key('settings.copy_on_scan');
 
-  /// The locale the English choice sets (LANG-1).
+  /// The locale the English choice sets (LANG-1). Kept because English is the
+  /// fallback every other part of the app names explicitly; the rest of the
+  /// languages come from [appLanguages].
   static const Locale english = Locale('en');
-
-  /// The locale the Arabic choice sets (LANG-1).
-  static const Locale arabic = Locale('ar');
 
   @override
   Widget build(BuildContext context) {
@@ -96,16 +90,18 @@ class GeneralSection extends StatelessWidget {
               value: null,
               label: l10n.languageSystemDefault,
             ),
-            _Choice<Locale?>(
-              buttonKey: englishLanguageKey,
-              value: english,
-              label: l10n.languageEnglish,
-            ),
-            _Choice<Locale?>(
-              buttonKey: arabicLanguageKey,
-              value: arabic,
-              label: l10n.languageArabic,
-            ),
+            // Every language the app has, each in its own name and never
+            // translated, so it can be found whatever the app is showing
+            // (LANG-1). Built from the one list in `lib/l10n/languages.dart`
+            // rather than spelled out, so adding a language is an ARB file
+            // and a line there.
+            for (final MapEntry<String, String> language
+                in appLanguages.entries)
+              _Choice<Locale?>(
+                buttonKey: Key(languageChoiceKey(language.key)),
+                value: Locale(language.key),
+                label: language.value,
+              ),
           ],
         ),
         const SizedBox(height: 8),

@@ -306,12 +306,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageSystemDefault => 'System default';
 
   @override
-  String get languageEnglish => 'English';
-
-  @override
-  String get languageArabic => 'العربية';
-
-  @override
   String get historyHeaderToday => 'Today';
 
   @override

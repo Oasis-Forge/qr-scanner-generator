@@ -18,13 +18,19 @@ class SettingsSectionHeader extends StatelessWidget {
       padding: const EdgeInsetsDirectional.only(bottom: 10),
       child: Row(
         children: <Widget>[
-          Semantics(
-            header: true,
-            child: Text(
-              title.toUpperCase(),
-              style: AppTheme.mono(
-                size: 10,
-                color: theme.colorScheme.onSurfaceVariant,
+          // Flexible, not a bare Text: a long group name in a language that
+          // compounds — Russian's "Конфиденциальность" — ran 32 dp past the
+          // screen at 2.0× text (LANG-6). It wraps now instead of clipping,
+          // and the rule keeps whatever width is left.
+          Flexible(
+            child: Semantics(
+              header: true,
+              child: Text(
+                title.toUpperCase(),
+                style: AppTheme.mono(
+                  size: 10,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
           ),
