@@ -16,7 +16,7 @@ flutter run
 - [Roadmap](docs/ROADMAP.md): phases and what's done
 - [Product rules](docs/PRODUCT_RULES.md): how the app behaves, with rule IDs
 - [Releasing](docs/RELEASING.md): versions, signing, stores
-- [Privacy policy](https://oasis-forge.github.io/qr-scanner-generator/privacy/) (`docs/privacy/index.html`)
+- [Privacy policy](https://oasis-forge.github.io/qr-scanner-generator/privacy-policy/) (`docs/privacy-policy/index.html`)
 - [Changelog](CHANGELOG.md)
 
 ## Development

@@ -37,7 +37,7 @@ Set up before the first feature, while it's cheap.
 - [ ] `main` ruleset: PR required, the CI checks required, no force pushes or deletion (`docs/RELEASING.md`)
 - [x] Every merged PR is a release: the CI version check, then a tag and a draft GitHub Release on merge. `v0.1.0` is the first (tagged 2026-09-16).
 - [x] The release workflow runs once without secrets (unsigned artifacts, nothing published): it ran on the `v0.1.0` merge, 2026-09-16
-- [x] Privacy policy served by GitHub Pages at `https://oasis-forge.github.io/qr-scanner-generator/privacy/` (`docs/privacy/index.html`), 2026-09-20
+- [x] Privacy policy served by GitHub Pages at `https://oasis-forge.github.io/qr-scanner-generator/privacy-policy/` (`docs/privacy-policy/index.html`), 2026-09-20
 - [x] Re-check package versions on pub.dev and run the licence check (S7); each version is pinned when its feature adds it (`docs/research/technical-constraints.md` → Spike results, 2026-09-16)
 - [x] Spikes S1 (virtual-scene scanning; answered 2026-09-17), S2 (`analyzeImage` on API 36/37), S3 (`flutter_zxing` from the OneDrive path) and S8 (camera permission states), plus the desk spikes S11 (Public Suffix List source) and S13 (barcode PNG rendering). Book real phones for S5 and S6 on Sep 28 – Oct 2. S2, S3, S8, S11 and S13 answered 2026-09-16 (`docs/research/technical-constraints.md` → Spike results).
 - [ ] Accounts:
