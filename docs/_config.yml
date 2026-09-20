@@ -1,0 +1,12 @@
+# GitHub Pages serves this folder (Settings → Pages → main /docs), which is
+# how the privacy policy the app links to (SET-6) is published.
+title: QR Scanner + Generator app
+description: Privacy policy and project documents for the QR Scanner + Generator Android app.
+theme: jekyll-theme-primer
+# The documents here are for the repository, not the published site.
+exclude:
+  - PRODUCT_RULES.md
+  - RELEASING.md
+  - ROADMAP.md
+  - STACK_NOTES.md
+  - research
