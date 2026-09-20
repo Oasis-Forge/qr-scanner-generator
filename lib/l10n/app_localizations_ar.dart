@@ -49,6 +49,9 @@ class AppLocalizationsAr extends AppLocalizations {
       'تصل قائمة السجل في النسخة التجريبية التالية. عمليات المسح محفوظة من الآن على هذا الهاتف.';
 
   @override
+  String get scanReadyStatus => 'جاهز';
+
+  @override
   String get scanTargetHint => 'وجّه الكاميرا نحو رمز';
 
   @override

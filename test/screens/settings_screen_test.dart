@@ -27,6 +27,7 @@ import 'package:qrscanner/state/settings_state.dart';
 import 'package:qrscanner/state/success_counts.dart';
 
 import '../helpers/fake_stores.dart';
+import '../helpers/test_app.dart';
 
 /// The Settings tab, driven through the shell that ships (`QrScannerApp`): the
 /// providers, the language resolution and the themes are the real ones, and
@@ -48,8 +49,9 @@ void main() {
         expect(find.text('العربية'), findsOneWidget);
         // "System default" is one choice in each switcher.
         expect(find.text('System default'), findsNWidgets(2));
-        // The screen's title and its bottom-bar label.
-        expect(find.text('Settings'), findsNWidgets(2));
+        // The screen's own title; the rail says the same word in capitals.
+        expect(find.text('Settings'), findsOneWidget);
+        expect(find.text('SETTINGS'), findsOneWidget);
       });
 
       testWidgets(
@@ -71,24 +73,34 @@ void main() {
       );
 
       testWidgets(
-        'SET-1: choosing Dark stores the theme and repaints the app dark',
+        'SET-1: the app opens on its own chassis, and choosing Light stores '
+        'that and repaints the app light',
         (WidgetTester tester) async {
           final _Harness harness = await _pumpSettings(tester);
-          expect(_brightnessOnScreen(tester), Brightness.light);
-
-          await _tapShown(tester, find.byKey(GeneralSection.darkThemeKey));
-          await tester.pumpAndSettle();
-
+          // Dark whatever the phone says: the chassis is the app's own.
           expect(harness.settings.themeMode, ThemeMode.dark);
-          expect(
-            harness.store.writes,
-            contains('set settings.theme_mode=dark'),
-          );
           expect(_brightnessOnScreen(tester), Brightness.dark);
-          // The chosen option is not colour alone: it carries a tick (A11Y-6).
           expect(
             find.descendant(
               of: find.byKey(GeneralSection.darkThemeKey),
+              matching: find.byIcon(Icons.check),
+            ),
+            findsOneWidget,
+          );
+
+          await _tapShown(tester, find.byKey(GeneralSection.lightThemeKey));
+          await tester.pumpAndSettle();
+
+          expect(harness.settings.themeMode, ThemeMode.light);
+          expect(
+            harness.store.writes,
+            contains('set settings.theme_mode=light'),
+          );
+          expect(_brightnessOnScreen(tester), Brightness.light);
+          // The chosen option is not colour alone: it carries a tick (A11Y-6).
+          expect(
+            find.descendant(
+              of: find.byKey(GeneralSection.lightThemeKey),
               matching: find.byIcon(Icons.check),
             ),
             findsOneWidget,
@@ -142,7 +154,7 @@ void main() {
           expect(harness.settings.localeOverride, const Locale('ar'));
           expect(harness.store.writes, contains('set settings.language=ar'));
           expect(find.text('اللغة'), findsOneWidget);
-          // The bottom bar follows too, and Settings stays the open tab.
+          // The rail follows too, and Settings stays the open tab.
           expect(find.text('الإعدادات'), findsNWidgets(2));
           expect(_directionOnScreen(tester), TextDirection.rtl);
         },
@@ -154,11 +166,11 @@ void main() {
           final _Harness harness = await _pumpSettings(tester);
           harness.store.failingKeys.add(SettingsState.themeModeKey);
 
-          await _tapShown(tester, find.byKey(GeneralSection.darkThemeKey));
+          await _tapShown(tester, find.byKey(GeneralSection.lightThemeKey));
           await tester.pumpAndSettle();
 
-          expect(harness.settings.themeMode, ThemeMode.system);
-          expect(_brightnessOnScreen(tester), Brightness.light);
+          expect(harness.settings.themeMode, ThemeMode.dark);
+          expect(_brightnessOnScreen(tester), Brightness.dark);
           expect(find.text('Nothing was saved. Try again.'), findsOneWidget);
 
           // Let the snackbar time out, so no timer is left pending.
@@ -332,10 +344,10 @@ void main() {
         'top to bottom', (WidgetTester tester) async {
       await _pumpSettings(tester);
 
-      final double general = tester.getTopLeft(find.text('General')).dy;
-      final double privacy = tester.getTopLeft(find.text('Privacy')).dy;
-      final double pro = tester.getTopLeft(find.text('Pro')).dy;
-      final double about = tester.getTopLeft(find.text('About')).dy;
+      final double general = tester.getTopLeft(find.text('GENERAL')).dy;
+      final double privacy = tester.getTopLeft(find.text('PRIVACY')).dy;
+      final double pro = tester.getTopLeft(find.text('PRO')).dy;
+      final double about = tester.getTopLeft(find.text('ABOUT')).dy;
 
       expect(general, lessThan(privacy));
       expect(privacy, lessThan(pro));
@@ -403,13 +415,14 @@ void main() {
           reason: '$label must be announced by its own name',
         );
       }
-      // The chosen option announces that it is the chosen one.
+      // The chosen option announces that it is the chosen one: the app's own
+      // chassis to begin with (SET-1).
       expect(
-        tester.getSemantics(find.byKey(GeneralSection.systemThemeKey)),
+        tester.getSemantics(find.byKey(GeneralSection.darkThemeKey)),
         isSemantics(isSelected: true),
       );
       expect(
-        tester.getSemantics(find.byKey(GeneralSection.darkThemeKey)),
+        tester.getSemantics(find.byKey(GeneralSection.systemThemeKey)),
         isSemantics(isSelected: false),
       );
       semantics.dispose();
@@ -482,6 +495,13 @@ Future<_Harness> _pumpSettings(
     tester.platformDispatcher.localesTestValue = deviceLanguages;
     addTearDown(tester.platformDispatcher.clearLocalesTestValue);
   }
+  // The phone this app is drawn for, the same surface `pumpApp` uses, so a
+  // control sits where it would on a phone rather than on a wide desktop
+  // window.
+  tester.view.devicePixelRatio = 1;
+  tester.view.physicalSize = phoneSurfaceSize;
+  addTearDown(tester.view.reset);
+
   final FakeKeyValueStore store = FakeKeyValueStore(stored);
   final SettingsState settings = SettingsState(store);
   await settings.load();
@@ -549,7 +569,28 @@ TextDirection _directionOnScreen(WidgetTester tester) =>
 /// Scrolls [finder] into view, then taps it: Settings is taller than the test
 /// surface, and a tap below its bottom edge would land on nothing.
 Future<void> _tapShown(WidgetTester tester, Finder finder) async {
-  await tester.ensureVisible(finder);
-  await tester.pumpAndSettle();
+  // Settings is taller than the screen, so a control below the fold is
+  // scrolled to first — but only then. Scrolling one that is already on
+  // screen would park it under the app bar, where a tap lands on the bar.
+  if (!_isTappable(tester, finder)) {
+    await tester.ensureVisible(finder);
+    await tester.pumpAndSettle();
+    final double under = _appBarBottom - tester.getRect(finder).top;
+    if (under > 0) {
+      await tester.drag(find.byType(Scrollable), Offset(0, under + 8));
+      await tester.pumpAndSettle();
+    }
+  }
   await tester.tap(finder);
+}
+
+/// Where a control has to start to be clear of the app bar above it.
+const double _appBarBottom = kToolbarHeight;
+
+/// Whether [finder]'s control is wholly on screen and clear of the app bar,
+/// so a tap on its centre reaches it.
+bool _isTappable(WidgetTester tester, Finder finder) {
+  final Size screen = tester.view.physicalSize / tester.view.devicePixelRatio;
+  final Rect rect = tester.getRect(finder);
+  return rect.top >= _appBarBottom && rect.bottom <= screen.height;
 }

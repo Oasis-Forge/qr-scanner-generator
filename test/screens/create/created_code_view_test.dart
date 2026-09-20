@@ -120,7 +120,7 @@ void main() {
       await pumpCreated(tester, state);
 
       expect(find.byKey(CreatedCodeView.imageKey), findsOneWidget);
-      expect(find.text('Text · QR code'), findsOneWidget);
+      expect(find.text('TEXT · QR CODE'), findsOneWidget);
       expect(find.text('hello'), findsOneWidget);
       expect(find.byKey(CreatedCodeView.checkFailedKey), findsNothing);
 

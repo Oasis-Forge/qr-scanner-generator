@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -48,6 +47,7 @@ import 'package:qrscanner/state/success_counts.dart';
 /// opened the app shows [DatabaseUnavailableApp] instead of crashing.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  _registerFontLicences();
   await _layOutUnderTheSystemBars();
 
   try {
@@ -124,6 +124,20 @@ Future<void> main() async {
 /// The AdMob banner unit every ADS-1 slot shows in a release build. Ad unit
 /// IDs aren't secrets; the matching app ID is in `AndroidManifest.xml`.
 const String bannerAdUnitId = 'ca-app-pub-8287765177319119/9242359295';
+
+/// Puts the bundled typefaces' licences on Flutter's own licence page, which
+/// Settings opens (SET-7). Both are the SIL Open Font Licence 1.1.
+void _registerFontLicences() {
+  LicenseRegistry.addLicense(() async* {
+    for (final (String font, String path) in <(String, String)>[
+      ('Space Grotesk', 'assets/fonts/SpaceGrotesk-OFL.txt'),
+      ('IBM Plex Mono', 'assets/fonts/IBMPlexMono-OFL.txt'),
+    ]) {
+      final String licence = await rootBundle.loadString(path);
+      yield LicenseEntryWithLineBreaks(<String>[font], licence);
+    }
+  });
+}
 
 AppServices _deviceServices(KeyValueStore store) {
   final PermissionService permissions = DevicePermissionService(store: store);
@@ -290,16 +304,7 @@ class QrScannerApp extends StatelessWidget {
           },
         ),
       ],
-      // The device's own palette, where Android offers one (SET-1). The schemes
-      // are null until the platform answers, and on any device below Android 12,
-      // and the theme falls back to the app's seed colour.
-      child: DynamicColorBuilder(
-        builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) =>
-            _MaterialShell(
-              lightDynamic: lightDynamic,
-              darkDynamic: darkDynamic,
-            ),
-      ),
+      child: const _MaterialShell(),
     );
   }
 }
@@ -307,10 +312,7 @@ class QrScannerApp extends StatelessWidget {
 /// The [MaterialApp] itself, below the providers so it can watch the settings:
 /// a theme or language change repaints without a restart (SET-1, LANG-1).
 class _MaterialShell extends StatelessWidget {
-  const _MaterialShell({this.lightDynamic, this.darkDynamic});
-
-  final ColorScheme? lightDynamic;
-  final ColorScheme? darkDynamic;
+  const _MaterialShell();
 
   @override
   Widget build(BuildContext context) {
@@ -329,8 +331,8 @@ class _MaterialShell extends StatelessWidget {
       // "follows the device language" into "and falls back to English".
       locale: settings.localeOverride,
       localeListResolutionCallback: _resolveAppLocale,
-      theme: AppTheme.light(dynamicScheme: lightDynamic),
-      darkTheme: AppTheme.dark(dynamicScheme: darkDynamic),
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
       themeMode: settings.themeMode,
       home: const AppShell(),
     );

@@ -44,14 +44,15 @@ void main() {
         ),
       );
 
-      expect(find.text('Today'), findsOneWidget);
-      expect(find.text('Yesterday'), findsOneWidget);
+      // A day is labelled in the app's monospaced voice, in capitals.
+      expect(find.text('TODAY'), findsOneWidget);
+      expect(find.text('YESTERDAY'), findsOneWidget);
       expect(
-        find.text(intl.DateFormat.EEEE('en').format(weekday.day)),
+        find.text(intl.DateFormat.EEEE('en').format(weekday.day).toUpperCase()),
         findsOneWidget,
       );
       expect(
-        find.text(intl.DateFormat.yMMMMd('en').format(date.day)),
+        find.text(intl.DateFormat.yMMMMd('en').format(date.day).toUpperCase()),
         findsOneWidget,
       );
     },

@@ -68,5 +68,4 @@ Data flows one way: screen → state → storage/service. A write lands first, t
 - If the repo is public: never commit secrets or personal data, and never print secrets in workflows.
 - Store IDs are permanent after the first upload and carry no personal names: `com.oasisforge.qrscanner`.
 - Quote paths in shell commands; project paths may contain spaces. The repo sits under OneDrive: if native (FFI) builds break there, move it out rather than patching the build.
-- `dynamic_color` stays on 1.9.0: 2.x returns `material_ui` color schemes that `ThemeData` rejects (found 2026-09-14).
 - `adb` isn't on PATH: use `$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe`. The emulator is `Medium_Phone` (API 37, Play Store image, virtual-scene back camera) at `emulator-5554`; the competitor app is installed there for research.

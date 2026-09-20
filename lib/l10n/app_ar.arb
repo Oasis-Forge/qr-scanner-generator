@@ -53,6 +53,7 @@
     "description": "SCAN-1, DATA-4. Body of the History tab until the list ships. Scans are written from this build on, so it says they are kept, and only on the phone."
   },
 
+  "scanReadyStatus": "جاهز",
   "scanTargetHint": "وجّه الكاميرا نحو رمز",
   "@scanTargetHint": {
     "description": "SCAN-4. One line on the live scanner, under the square target. Detection is automatic: there is no shutter to press."

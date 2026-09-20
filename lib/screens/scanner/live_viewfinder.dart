@@ -81,7 +81,12 @@ class _LiveViewfinderState extends State<LiveViewfinder> {
                 onScaleEnd: (ScaleEndDetails details) {
                   _pinchBaseScale = null;
                 },
-                child: CustomPaint(painter: _TargetPainter(target)),
+                child: CustomPaint(
+                  painter: _TargetPainter(
+                    target: target,
+                    signal: AppColors.read(context).signal,
+                  ),
+                ),
               ),
               _Controls(
                 scanner: scanner,
@@ -162,7 +167,6 @@ class _Controls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context);
-    final ThemeData theme = Theme.of(context);
     final bool busy = scanner.isBusy;
 
     return SafeArea(
@@ -170,67 +174,67 @@ class _Controls extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsetsDirectional.all(8),
-            child: Align(
-              alignment: AlignmentDirectional.topEnd,
-              child: scanner.showsTorchButton
-                  ? _TorchButton(
-                      isOn: scanner.isTorchOn,
-                      onPressed: () => unawaited(scanner.toggleTorch()),
-                      panelColor: panelColor,
-                    )
-                  : const SizedBox.square(dimension: AppTheme.minTapTargetSize),
+            padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 8, 0),
+            child: Row(
+              children: <Widget>[
+                _ReadyMark(label: l10n.scanReadyStatus),
+                const Spacer(),
+                if (scanner.showsTorchButton)
+                  _TorchButton(
+                    isOn: scanner.isTorchOn,
+                    onPressed: () => unawaited(scanner.toggleTorch()),
+                  )
+                else
+                  const SizedBox.square(dimension: AppTheme.minTapTargetSize),
+              ],
             ),
           ),
           // The target shows through here; the gesture layer below takes the
           // pinch and the double-tap.
           const Expanded(child: IgnorePointer(child: SizedBox.expand())),
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 16),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: panelColor,
-                borderRadius: const BorderRadius.all(Radius.circular(24)),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: panelColor,
+              border: Border(
+                top: BorderSide(color: AppColors.read(context).hairline),
               ),
-              child: Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Text(
-                      l10n.scanTargetHint,
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        color: Colors.white,
+            ),
+            child: Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(16, 14, 16, 16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Text(
+                    l10n.scanTargetHint,
+                    textAlign: TextAlign.center,
+                    style: AppTheme.mono(size: 11, color: Colors.white70),
+                  ),
+                  if (scanner.maxZoom > ScannerState.minZoom)
+                    _ZoomSlider(scanner: scanner),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: <Widget>[
+                      OutlinedButton.icon(
+                        key: ScannerKeys.scanPhoto,
+                        onPressed: busy ? null : onScanPhoto,
+                        style: _shortcutStyle,
+                        icon: const Icon(Icons.photo_library_outlined),
+                        label: Text(l10n.scanFromPhotoButton),
                       ),
-                    ),
-                    if (scanner.maxZoom > ScannerState.minZoom)
-                      _ZoomSlider(scanner: scanner),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: <Widget>[
-                        FilledButton.tonalIcon(
-                          key: ScannerKeys.scanPhoto,
-                          onPressed: busy ? null : onScanPhoto,
-                          style: _shortcutStyle,
-                          icon: const Icon(Icons.photo_library_outlined),
-                          label: Text(l10n.scanFromPhotoButton),
-                        ),
-                        FilledButton.tonalIcon(
-                          key: ScannerKeys.typeCode,
-                          onPressed: busy ? null : onTypeCode,
-                          style: _shortcutStyle,
-                          icon: const Icon(Icons.keyboard_outlined),
-                          label: Text(l10n.typeCodeButton),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                      OutlinedButton.icon(
+                        key: ScannerKeys.typeCode,
+                        onPressed: busy ? null : onTypeCode,
+                        style: _shortcutStyle,
+                        icon: const Icon(Icons.keyboard_outlined),
+                        label: Text(l10n.typeCodeButton),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
@@ -239,12 +243,38 @@ class _Controls extends StatelessWidget {
     );
   }
 
-  static final ButtonStyle _shortcutStyle = FilledButton.styleFrom(
+  // On the dimmed scene, not on the app's own ground, so the outline and the
+  // label stay white whichever theme is on.
+  static final ButtonStyle _shortcutStyle = OutlinedButton.styleFrom(
+    foregroundColor: Colors.white,
+    side: const BorderSide(color: Color(0x59FFFFFF)),
     minimumSize: const Size(
       AppTheme.minTapTargetSize,
       AppTheme.minTapTargetSize,
     ),
   );
+}
+
+/// The status word beside the torch: the instrument saying it is looking.
+class _ReadyMark extends StatelessWidget {
+  const _ReadyMark({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final Color signal = AppColors.read(context).signal;
+    return ExcludeSemantics(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(width: 8, height: 8, color: signal),
+          const SizedBox(width: 8),
+          Text(label, style: AppTheme.mono(size: 11, color: signal)),
+        ],
+      ),
+    );
+  }
 }
 
 /// The torch button (SCAN-6).
@@ -253,15 +283,10 @@ class _Controls extends StatelessWidget {
 /// is on, and the icon changes between a struck-out and a lit flashlight, so on
 /// and off are never told apart by colour alone (A11Y-1, A11Y-6).
 class _TorchButton extends StatelessWidget {
-  const _TorchButton({
-    required this.isOn,
-    required this.onPressed,
-    required this.panelColor,
-  });
+  const _TorchButton({required this.isOn, required this.onPressed});
 
   final bool isOn;
   final VoidCallback onPressed;
-  final Color panelColor;
 
   @override
   Widget build(BuildContext context) {
@@ -272,8 +297,11 @@ class _TorchButton extends StatelessWidget {
       isSelected: isOn,
       onPressed: onPressed,
       style: IconButton.styleFrom(
-        backgroundColor: panelColor,
         foregroundColor: Colors.white,
+        side: const BorderSide(color: Color(0x59FFFFFF)),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(AppTheme.radius)),
+        ),
         minimumSize: const Size(
           AppTheme.minTapTargetSize,
           AppTheme.minTapTargetSize,
@@ -332,8 +360,7 @@ class _ZoomSlider extends StatelessWidget {
           child: Text(
             l10n.scanZoomValue(_rounded(zoom)),
             textDirection: TextDirection.ltr,
-            style: Theme.of(context).textTheme.labelLarge
-                ?.copyWith(color: Colors.white),
+            style: AppTheme.mono(size: 12, color: Colors.white),
           ),
         ),
       ],
@@ -342,46 +369,77 @@ class _ZoomSlider extends StatelessWidget {
 }
 
 /// SCAN-4's target: the scene outside the square is dimmed, and the square
-/// gets white corner marks, so where codes are read is visible without
-/// reading any text.
+/// itself is marked the way an instrument marks what it is aimed at — corner
+/// ticks and a centre crosshair in the signal colour, so where codes are read
+/// is visible without reading any text.
 class _TargetPainter extends CustomPainter {
-  const _TargetPainter(this.target);
+  const _TargetPainter({required this.target, required this.signal});
 
   final Rect target;
 
-  static const double _cornerLength = 28;
-  static const double _strokeWidth = 4;
+  /// The app's signal colour, handed in so the painter draws the theme's own
+  /// mark rather than one of its own.
+  final Color signal;
+
+  static const double _cornerLength = 34;
+  static const double _strokeWidth = 3;
+  static const double _crosshair = 11;
 
   @override
   void paint(Canvas canvas, Size size) {
     final Path outside = Path()
       ..fillType = PathFillType.evenOdd
       ..addRect(Offset.zero & size)
-      ..addRRect(RRect.fromRectAndRadius(target, const Radius.circular(16)));
-    canvas.drawPath(outside, Paint()..color = const Color(0x66000000));
+      ..addRect(target);
+    canvas.drawPath(outside, Paint()..color = const Color(0x8C0E0D0B));
 
-    final Paint corner = Paint()
-      ..color = Colors.white
+    final Paint mark = Paint()
+      ..color = signal
       ..style = PaintingStyle.stroke
-      ..strokeWidth = _strokeWidth
-      ..strokeCap = StrokeCap.round;
+      ..strokeWidth = _strokeWidth;
     final double l = target.left;
     final double t = target.top;
     final double r = target.right;
     final double b = target.bottom;
     const double c = _cornerLength;
     canvas
-      ..drawLine(Offset(l, t + c), Offset(l, t), corner)
-      ..drawLine(Offset(l, t), Offset(l + c, t), corner)
-      ..drawLine(Offset(r - c, t), Offset(r, t), corner)
-      ..drawLine(Offset(r, t), Offset(r, t + c), corner)
-      ..drawLine(Offset(l, b - c), Offset(l, b), corner)
-      ..drawLine(Offset(l, b), Offset(l + c, b), corner)
-      ..drawLine(Offset(r - c, b), Offset(r, b), corner)
-      ..drawLine(Offset(r, b), Offset(r, b - c), corner);
+      ..drawLine(Offset(l, t + c), Offset(l, t), mark)
+      ..drawLine(Offset(l, t), Offset(l + c, t), mark)
+      ..drawLine(Offset(r - c, t), Offset(r, t), mark)
+      ..drawLine(Offset(r, t), Offset(r, t + c), mark)
+      ..drawLine(Offset(l, b - c), Offset(l, b), mark)
+      ..drawLine(Offset(l, b), Offset(l + c, b), mark)
+      ..drawLine(Offset(r - c, b), Offset(r, b), mark)
+      ..drawLine(Offset(r, b), Offset(r, b - c), mark);
+
+    // The centre: a thin rule across the target and a crosshair on it, which
+    // is what the eye lines a code up against.
+    final Offset centre = target.center;
+    canvas
+      ..drawLine(
+        Offset(l, centre.dy),
+        Offset(r, centre.dy),
+        Paint()
+          ..color = signal.withValues(alpha: 0.28)
+          ..strokeWidth = 1,
+      )
+      ..drawLine(
+        Offset(centre.dx - _crosshair, centre.dy),
+        Offset(centre.dx + _crosshair, centre.dy),
+        Paint()
+          ..color = signal
+          ..strokeWidth = 1.5,
+      )
+      ..drawLine(
+        Offset(centre.dx, centre.dy - _crosshair),
+        Offset(centre.dx, centre.dy + _crosshair),
+        Paint()
+          ..color = signal
+          ..strokeWidth = 1.5,
+      );
   }
 
   @override
   bool shouldRepaint(_TargetPainter oldDelegate) =>
-      oldDelegate.target != target;
+      oldDelegate.target != target || oldDelegate.signal != signal;
 }

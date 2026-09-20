@@ -44,7 +44,7 @@ final List<HarnessScreen> scannerHarnessScreens = <HarnessScreen>[
   HarnessScreen(
     name: 'the app shell on the Scan tab',
     build: () => const ScannerScope(child: AppShell()),
-    readableText: const <String, String>{'en': 'Create', 'ar': 'إنشاء'},
+    readableText: const <String, String>{'en': 'CREATE', 'ar': 'إنشاء'},
   ),
   HarnessScreen(
     name: 'the scanner asking for the camera (RUN-1)',
@@ -238,7 +238,7 @@ final List<HarnessScreen> settingsHarnessScreens = <HarnessScreen>[
   HarnessScreen(
     name: 'the settings screen in its full form (SET-5)',
     build: () => const SettingsScope(child: SettingsScreen()),
-    readableText: const <String, String>{'en': 'General', 'ar': 'عام'},
+    readableText: const <String, String>{'en': 'GENERAL', 'ar': 'عام'},
   ),
 ];
 
@@ -257,7 +257,7 @@ final List<HarnessScreen> generatorHarnessScreens = <HarnessScreen>[
     build: () =>
         GeneratorScope(dao: MemoryRecordDao(), child: const CreateScreen()),
     readableText: const <String, String>{
-      'en': 'Choose what to create',
+      'en': 'CHOOSE WHAT TO CREATE',
       'ar': 'اختر ما تريد إنشاءه',
     },
   ),

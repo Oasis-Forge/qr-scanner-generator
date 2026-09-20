@@ -1,3 +1,5 @@
+import 'dart:ui' show Tristate;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qrscanner/screens/app_shell.dart';
@@ -32,16 +34,15 @@ void main() {
 
         expect(find.byType(ScannerScreen), findsOneWidget);
         expect(find.text('Allow camera'), findsOneWidget);
-        final NavigationBar bar = tester.widget<NavigationBar>(
-          find.byType(NavigationBar),
-        );
-        expect(bar.selectedIndex, 0);
+        expect(_selectedTab(tester), AppShell.scanTabKey);
+        // The rail says each destination in the app's monospaced voice, in
+        // capitals, and gives the screen reader the word as it is written.
         for (final (Key key, String label, IconData icon)
             in <(Key, String, IconData)>[
-              (AppShell.scanTabKey, 'Scan', Icons.qr_code_scanner),
-              (AppShell.createTabKey, 'Create', Icons.add_box_outlined),
-              (AppShell.historyTabKey, 'History', Icons.history),
-              (AppShell.settingsTabKey, 'Settings', Icons.settings_outlined),
+              (AppShell.scanTabKey, 'SCAN', Icons.qr_code_scanner),
+              (AppShell.createTabKey, 'CREATE', Icons.add_box_outlined),
+              (AppShell.historyTabKey, 'HISTORY', Icons.history),
+              (AppShell.settingsTabKey, 'SETTINGS', Icons.tune),
             ]) {
           expect(
             find.descendant(of: find.byKey(key), matching: find.text(label)),
@@ -81,17 +82,12 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.byType(ScannerScreen), findsNothing);
         expect(find.byType(CreateScreen), findsOneWidget);
-        expect(find.text('Choose what to create'), findsOneWidget);
+        expect(find.text('CHOOSE WHAT TO CREATE'), findsOneWidget);
         expect(
           find.text('Creating codes arrives in the next test build.'),
           findsNothing,
         );
-        expect(
-          tester
-              .widget<NavigationBar>(find.byType(NavigationBar))
-              .selectedIndex,
-          1,
-        );
+        expect(_selectedTab(tester), AppShell.createTabKey);
 
         // History is the real list now (HIS-1), no longer a placeholder.
         await tester.tap(find.byKey(AppShell.historyTabKey));
@@ -180,12 +176,31 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(ScannerScreen), findsOneWidget);
-      expect(
-        tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
-        0,
-      );
+      expect(_selectedTab(tester), AppShell.scanTabKey);
     });
   });
+}
+
+/// The destination the rail marks as chosen, by the same flag a screen
+/// reader announces (A11Y-1).
+Key _selectedTab(WidgetTester tester) {
+  final List<Key> selected = <Key>[
+    for (final Key key in <Key>[
+      AppShell.scanTabKey,
+      AppShell.createTabKey,
+      AppShell.historyTabKey,
+      AppShell.settingsTabKey,
+    ])
+      if (tester
+              .getSemantics(find.byKey(key))
+              .getSemanticsData()
+              .flagsCollection
+              .isSelected ==
+          Tristate.isTrue)
+        key,
+  ];
+  expect(selected, hasLength(1), reason: 'exactly one tab is chosen');
+  return selected.single;
 }
 
 /// Two taps close enough together to be a double-tap.

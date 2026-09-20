@@ -13,11 +13,29 @@ class SettingsSectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsetsDirectional.only(bottom: 8),
-      child: Semantics(
-        header: true,
-        child: Text(title, style: Theme.of(context).textTheme.titleMedium),
+      padding: const EdgeInsetsDirectional.only(bottom: 10),
+      child: Row(
+        children: <Widget>[
+          Semantics(
+            header: true,
+            child: Text(
+              title.toUpperCase(),
+              style: AppTheme.mono(
+                size: 10,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Container(
+              height: 1,
+              color: AppColors.read(context).hairline,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -145,15 +163,26 @@ class ToggleChoiceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppColors colors = AppColors.read(context);
     final Widget text = Text(label);
     return MergeSemantics(
       child: Semantics(
         selected: selected,
         child: selected
-            ? FilledButton.icon(
+            ? OutlinedButton.icon(
                 onPressed: onPressed,
-                style: _style,
-                icon: const Icon(Icons.check),
+                style: _style.copyWith(
+                  backgroundColor: WidgetStatePropertyAll<Color>(
+                    colors.signalWash,
+                  ),
+                  foregroundColor: WidgetStatePropertyAll<Color>(
+                    colors.signalText,
+                  ),
+                  side: WidgetStatePropertyAll<BorderSide>(
+                    BorderSide(color: colors.signalText),
+                  ),
+                ),
+                icon: const Icon(Icons.check, size: 16),
                 label: text,
               )
             : OutlinedButton(onPressed: onPressed, style: _style, child: text),
