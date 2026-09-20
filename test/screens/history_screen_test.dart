@@ -152,7 +152,7 @@ void main() {
 
       await pumpApp(tester, wrap(), settings: settings);
 
-      expect(find.text('Today'), findsOneWidget);
+      expect(find.text('TODAY'), findsOneWidget);
       expect(find.byType(HistoryDateHeader), findsNWidgets(2));
       expect(find.text('https://example.com/today'), findsOneWidget);
       expect(find.text('https://example.com/old'), findsOneWidget);

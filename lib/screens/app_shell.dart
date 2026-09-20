@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/theme/app_theme.dart';
 import '../l10n/app_localizations.dart';
 import 'create_screen.dart';
 import 'history_screen.dart';
@@ -71,33 +72,156 @@ class _AppShellState extends State<AppShell> {
           ),
           AppTab.settings => const SettingsScreen(),
         },
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: _tab.index,
-          onDestinationSelected: (int index) => _select(AppTab.values[index]),
-          destinations: <Widget>[
-            NavigationDestination(
+        bottomNavigationBar: _TabRail(
+          selected: _tab,
+          onSelected: _select,
+          tabs: <_Tab>[
+            _Tab(
               key: AppShell.scanTabKey,
-              icon: const Icon(Icons.qr_code_scanner),
+              tab: AppTab.scan,
+              icon: Icons.qr_code_scanner,
               label: l10n.navScan,
             ),
-            NavigationDestination(
+            _Tab(
               key: AppShell.createTabKey,
-              icon: const Icon(Icons.add_box_outlined),
-              selectedIcon: const Icon(Icons.add_box),
+              tab: AppTab.create,
+              icon: Icons.add_box_outlined,
               label: l10n.navCreate,
             ),
-            NavigationDestination(
+            _Tab(
               key: AppShell.historyTabKey,
-              icon: const Icon(Icons.history),
+              tab: AppTab.history,
+              icon: Icons.history,
               label: l10n.navHistory,
             ),
-            NavigationDestination(
+            _Tab(
               key: AppShell.settingsTabKey,
-              icon: const Icon(Icons.settings_outlined),
-              selectedIcon: const Icon(Icons.settings),
+              tab: AppTab.settings,
+              icon: Icons.tune,
               label: l10n.navSettings,
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// One destination on the rail.
+class _Tab {
+  const _Tab({
+    required this.key,
+    required this.tab,
+    required this.icon,
+    required this.label,
+  });
+
+  final Key key;
+  final AppTab tab;
+  final IconData icon;
+  final String label;
+}
+
+/// The bottom rail: a hairline with the chosen tab marked by a signal line
+/// above it, instead of Material's pill (SET-1's own look).
+///
+/// The label is drawn in the app's mono voice and in capitals, while the
+/// screen reader is given the word as it is written, since a reader may spell
+/// capitals out letter by letter (A11Y-1).
+class _TabRail extends StatelessWidget {
+  const _TabRail({
+    required this.selected,
+    required this.onSelected,
+    required this.tabs,
+  });
+
+  final AppTab selected;
+  final ValueChanged<AppTab> onSelected;
+  final List<_Tab> tabs;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final AppColors colors = AppColors.read(context);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        border: Border(top: BorderSide(color: colors.hairline)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Row(
+          children: <Widget>[
+            for (final _Tab tab in tabs)
+              Expanded(
+                child: _RailItem(
+                  key: tab.key,
+                  tab: tab,
+                  isSelected: tab.tab == selected,
+                  onTap: () => onSelected(tab.tab),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RailItem extends StatelessWidget {
+  const _RailItem({
+    required this.tab,
+    required this.isSelected,
+    required this.onTap,
+    super.key,
+  });
+
+  final _Tab tab;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final AppColors colors = AppColors.read(context);
+    final Color foreground = isSelected
+        ? colors.signalText
+        : theme.colorScheme.onSurfaceVariant;
+
+    return Semantics(
+      label: tab.label,
+      selected: isSelected,
+      button: true,
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 58),
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: isSelected ? colors.signal : Colors.transparent,
+                width: 2,
+              ),
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: Column(
+            // Only as tall as its icon and label: the rail sits at the foot
+            // of the screen, and a column left to fill would take the whole
+            // height and swallow taps meant for the screen above it.
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(tab.icon, size: 20, color: foreground),
+              const SizedBox(height: 6),
+              Text(
+                tab.label.toUpperCase(),
+                style: AppTheme.mono(size: 10, color: foreground),
+              ),
+            ],
+          ),
         ),
       ),
     );

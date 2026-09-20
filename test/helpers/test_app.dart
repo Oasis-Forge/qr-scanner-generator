@@ -84,7 +84,7 @@ final List<HarnessScreen> harnessScreens = <HarnessScreen>[
   HarnessScreen(
     name: 'the settings screen',
     build: () => const SettingsScreen(),
-    readableText: const <String, String>{'en': 'General', 'ar': 'عام'},
+    readableText: const <String, String>{'en': 'GENERAL', 'ar': 'عام'},
   ),
 ];
 
@@ -149,7 +149,6 @@ Future<TestApp> pumpApp(
   FakeKeyValueStore? store,
   Map<String, String>? stored,
   SuccessCounts? successCounts,
-  ColorScheme? dynamicScheme,
   Size surfaceSize = phoneSurfaceSize,
 }) async {
   final FakeKeyValueStore appStore = store ?? FakeKeyValueStore(stored);
@@ -203,7 +202,6 @@ Future<TestApp> pumpApp(
         locale: locale,
         themeMode: themeMode,
         textScale: textScale,
-        dynamicScheme: dynamicScheme,
       ),
     ),
   );
@@ -340,14 +338,12 @@ class _TestShell extends StatelessWidget {
     required this.locale,
     required this.themeMode,
     required this.textScale,
-    required this.dynamicScheme,
   });
 
   final Widget screen;
   final Locale? locale;
   final ThemeMode? themeMode;
   final double textScale;
-  final ColorScheme? dynamicScheme;
 
   @override
   Widget build(BuildContext context) {
@@ -358,8 +354,8 @@ class _TestShell extends StatelessWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: locale ?? settings.localeOverride,
-      theme: AppTheme.light(dynamicScheme: dynamicScheme),
-      darkTheme: AppTheme.dark(dynamicScheme: dynamicScheme),
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
       themeMode: themeMode ?? settings.themeMode,
       // Inside the app, so a dialog, a sheet and a snackbar are scaled too.
       builder: (BuildContext context, Widget? child) => MediaQuery(

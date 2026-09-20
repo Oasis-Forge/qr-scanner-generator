@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/theme/app_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/payload_classifier.dart' show maskSensitive;
 import '../../models/record_enums.dart' show Symbology;
@@ -65,30 +66,53 @@ class CreatedCodeView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          Text(
+            l10n.typeAndFormat(state.type, Symbology.qr).toUpperCase(),
+            style: AppTheme.mono(
+              size: 10,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 12),
           if (png != null)
-            Center(
-              child: Image.memory(
-                png,
-                key: imageKey,
-                width: 220,
-                height: 220,
-                semanticLabel: l10n.createCodeImageLabel,
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: AppColors.light.paper,
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(AppTheme.radius),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsetsDirectional.all(20),
+                child: Center(
+                  child: Image.memory(
+                    png,
+                    key: imageKey,
+                    width: 240,
+                    height: 240,
+                    semanticLabel: l10n.createCodeImageLabel,
+                  ),
+                ),
               ),
             ),
-          const SizedBox(height: 16),
-          Text(
-            l10n.typeAndFormat(state.type, Symbology.qr),
-            textAlign: TextAlign.center,
-            style: theme.textTheme.titleMedium,
-          ),
           if (payload != null) ...<Widget>[
-            const SizedBox(height: 16),
-            Text(l10n.createContentLabel, style: theme.textTheme.labelMedium),
-            const SizedBox(height: 4),
+            const SizedBox(height: 18),
+            Text(
+              l10n.createContentLabel.toUpperCase(),
+              style: AppTheme.mono(
+                size: 10,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 6),
             // A Wi-Fi password stays masked here too (DATA-5).
             SelectableText(
               maskSensitive(payload, state.type),
               textDirection: TextDirection.ltr,
+              style: AppTheme.mono(
+                size: 12,
+                color: theme.colorScheme.onSurface,
+              ),
             ),
           ],
           if (error != null) ...<Widget>[

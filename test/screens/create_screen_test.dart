@@ -41,7 +41,7 @@ void main() {
       ]) {
         expect(find.text(label), findsOneWidget);
       }
-      expect(find.byKey(CreateTypePicker.adSlotKey), findsOneWidget);
+      // The banner sits below the list (ADS-1), not inside the picker.
     });
 
     testWidgets('tapping a tile opens that type\'s form', (
@@ -89,15 +89,19 @@ void main() {
       expect(find.text('اختر ما تريد إنشاءه'), findsOneWidget);
       expect(find.text('نص'), findsOneWidget);
       expect(find.text('شبكة Wi-Fi'), findsOneWidget);
-      // URL and Text share the picker's first row (GEN-1's order); in
-      // Arabic the row mirrors, so URL sits to the right of Text — the
-      // same mirroring `app_shell_test.dart` checks on the bottom bar.
+      // Each format is its own row, in GEN-1's order, so URL sits above
+      // Text whichever way the screen reads.
       expect(
-        tester.getCenter(find.byKey(CreateTypePicker.tileKey(_url))).dx,
-        greaterThan(
-          tester.getCenter(find.byKey(CreateTypePicker.tileKey(_text))).dx,
+        tester.getCenter(find.byKey(CreateTypePicker.tileKey(_url))).dy,
+        lessThan(
+          tester.getCenter(find.byKey(CreateTypePicker.tileKey(_text))).dy,
         ),
       );
+      // The row itself mirrors: its number leads from the right in Arabic.
+      final double screenCentre = tester
+          .getCenter(find.byKey(CreateTypePicker.tileKey(_url)))
+          .dx;
+      expect(tester.getCenter(find.text('01')).dx, greaterThan(screenCentre));
     });
   });
 

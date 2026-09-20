@@ -4,6 +4,18 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-09-20
+
+### Changed
+- The app has a look of its own: a dark instrument chassis, one signal colour that marks what the app is doing, and paper only where a code's content is shown.
+- Two typefaces do different jobs: Space Grotesk names things, and IBM Plex Mono says what the machine read — codes, sizes, times and states.
+- The viewfinder is marked like an instrument: corner ticks and a centre crosshair, with "Ready" beside the torch.
+- A scan result is printed on paper: the site's name large, the address below it in the monospaced voice.
+- The bottom bar is a thin rail, marked by a line above the tab you are on.
+- Create lists the seven formats in order, numbered, instead of a grid of cards.
+- Days in History and groups in Settings are labelled in small capitals against a hairline rule.
+- The app keeps its own colours now, in light and dark, instead of following the phone's palette.
+
 ## [0.8.2] - 2026-09-20
 
 ### Changed

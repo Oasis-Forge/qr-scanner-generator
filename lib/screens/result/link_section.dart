@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../models/link_check.dart';
+import '../../core/theme/app_theme.dart';
 import '../../models/parsed_payload.dart';
 import '../../models/record_enums.dart';
 import '../../state/result_state.dart';
@@ -49,7 +50,7 @@ class LinkSection extends StatelessWidget {
         link.url,
         type: ParsedType.url,
         selectable: true,
-        style: theme.textTheme.bodyLarge?.copyWith(fontFamily: 'monospace'),
+        style: AppTheme.mono(size: 12, color: theme.colorScheme.onSurface),
       ),
     );
 
@@ -81,21 +82,21 @@ class LinkSection extends StatelessWidget {
     final List<LinkCheck> checks = state.linkChecks;
     final bool hasWarnings = checks.isNotEmpty;
 
+    // LINK-2: the name first and large, because that is what says where the
+    // link goes; the address itself follows in the machine's own voice.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        urlBox,
         if (link.host.isNotEmpty) ...<Widget>[
-          const SizedBox(height: 16),
           PayloadText(
             link.host,
             key: LinkSection.hostKey,
             type: ParsedType.url,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: theme.textTheme.displaySmall,
           ),
+          const SizedBox(height: 12),
         ],
+        urlBox,
         const SizedBox(height: 16),
         const LinkCallout(),
         ResultPrimaryButton(

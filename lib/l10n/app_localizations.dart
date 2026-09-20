@@ -170,6 +170,12 @@ abstract class AppLocalizations {
   /// **'The History list arrives in the next test build. Your scans are already kept on this phone.'**
   String get placeholderHistoryMessage;
 
+  /// SCAN-4. The word beside the live scanner's marker, saying the camera is looking. Shown in capitals in the app's monospaced voice.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get scanReadyStatus;
+
   /// SCAN-4. One line on the live scanner, under the square target. Detection is automatic: there is no shutter to press.
   ///
   /// In en, this message translates to:

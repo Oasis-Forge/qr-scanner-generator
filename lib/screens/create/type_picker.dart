@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_theme.dart';
 import '../../generator/generator_types.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/record_enums.dart' show ParsedType;
@@ -17,8 +18,6 @@ class CreateTypePicker extends StatelessWidget {
   /// ADS-1: the one spot on the whole Create flow an ad may fill — ready for
   /// theme 5, and empty here. Excluded from semantics since it says nothing
   /// yet.
-  static const Key adSlotKey = Key('create.picker.ad_slot');
-
   final ValueChanged<ParsedType> onSelected;
 
   /// The key one type's tile is found by in a test, e.g. for [ParsedType.url].
@@ -29,84 +28,90 @@ class CreateTypePicker extends StatelessWidget {
     final AppLocalizations l10n = AppLocalizations.of(context);
     final ThemeData theme = Theme.of(context);
     return SingleChildScrollView(
-      padding: const EdgeInsetsDirectional.fromSTEB(24, 16, 24, 32),
+      padding: const EdgeInsetsDirectional.fromSTEB(0, 8, 0, 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Semantics(
-            header: true,
-            child: Text(
-              l10n.createSubtitle,
-              style: theme.textTheme.titleMedium,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: <Widget>[
-              for (final ParsedType type in generatorTypes)
-                _TypeTile(type: type, onTap: () => onSelected(type)),
-            ],
-          ),
-          const SizedBox(height: 24),
-          ExcludeSemantics(
-            child: Container(
-              key: adSlotKey,
-              height: 60,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                border: Border.all(color: theme.colorScheme.outlineVariant),
-                borderRadius: const BorderRadius.all(Radius.circular(8)),
+          Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(24, 8, 24, 14),
+            child: Semantics(
+              header: true,
+              child: Text(
+                l10n.createSubtitle.toUpperCase(),
+                style: AppTheme.mono(
+                  size: 10,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
           ),
+          for (final (int index, ParsedType type) in generatorTypes.indexed)
+            _TypeRow(
+              type: type,
+              index: index + 1,
+              onTap: () => onSelected(type),
+            ),
         ],
       ),
     );
   }
 }
 
-class _TypeTile extends StatelessWidget {
-  const _TypeTile({required this.type, required this.onTap});
+/// One format in the index: its number, its icon and its name.
+///
+/// A row, not a card: the picker reads as a list of what the instrument can
+/// make. The whole row is the tap target (A11Y-2).
+class _TypeRow extends StatelessWidget {
+  const _TypeRow({
+    required this.type,
+    required this.index,
+    required this.onTap,
+  });
 
   final ParsedType type;
+  final int index;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context);
     final ThemeData theme = Theme.of(context);
-    return SizedBox(
-      width: 160,
-      child: Card(
-        margin: EdgeInsets.zero,
-        child: InkWell(
-          key: CreateTypePicker.tileKey(type),
-          onTap: onTap,
-          borderRadius: const BorderRadius.all(Radius.circular(12)),
-          child: Padding(
-            padding: const EdgeInsetsDirectional.symmetric(
-              horizontal: 12,
-              vertical: 20,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Icon(
-                  parsedTypeIcon(type),
-                  size: 32,
-                  color: theme.colorScheme.primary,
+    final AppColors colors = AppColors.read(context);
+    final Color quiet = theme.colorScheme.onSurfaceVariant;
+
+    return InkWell(
+      key: CreateTypePicker.tileKey(type),
+      onTap: onTap,
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 62),
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: colors.hairline)),
+        ),
+        padding: const EdgeInsetsDirectional.symmetric(
+          horizontal: 24,
+          vertical: 12,
+        ),
+        child: Row(
+          children: <Widget>[
+            ExcludeSemantics(
+              child: SizedBox(
+                width: 26,
+                child: Text(
+                  index.toString().padLeft(2, '0'),
+                  style: AppTheme.mono(size: 11, color: quiet),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  l10n.parsedTypeLabel(type),
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.titleSmall,
-                ),
-              ],
+              ),
             ),
-          ),
+            Icon(parsedTypeIcon(type), size: 20, color: quiet),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                l10n.parsedTypeLabel(type),
+                style: theme.textTheme.titleMedium,
+              ),
+            ),
+            Icon(Icons.chevron_right, size: 18, color: quiet),
+          ],
         ),
       ),
     );

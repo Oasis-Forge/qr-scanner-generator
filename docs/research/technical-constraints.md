@@ -71,7 +71,6 @@ Every rule in `docs/PRODUCT_RULES.md` has to be buildable within these limits. V
 ### Platform UI
 - Predictive back: manifest flag plus `PopScope`. The flag without `PopScope` can swallow back events (flutter/flutter#135815): test every screen.
 - Edge-to-edge is on by default from targetSdk 35: every screen needs an insets pass.
-- `dynamic_color` stays on 1.9.0 (2.x breaks `ThemeData`).
 
 ## Play policy checklist
 

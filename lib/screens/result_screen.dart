@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/theme/app_theme.dart';
 import '../l10n/app_localizations.dart';
 import '../models/parsed_payload.dart';
 import '../services/app_services.dart';
@@ -160,47 +161,65 @@ class _ResultScreenState extends State<ResultScreen> {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context);
-    final ThemeData theme = Theme.of(context);
     final ScanOutcome outcome = widget.outcome;
+
+    // What was read is printed on paper, in both themes: the slip the
+    // instrument hands back, against the dark chassis it was read with.
+    final ThemeData paperTheme = AppTheme.light();
+    const AppColors colors = AppColors.light;
 
     return ChangeNotifierProvider<ResultState>.value(
       value: _resultState,
-      child: Scaffold(
-        appBar: AppBar(title: Text(l10n.resultTitle)),
-        body: SafeArea(
-          top: false,
-          child: ListView(
-            padding: const EdgeInsetsDirectional.fromSTEB(24, 16, 24, 32),
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Icon(
-                    parsedTypeIcon(outcome.parsedType),
-                    color: theme.colorScheme.primary,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Semantics(
-                      header: true,
-                      child: Text(
-                        l10n.typeAndFormat(
-                          outcome.parsedType,
-                          outcome.symbology,
+      child: Theme(
+        data: paperTheme,
+        child: Scaffold(
+          backgroundColor: colors.paper,
+          appBar: AppBar(
+            backgroundColor: colors.paper,
+            title: Text(
+              l10n.resultTitle,
+              style: AppTheme.mono(size: 12, color: paperTheme.hintColor),
+            ),
+          ),
+          body: SafeArea(
+            top: false,
+            child: ListView(
+              padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 32),
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Icon(
+                      parsedTypeIcon(outcome.parsedType),
+                      size: 18,
+                      color: colors.signalText,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Semantics(
+                        header: true,
+                        child: Text(
+                          l10n.typeAndFormat(
+                            outcome.parsedType,
+                            outcome.symbology,
+                          ),
+                          key: ResultScreen.typeLineKey,
+                          style: AppTheme.mono(
+                            size: 11,
+                            color: colors.signalText,
+                          ),
                         ),
-                        key: ResultScreen.typeLineKey,
-                        style: theme.textTheme.titleMedium,
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              if (outcome.saveFailed) ...<Widget>[
-                _NotSaved(message: l10n.resultNotSaved),
+                  ],
+                ),
                 const SizedBox(height: 16),
+                if (outcome.saveFailed) ...<Widget>[
+                  _NotSaved(message: l10n.resultNotSaved),
+                  const SizedBox(height: 16),
+                ],
+                _sectionFor(_resultState.payload),
               ],
-              _sectionFor(_resultState.payload),
-            ],
+            ),
           ),
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:qrscanner/core/services/clipboard_service.dart';
 import 'package:qrscanner/core/services/link_opener.dart';
+import 'package:qrscanner/core/theme/app_theme.dart';
 import 'package:qrscanner/models/parsed_payload.dart';
 import 'package:qrscanner/models/record_enums.dart';
 import 'package:qrscanner/screens/result/link_callout.dart';
@@ -64,7 +65,9 @@ void main() {
       final SelectableText urlText = tester.widget<SelectableText>(
         find.widgetWithText(SelectableText, 'https://example.com/a/path'),
       );
-      expect(urlText.style?.fontFamily, 'monospace');
+      // The address is the machine's own reading of the code, so it is set
+      // in the app's monospaced voice.
+      expect(urlText.style?.fontFamily, AppTheme.monoFamily);
       final FilledButton primary = tester.widget<FilledButton>(
         find.widgetWithText(FilledButton, 'Open'),
       );

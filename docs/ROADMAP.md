@@ -62,7 +62,7 @@ Groundwork every feature builds on. Settle everything that shapes stored data no
   - stores for settings, consent, Pro ownership and success counts
   - v1 fields included, so no migration touches testers' data
 - [x] Localization scaffolding: English and Arabic message files, locale-formatted dates and numbers, and right-to-left layout from the start (LANG-1–LANG-3, LANG-5), with the CI message check and a test that both files carry the same keys and placeholders
-- [x] Themes: system, light and dark with dynamic colour (SET-1 theme engine, `dynamic_color` 1.9.0), edge-to-edge insets, predictive back
+- [x] Themes: system, light and dark, edge-to-edge insets, predictive back. Dynamic colour was dropped on 2026-09-20 when the app took its own identity (SET-1).
 - [x] Test harnesses: icon labels (A11Y-1), touch targets (A11Y-2), every language at 2.0× text (A11Y-4, LANG-6) in `test/helpers/test_app.dart`. Contrast in both themes (A11Y-5) and no colour-only states (A11Y-6) go into every screen PR's checklist.
 - [x] Tests: model round-trip, migration upgrade, duplicate matching (DATA-4), the sensitive-field flag (DATA-5)
 - [x] Platform decision: Android only in v1; iOS deferred (2026-09-14)
@@ -84,6 +84,7 @@ In dependency order, one theme per PR. Everything else in Phase 2 arrives during
 - [ ] Spikes S5 (Wi-Fi join) and S6 (cold start to first scan) on real phones, Sep 28 – Oct 2; S12 (share-target permissions) before Oct 19
 
 ## Phase 2b: v1 during the closed test (Oct 19–30)
+- [x] **The app's own look** (2026-09-20): the instrument design — chassis, signal colour, paper for content, Space Grotesk and IBM Plex Mono, registration marks, hairline rails. Designed on a canvas first, then built (v0.9.0).
 Shipped to the closed track as updates; the testers' 14-day clock keeps running.
 - [ ] **Languages** (LANG-7): French, Spanish, German, Portuguese (Brazil), Hindi, Indonesian, Russian, Turkish. First, so every later PR translates as it goes.
 - [ ] **Scan modes and entry points:** SCAN-8, SCAN-10, SCAN-14 with HIS-6, ENTRY-1, ENTRY-2 (only if S12 passes)

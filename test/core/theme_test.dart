@@ -4,13 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qrscanner/core/theme/app_theme.dart';
 
-/// The app's own colour, spelled out here instead of read from [AppTheme], so a
-/// change to the seed fails these tests rather than moving along with them.
-const Color indigoSeed = Color(0xFF3F51B5);
-
-/// A palette that is nothing like the app's seed, standing in for the one
-/// Android reads off the user's wallpaper.
-const Color wallpaperSeed = Color(0xFF00695C);
+/// The app's signal colour, spelled out here instead of read from
+/// [AppTheme], so a change to it fails these tests rather than moving along
+/// with them.
+const Color signalColour = Color(0xFFC9F24D);
 
 /// The ratio WCAG AA asks of body and UI text (A11Y-5).
 const double minTextContrastRatio = 4.5;
@@ -37,27 +34,21 @@ double contrastRatio(Color foreground, Color background) {
 
 void main() {
   group('AppTheme', () {
-    test('SET-1: the app paints from its own indigo seed when the device '
-        'offers no palette', () {
-      // Pinned, so a changed seed is a failing test and not a silent redesign.
-      expect(AppTheme.seedColor, indigoSeed);
+    test('SET-1: the app paints its own palette, the same in both themes', () {
+      // Pinned, so a changed signal is a failing test and not a silent
+      // redesign.
+      expect(AppTheme.seedColor, signalColour);
+      expect(AppColors.dark.signal, signalColour);
+      expect(AppColors.light.signal, signalColour);
 
-      final ColorScheme light = AppTheme.colorSchemeFor(
-        brightness: Brightness.light,
-      );
-      final ColorScheme fromIndigo = ColorScheme.fromSeed(
-        seedColor: indigoSeed,
-      );
-
-      expect(light.brightness, Brightness.light);
-      expect(light.primary, fromIndigo.primary);
-      expect(light.surface, fromIndigo.surface);
-      expect(light.onPrimary, fromIndigo.onPrimary);
-      // Material 3 paints with a tone of the seed, never the raw seed, and
-      // hands a screen fully opaque colours.
-      expect(light.primary, isNot(indigoSeed));
-      expect(light.primary.a, 1.0);
-      expect(light.surface.a, 1.0);
+      for (final Brightness brightness in Brightness.values) {
+        final ThemeData theme = AppTheme.themeFor(brightness: brightness);
+        expect(
+          theme.extension<AppColors>(),
+          same(AppColors.of(brightness)),
+          reason: 'every screen reads the same colours from the theme',
+        );
+      }
     });
 
     test('SET-1: light and dark are two different schemes, not one painted '
@@ -69,7 +60,6 @@ void main() {
       expect(dark.brightness, Brightness.dark);
       expect(light.useMaterial3, isTrue);
       expect(dark.useMaterial3, isTrue);
-      expect(light.colorScheme.primary, isNot(dark.colorScheme.primary));
       // Told apart by looking, not only by the brightness flag: the light
       // theme's background is the pale one and its text the dark one.
       expect(
@@ -80,78 +70,20 @@ void main() {
         relativeLuminance(light.colorScheme.onSurface),
         lessThan(relativeLuminance(dark.colorScheme.onSurface)),
       );
+      expect(light.colorScheme.surface.a, 1.0);
+      expect(dark.colorScheme.surface.a, 1.0);
     });
 
-    test('SET-1: a matching dynamic scheme is used as it stands, not '
-        're-seeded', () {
-      final ColorScheme wallpaper = ColorScheme.fromSeed(
-        seedColor: wallpaperSeed,
-      );
-      final ThemeData theme = AppTheme.light(dynamicScheme: wallpaper);
+    test('the two typefaces are the ones the design names', () {
+      final ThemeData theme = AppTheme.dark();
 
-      expect(
-        AppTheme.colorSchemeFor(
-          brightness: Brightness.light,
-          dynamicScheme: wallpaper,
-        ),
-        same(wallpaper),
-        reason: 'the device palette is passed through, not rebuilt from it',
-      );
-      expect(theme.colorScheme.primary, wallpaper.primary);
-      expect(theme.colorScheme.secondary, wallpaper.secondary);
-      expect(theme.colorScheme.surface, wallpaper.surface);
-      expect(theme.colorScheme.error, wallpaper.error);
-      expect(
-        theme.colorScheme.primary,
-        isNot(AppTheme.light().colorScheme.primary),
-        reason: 'the wallpaper palette must actually replace the seeded one',
-      );
-    });
-
-    test('SET-1: the dark half takes the dark palette the device offers', () {
-      final ColorScheme wallpaperDark = ColorScheme.fromSeed(
-        seedColor: wallpaperSeed,
-        brightness: Brightness.dark,
-      );
-      final ThemeData theme = AppTheme.dark(dynamicScheme: wallpaperDark);
-
-      expect(theme.brightness, Brightness.dark);
-      expect(theme.colorScheme.primary, wallpaperDark.primary);
-      expect(theme.colorScheme.surface, wallpaperDark.surface);
-    });
-
-    test('SET-1: a palette of the wrong brightness is ignored, so the dark '
-        'theme never comes back light', () {
-      final ColorScheme lightWallpaper = ColorScheme.fromSeed(
-        seedColor: wallpaperSeed,
-      );
-      final ThemeData dark = AppTheme.dark(dynamicScheme: lightWallpaper);
-      final ColorScheme seededDark = ColorScheme.fromSeed(
-        seedColor: indigoSeed,
-        brightness: Brightness.dark,
-      );
-
-      expect(dark.brightness, Brightness.dark);
-      expect(dark.colorScheme.primary, seededDark.primary);
-      expect(dark.colorScheme.surface, seededDark.surface);
-      expect(dark.colorScheme.surface, isNot(lightWallpaper.surface));
-      // And what it paints really is dark, whatever the device handed over.
-      expect(relativeLuminance(dark.colorScheme.surface), lessThan(0.1));
-    });
-
-    test('SET-1: a dark palette offered to the light theme is ignored too', () {
-      final ColorScheme darkWallpaper = ColorScheme.fromSeed(
-        seedColor: wallpaperSeed,
-        brightness: Brightness.dark,
-      );
-      final ThemeData light = AppTheme.light(dynamicScheme: darkWallpaper);
-      final ColorScheme seededLight = ColorScheme.fromSeed(
-        seedColor: indigoSeed,
-      );
-
-      expect(light.brightness, Brightness.light);
-      expect(light.colorScheme.surface, seededLight.surface);
-      expect(relativeLuminance(light.colorScheme.surface), greaterThan(0.5));
+      expect(theme.textTheme.headlineMedium?.fontFamily, 'Space Grotesk');
+      expect(theme.textTheme.bodyMedium?.fontFamily, 'Space Grotesk');
+      // Machine-read facts are the mono ones.
+      expect(theme.textTheme.labelMedium?.fontFamily, 'IBM Plex Mono');
+      expect(AppTheme.mono().fontFamily, 'IBM Plex Mono');
+      // The letter spacing grows with the size, so a label keeps its look.
+      expect(AppTheme.mono(size: 20).letterSpacing, closeTo(2.8, 0.001));
     });
 
     test('A11Y-5: text clears WCAG AA contrast in both themes', () {
@@ -160,33 +92,69 @@ void main() {
         AppTheme.dark(),
       ]) {
         final ColorScheme scheme = theme.colorScheme;
+        final AppColors colours = theme.extension<AppColors>()!;
         final String half = scheme.brightness.name;
 
-        final double bodyText = contrastRatio(scheme.onSurface, scheme.surface);
-        expect(
-          bodyText,
-          greaterThanOrEqualTo(minTextContrastRatio),
-          reason:
-              'body text on the $half background is only '
-              '${bodyText.toStringAsFixed(2)}:1',
-        );
+        void expectReadable(Color foreground, Color background, String what) {
+          final double ratio = contrastRatio(foreground, background);
+          expect(
+            ratio,
+            greaterThanOrEqualTo(minTextContrastRatio),
+            reason:
+                '$what in the $half theme is only '
+                '${ratio.toStringAsFixed(2)}:1',
+          );
+        }
 
-        final double buttonLabel = contrastRatio(
+        expectReadable(scheme.onSurface, scheme.surface, 'body text');
+        expectReadable(
+          scheme.onSurfaceVariant,
+          scheme.surface,
+          'the quieter text',
+        );
+        expectReadable(
           scheme.onPrimary,
           scheme.primary,
+          'the label on the primary button',
         );
-        expect(
-          buttonLabel,
-          greaterThanOrEqualTo(minTextContrastRatio),
-          reason:
-              'the label on the primary button in the $half theme is only '
-              '${buttonLabel.toStringAsFixed(2)}:1',
+        // The signal carries small mono labels of its own, so it has to be
+        // readable on the ground as well as behind ink.
+        expectReadable(
+          colours.signalText,
+          scheme.surface,
+          'a label in the signal colour',
         );
+        expectReadable(colours.onSignal, colours.signal, 'ink on the signal');
+        expectReadable(colours.ink, colours.paper, 'ink on paper');
       }
     });
 
-    test('A11Y-2: the shared minimum tap target is 48 dp', () {
+    test('the chassis is drawn with hairlines, not shadows', () {
+      for (final ThemeData theme in <ThemeData>[
+        AppTheme.light(),
+        AppTheme.dark(),
+      ]) {
+        final AppColors colours = theme.extension<AppColors>()!;
+        expect(theme.dividerTheme.color, colours.hairline);
+        expect(theme.dividerTheme.thickness, 1);
+        // Visible, but never a solid rule.
+        expect(colours.hairline.a, lessThan(0.5));
+        expect(colours.hairlineStrong.a, greaterThan(colours.hairline.a));
+      }
+    });
+
+    test('A11Y-2: the shared minimum tap target is 48 dp, and the buttons '
+        'clear it', () {
       expect(AppTheme.minTapTargetSize, 48);
+
+      final ThemeData theme = AppTheme.dark();
+      final Size? filled = theme.filledButtonTheme.style?.minimumSize?.resolve(
+        <WidgetState>{},
+      );
+      final Size? outlined = theme.outlinedButtonTheme.style?.minimumSize
+          ?.resolve(<WidgetState>{});
+      expect(filled?.height, greaterThanOrEqualTo(AppTheme.minTapTargetSize));
+      expect(outlined?.height, greaterThanOrEqualTo(AppTheme.minTapTargetSize));
     });
   });
 
@@ -198,10 +166,7 @@ void main() {
         contrastRatio(const Color(0xFF000000), const Color(0xFFFFFFFF)),
         closeTo(21, 0.01),
       );
-      expect(
-        contrastRatio(const Color(0xFF3F51B5), const Color(0xFF3F51B5)),
-        closeTo(1, 0.001),
-      );
+      expect(contrastRatio(signalColour, signalColour), closeTo(1, 0.001));
       expect(
         contrastRatio(const Color(0xFF767676), const Color(0xFFFFFFFF)),
         closeTo(4.54, 0.02),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/history_state.dart';
 
@@ -26,17 +27,24 @@ class HistoryDateHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context);
     final ThemeData theme = Theme.of(context);
+    final AppColors colors = AppColors.read(context);
     return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 20, 16, 8),
-      child: Semantics(
-        header: true,
-        child: Text(
-          l10n.historyHeaderLabel(header),
-          style: theme.textTheme.titleSmall?.copyWith(
-            color: theme.colorScheme.primary,
-            fontWeight: FontWeight.w600,
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 22, 16, 10),
+      child: Row(
+        children: <Widget>[
+          Semantics(
+            header: true,
+            child: Text(
+              l10n.historyHeaderLabel(header).toUpperCase(),
+              style: AppTheme.mono(
+                size: 10,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
           ),
-        ),
+          const SizedBox(width: 10),
+          Expanded(child: Container(height: 1, color: colors.hairline)),
+        ],
       ),
     );
   }

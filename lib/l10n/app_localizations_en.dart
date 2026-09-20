@@ -49,6 +49,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'The History list arrives in the next test build. Your scans are already kept on this phone.';
 
   @override
+  String get scanReadyStatus => 'Ready';
+
+  @override
   String get scanTargetHint => 'Point the camera at a code';
 
   @override
