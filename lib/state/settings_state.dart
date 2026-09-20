@@ -81,8 +81,9 @@ class SettingsState extends ChangeNotifier {
   /// Stores whether the RUN-8 link-check callout has been dismissed.
   static const String linkCalloutSeenKey = 'settings.link_callout_seen';
 
-  /// Theme: System default is the initial choice (SET-1).
-  static const ThemeMode defaultThemeMode = ThemeMode.system;
+  /// Theme: the app's own dark chassis is the initial choice, whatever the
+  /// phone is set to (SET-1). Light and System default sit beside it.
+  static const ThemeMode defaultThemeMode = ThemeMode.dark;
 
   /// Sound on scan: off (SET-2).
   static const bool defaultSoundOnScan = false;

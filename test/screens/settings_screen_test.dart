@@ -73,24 +73,34 @@ void main() {
       );
 
       testWidgets(
-        'SET-1: choosing Dark stores the theme and repaints the app dark',
+        'SET-1: the app opens on its own chassis, and choosing Light stores '
+        'that and repaints the app light',
         (WidgetTester tester) async {
           final _Harness harness = await _pumpSettings(tester);
-          expect(_brightnessOnScreen(tester), Brightness.light);
-
-          await _tapShown(tester, find.byKey(GeneralSection.darkThemeKey));
-          await tester.pumpAndSettle();
-
+          // Dark whatever the phone says: the chassis is the app's own.
           expect(harness.settings.themeMode, ThemeMode.dark);
-          expect(
-            harness.store.writes,
-            contains('set settings.theme_mode=dark'),
-          );
           expect(_brightnessOnScreen(tester), Brightness.dark);
-          // The chosen option is not colour alone: it carries a tick (A11Y-6).
           expect(
             find.descendant(
               of: find.byKey(GeneralSection.darkThemeKey),
+              matching: find.byIcon(Icons.check),
+            ),
+            findsOneWidget,
+          );
+
+          await _tapShown(tester, find.byKey(GeneralSection.lightThemeKey));
+          await tester.pumpAndSettle();
+
+          expect(harness.settings.themeMode, ThemeMode.light);
+          expect(
+            harness.store.writes,
+            contains('set settings.theme_mode=light'),
+          );
+          expect(_brightnessOnScreen(tester), Brightness.light);
+          // The chosen option is not colour alone: it carries a tick (A11Y-6).
+          expect(
+            find.descendant(
+              of: find.byKey(GeneralSection.lightThemeKey),
               matching: find.byIcon(Icons.check),
             ),
             findsOneWidget,
@@ -156,11 +166,11 @@ void main() {
           final _Harness harness = await _pumpSettings(tester);
           harness.store.failingKeys.add(SettingsState.themeModeKey);
 
-          await _tapShown(tester, find.byKey(GeneralSection.darkThemeKey));
+          await _tapShown(tester, find.byKey(GeneralSection.lightThemeKey));
           await tester.pumpAndSettle();
 
-          expect(harness.settings.themeMode, ThemeMode.system);
-          expect(_brightnessOnScreen(tester), Brightness.light);
+          expect(harness.settings.themeMode, ThemeMode.dark);
+          expect(_brightnessOnScreen(tester), Brightness.dark);
           expect(find.text('Nothing was saved. Try again.'), findsOneWidget);
 
           // Let the snackbar time out, so no timer is left pending.
@@ -405,13 +415,14 @@ void main() {
           reason: '$label must be announced by its own name',
         );
       }
-      // The chosen option announces that it is the chosen one.
+      // The chosen option announces that it is the chosen one: the app's own
+      // chassis to begin with (SET-1).
       expect(
-        tester.getSemantics(find.byKey(GeneralSection.systemThemeKey)),
+        tester.getSemantics(find.byKey(GeneralSection.darkThemeKey)),
         isSemantics(isSelected: true),
       );
       expect(
-        tester.getSemantics(find.byKey(GeneralSection.darkThemeKey)),
+        tester.getSemantics(find.byKey(GeneralSection.systemThemeKey)),
         isSemantics(isSelected: false),
       );
       semantics.dispose();

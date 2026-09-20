@@ -94,10 +94,10 @@ void main() {
   tearDown(() => settings.dispose());
 
   group('defaults, with nothing stored', () {
-    test('the theme follows the system (SET-1)', () async {
+    test('the app opens on its own dark chassis (SET-1)', () async {
       await settings.load();
 
-      expect(settings.themeMode, ThemeMode.system);
+      expect(settings.themeMode, ThemeMode.dark);
     });
 
     test('the language follows the device (LANG-1)', () async {
@@ -152,7 +152,7 @@ void main() {
 
     test('the defaults hold before load is called', () {
       expect(settings.isLoaded, isFalse);
-      expect(settings.themeMode, ThemeMode.system);
+      expect(settings.themeMode, ThemeMode.dark);
       expect(settings.vibrateOnScan, isTrue);
       expect(settings.saveHistory, isTrue);
       expect(settings.sendCrashReports, isFalse);
@@ -209,7 +209,7 @@ void main() {
 
       await settings.load();
 
-      expect(settings.themeMode, ThemeMode.system);
+      expect(settings.themeMode, ThemeMode.dark);
       expect(settings.localeOverride, isNull);
       expect(settings.searchEngine, SearchEngine.google);
       expect(settings.saveHistory, isTrue);
@@ -228,10 +228,10 @@ void main() {
     test('the theme is stored by name and notified once (SET-1)', () async {
       await loadAndListen();
 
-      await settings.setThemeMode(ThemeMode.dark);
+      await settings.setThemeMode(ThemeMode.light);
 
-      expect(settings.themeMode, ThemeMode.dark);
-      expect(store.values[SettingsState.themeModeKey], 'dark');
+      expect(settings.themeMode, ThemeMode.light);
+      expect(store.values[SettingsState.themeModeKey], 'light');
       expect(notifications, 1);
     });
 
@@ -360,7 +360,7 @@ void main() {
       await loadAndListen();
 
       await settings.setSaveHistory(enabled: true);
-      await settings.setThemeMode(ThemeMode.system);
+      await settings.setThemeMode(ThemeMode.dark);
       await settings.setSearchEngine(SearchEngine.google);
       await settings.setLocaleOverride(null);
 

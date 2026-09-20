@@ -14,7 +14,7 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 - The bottom bar is a thin rail, marked by a line above the tab you are on.
 - Create lists the seven formats in order, numbered, instead of a grid of cards.
 - Days in History and groups in Settings are labelled in small capitals against a hairline rule.
-- The app keeps its own colours now, in light and dark, instead of following the phone's palette.
+- The app opens on its own dark chassis whatever the phone is set to, and keeps its own colours in both halves instead of following the phone's palette. Light and System default are still there in Settings.
 
 ## [0.8.2] - 2026-09-20
 

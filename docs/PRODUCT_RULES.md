@@ -293,7 +293,7 @@ This file defines how QR Scanner + Generator behaves: the defaults, limits, orde
 
 **Learn:** The tidy layout is worth matching. Add a theme and privacy controls, and ask for a review only after something worked.
 
-- **SET-1** Theme: System default (the initial choice), Light or Dark. The app keeps its own palette in both (decided 2026-09-20): the signal colour, the paper a code is printed on and the hairline chassis are the product's identity, so the phone's own palette never recolours them.
+- **SET-1** Theme: Dark (the initial choice), Light or System default. The app opens on its own dark chassis whatever the phone is set to, and keeps its own palette in both halves (decided 2026-09-20): the signal colour, the paper a code is printed on and the hairline chassis are the product's identity, so neither the phone's palette nor its light setting recolours them.
 - **SET-2** Vibrate on scan: on. Sound on scan: off.
 - **SET-3** Copy on scan: off. When on, a snackbar confirms what was copied (RES-2).
 - **SET-4** Search engine: Google (default), Bing, DuckDuckGo, Ecosia, Brave, Yahoo or Yandex, used by "Search the web" (RES-9).
