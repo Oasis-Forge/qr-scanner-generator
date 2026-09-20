@@ -283,7 +283,7 @@ This file defines how QR Scanner + Generator behaves: the defaults, limits, orde
 - **PRIV-3** Crash reports (Firebase Crashlytics) stay off until the user turns on "Send crash reports" in Settings: collection is disabled in the manifest, and no Firebase traffic happens before the switch is on (spike S14; anything unavoidable is disclosed under PRIV-5 and in the privacy policy). No analytics SDK ships.
 - **PRIV-4** Scanned and created content leaves the device only when the user shares, exports, backs up, opens or searches it in another app, or runs the link check (LINK-7). Crash reports never contain it.
 - **PRIV-5** The app itself connects only for ads and consent, Play Billing, crash reports (when on) and the link check (when tapped).
-- **PRIV-6** The data-safety form and `docs/privacy/index.html` are updated in the same PR as any change to permissions, SDKs or network use, and checked against the release manifest before every release (RUN-2).
+- **PRIV-6** The data-safety form and `docs/privacy-policy/index.html` are updated in the same PR as any change to permissions, SDKs or network use, and checked against the release manifest before every release (RUN-2).
 - **PRIV-7** No account and no cloud sync.
 - **PRIV-8** Consent and crash-report choices are stored only on the device.
 

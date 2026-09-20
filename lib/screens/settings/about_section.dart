@@ -15,7 +15,7 @@ import 'settings_rows.dart';
 /// A GitHub Pages site the user turns on separately; this only names the
 /// published address.
 const String privacyPolicyUrl =
-    'https://oasis-forge.github.io/qr-scanner-generator/privacy/';
+    'https://oasis-forge.github.io/qr-scanner-generator/privacy-policy/';
 
 /// Settings' fourth group: feedback, privacy policy, open-source licences and
 /// the version (SET-5, SET-6, SET-7, SET-8).
