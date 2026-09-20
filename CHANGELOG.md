@@ -4,6 +4,11 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-09-20
+
+### Changed
+- The privacy policy moved to https://oasis-forge.github.io/qr-scanner-generator/privacy-policy/, which is the address Settings opens.
+
 ## [0.8.1] - 2026-09-20
 
 ### Changed
