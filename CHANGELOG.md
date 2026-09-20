@@ -4,6 +4,15 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-09-20
+
+### Added
+- The app has its own icon: the corner square a scanner looks for first, in the signal colour on the dark chassis. It keeps its shape whatever mask the phone puts around it — round, squircle or rounded square — and has a monochrome version for phones that tint their icons.
+- Opening the app now shows the chassis and that mark while it starts, instead of Flutter's white screen. Nothing is added to how long it takes.
+
+### Fixed
+- A white flash on the way into the app on a phone set to light. The app opens on its own dark chassis whatever the phone is set to, but the window behind it was still the phone's light one for a frame.
+
 ## [0.9.1] - 2026-09-20
 
 ### Changed

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The chassis (ICON-2). The window behind Flutter is painted with it so
+         a cold start goes straight from the launch window to the app with no
+         flash: the app opens on the chassis whatever the phone is set to
+         (SET-1), so the platform's own light background would show white for
+         a frame on a phone set to light. -->
+    <color name="chassis">#0E0D0B</color>
+</resources>

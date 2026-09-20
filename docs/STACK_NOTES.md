@@ -10,15 +10,15 @@ Read on demand: the fill-ins `/kickoff` uses, and the traps earlier Flutter apps
 | `FLUTTER_VERSION` | the Flutter version alone; it's used by `ci.yml`, `release.yml`, and `claude.yml` |
 | `CMD_INSTALL` | `flutter pub get > $null` |
 | `CMD_ANALYZE` | `flutter analyze` |
-| `CMD_FORMAT` | `dart format lib test` |
-| `CMD_FORMAT_CHECK` | `dart format --output=none --set-exit-if-changed lib test` |
+| `CMD_FORMAT` | `dart format lib test tool` |
+| `CMD_FORMAT_CHECK` | `dart format --output=none --set-exit-if-changed lib test tool` |
 | `CMD_TEST_FILE` | `flutter test test/<file>_test.dart` |
 | `CMD_TEST_ALL` | `flutter test -r failures-only` |
 | `CMD_COVERAGE` | `flutter test --coverage` (writes `coverage/lcov.info`) |
 | `CMD_BUILD_RELEASE` | `flutter build apk --release` (writes `build/app/outputs/flutter-apk/app-release.apk`) |
 | `CMD_RUN` | `flutter run` |
 
-SDK: CI pins the version (`FLUTTER_VERSION` in `ci.yml`). On the QR machine Flutter is on PATH at `C:\src\flutter\bin`; the kit's original machine used `D:\Desktop\projects\flutter_sdk\flutter\bin\flutter.bat`. Check that `flutter --version` matches the pin before committing. `adb` isn't on PATH: use `$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe`.
+SDK: CI pins the version (`FLUTTER_VERSION` in `ci.yml`). **On the QR machine the bare `flutter` on PATH is the wrong one** — it resolves to `C:\src\flutter` (3.44.8 / Dart 3.12.2), which cannot satisfy this repo's `sdk: ^3.13.3` and fails `pub get` with "version solving failed" (checked 2026-09-20). The pinned SDK is `D:\Desktop\projects\flutter_sdk\flutter\bin\flutter` (3.47.4 / Dart 3.13.3); call it by full path, or put its `bin` ahead of `C:\src\flutter\bin` on PATH. Check `flutter --version` matches the pin before committing. `adb` isn't on PATH either: use `$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe`.
 
 ## Scaffold
 
@@ -69,8 +69,20 @@ Add `windows,macos,linux` to `--platforms` if desktop is a target. Then:
 - UMP's `canRequestAds()` is false until a required consent form is answered. Gate the form on "eligible for an ad", not on `canRequestAds`, or the form never shows and no ad ever loads in consent regions.
 - `pdf` package: use static TTF fonts (variable fonts lose their weights), and set text direction per run on right-to-left pages. Test a PDF by reading its text back, not by byte count.
 - Writing `\u` escapes has put literal invisible characters in files. Use `String.fromCharCode` instead.
-- The format hook may use a different SDK than CI. Run the pinned SDK's `dart format lib test` before committing.
-- Icons and splash: draw them in a test (`tool/render_app_icons_test.dart`), then run `dart run flutter_launcher_icons` and `dart run flutter_native_splash:create`, and commit the generated files.
+- The format hook may use a different SDK than CI. Run the pinned SDK's `dart format lib test tool` before committing.
+- Icons and splash: the mark is painted in `tool/app_icon_painter.dart`. Change it there, then `flutter test tool/render_app_icons_test.dart` to redraw `assets/icon/`, then `dart run flutter_launcher_icons` and `dart run flutter_native_splash:create`, and commit the generated files (ICON-1). `test/icon/app_icon_test.dart` guards the mark's legibility (ICON-5) and runs in the normal suite; the renderer lives outside `test/` so an ordinary run doesn't rewrite the assets.
+- `flutter_native_splash` also writes `forceDarkAllowed`, `windowFullscreen`, `windowDrawsSystemBarBackgrounds` and `windowLayoutInDisplayCutoutMode` into `LaunchTheme`. They apply only to the launch window, not the running app, which switches to `NormalTheme` on Flutter's first frame.
+- **`NormalTheme` is the window the user sees between the launch window and Flutter's first frame,** and the template leaves it on `?android:colorBackground` — white on a phone set to light, though the app opens on the chassis whatever the phone is set to (SET-1). All four copies (`values`, `values-night`, `values-v31`, `values-night-v31`) are pointed at `@color/chassis` instead. Re-running `flutter_native_splash:create` can put the template value back: check those four files afterwards.
+- **Android release builds need Kotlin's incremental compilation turned off on this Windows machine.** `flutter build apk --release` fails with one `compileReleaseKotlin` failure per plugin that has Kotlin sources — nine of them — all reading `Could not close incremental caches ... class-fq-name-to-source.tab`. That message is the symptom. The suppressed cause is `IllegalArgumentException: this and base files have different roots: C:\...\Pub\Cache\...\*.kt and D:\...\android`: Kotlin 2.4.0's `RelocatableFileToPathConverter` calls Java's `File.relativeTo` on every source file, and that throws across Windows drive letters, because the pub cache defaults to `C:` and the checkout is on `D:` (found 2026-09-20 on Kotlin 2.4.0 / AGP 9.1.0 / Gradle 9.3.1 / JDK 25). What actually builds, in PowerShell:
+
+  ```powershell
+  $env:GRADLE_OPTS = "-Dorg.gradle.project.kotlin.incremental=false"
+  flutter build apk --release
+  ```
+
+  Moving the pub cache to the checkout's drive (`$env:PUB_CACHE = "D:\pub-cache"`, then `flutter pub get`) is the tidier fix on paper and is what the drive-letter diagnosis suggests, **but on its own it did not work** — tried with and without `flutter clean`, same nine failures. Only disabling the incremental cache got a build out. Keep the flag in the environment: don't add `kotlin.incremental=false` to `android/gradle.properties` and don't downgrade Kotlin in `android/settings.gradle.kts`, since this is one machine's problem and CI's Linux runners never hit it.
+- Two Gradle builds at once on this project will fight over the build directory. Don't start a second build, or a `flutter test`, while one is running.
+- The generators are run by hand and will happily consume stale input: a failed `flutter test tool/render_app_icons_test.dart` still leaves the old `assets/icon/` PNGs in place, and `flutter_launcher_icons` then reports success against them. `test/icon/app_icon_test.dart` reads the shipped `drawable-xxxhdpi/ic_launcher_foreground.png` back and fails if it no longer matches the painter.
 
 ## Device drill (Android emulator, Git Bash)
 

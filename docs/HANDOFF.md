@@ -19,9 +19,10 @@ The behaviour is written down, rule by rule with stable IDs, in `docs/PRODUCT_RU
 
 - **Everything planned for the closed test is built:** the scanner and permissions, result screens and payload parsers, on-device link safety, History with an undoable delete, the generator with save and share, ads with consent, Pro, and Settings.
 - **v0.9.0 replaced the Material look with the app's own design** (see *The design*, below).
-- 1,411 tests pass; the analyzer and the format check are clean.
-- Thirteen pull requests are merged; each one was a release. `v0.9.0`'s release run was still finishing when this was written — check that its tag and draft release exist.
-- **The app has never been uploaded to Google Play.** That, and the launcher icon, are what stand between here and a closed test.
+- 1,421 tests pass; the analyzer and the format check are clean.
+- Fourteen pull requests are merged; each one was a release. `v0.9.0` and `v0.9.1` are both tagged with draft releases (checked 2026-09-20).
+- **v0.10.0 gave the app its launcher icon and cold-start window** (see *The design*, below), so the last code blocker is cleared.
+- **The app has never been uploaded to Google Play.** That is now what stands between here and a closed test, and everything it needs is a person's decision rather than code: the upload key, the Play Console entries, the store listing and the testers.
 
 ## Getting it running
 
@@ -30,7 +31,7 @@ The behaviour is written down, rule by rule with stable IDs, in `docs/PRODUCT_RU
 3. An Android emulator or a phone: `flutter run`. The project was driven on an emulator named `Medium_Phone` (API 37, Play Store image, virtual-scene camera).
 4. `adb` is not on the PATH on the machine this was built on: use `$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe`.
 
-The repository sits under OneDrive on that machine. If a native build ever breaks there, move the checkout out of OneDrive rather than patching the build.
+On that machine the checkout is on `D:`, outside the OneDrive root at `C:\Users\hassa\OneDrive` (checked 2026-09-20), so a broken native build is not OneDrive's doing. What does break there is the release build: Kotlin 2.4.0 cannot compute a path from the pub cache on `C:` to the project on `D:`, and all nine Kotlin plugin modules fail at once. Set `$env:GRADLE_OPTS = "-Dorg.gradle.project.kotlin.incremental=false"` before building; `docs/STACK_NOTES.md` has the detail.
 
 ## How the code is arranged
 
@@ -44,7 +45,7 @@ Data flows one way: screen → state → storage or service. A write lands first
 - `lib/screens/` — presentational only.
 - `test/` mirrors `lib/`, plus `test/helpers/` and the accessibility and text-size harnesses.
 
-128 Dart files under `lib/`, 71 test files.
+128 Dart files under `lib/`, 72 test files. `tool/` sits outside both: it holds the icon painter and the renderer that writes `assets/icon/`, and the format check covers it.
 
 ## The design
 
@@ -63,6 +64,8 @@ Two decisions worth knowing before you change them:
 - **The chassis is the default,** even on a phone set to light. Light and System default remain in Settings.
 
 The design was drawn on a canvas before it was built; the screens there are the reference for anything new.
+
+v0.10.0 added the app's mark (ICON-1–ICON-7): the concentric square of a QR code's finder pattern, signal on chassis, painted in `tool/app_icon_painter.dart` so the launcher icon, its adaptive and themed layers and the cold-start window all come from one source. One number matters more than it looks: the mark is drawn at **44 dp of the 108 dp canvas**, not the 66 dp safe zone. 66 dp is the widest a mark may be before a mask clips it, and a square that wide has its corners at 46.7 dp — outside the 36 dp a launcher actually shows — so round masks cut the ring and the chassis is squeezed out until the icon reads as a plain signal-coloured tile. Tests hold both ends of that: the corners stay inside the safe circle, and the mark stays between 45% and 70% of the visible circle.
 
 ## Working rules
 
@@ -89,10 +92,9 @@ The design was drawn on a canvas before it was built; the screens there are the 
 
 ### Code
 
-1. **Launcher icon and splash screen.** Both are still Flutter's defaults, and this is the last code blocker for a Play upload. Draw them from one committed source and generate the platform files (`docs/STACK_NOTES.md`).
-2. **Crash reports** (PRIV-3): the Settings row is hidden behind `crashReportsAvailable` in `lib/screens/settings/privacy_section.dart` until a Firebase `google-services.json` exists. Spike S14 first: no Firebase traffic before the switch is on.
-3. **Open questions** for the product owner: Create forms show "This field is required." on an untouched blank form; the link result could show its checks as a short inspection report (needs a rule first); SCAN-7's "up to 2×" auto-zoom cap cannot be enforced with Flutter alone.
-4. **Phase 2b**, during the closed test: eight more languages, more scan entry points, the remaining result types, extended link safety, History organisation, the rest of the generator, then export and backup. `docs/ROADMAP.md` has the order and the reasons.
+1. **Crash reports** (PRIV-3): the Settings row is hidden behind `crashReportsAvailable` in `lib/screens/settings/privacy_section.dart` until a Firebase `google-services.json` exists. Spike S14 first: no Firebase traffic before the switch is on.
+2. **Open questions** for the product owner: Create forms show "This field is required." on an untouched blank form; the link result could show its checks as a short inspection report (needs a rule first); SCAN-7's "up to 2×" auto-zoom cap cannot be enforced with Flutter alone.
+3. **Phase 2b**, during the closed test: eight more languages, more scan entry points, the remaining result types, extended link safety, History organisation, the rest of the generator, then export and backup. `docs/ROADMAP.md` has the order and the reasons.
 
 ### Waiting on a person, not on code
 

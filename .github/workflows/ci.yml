@@ -57,7 +57,7 @@ jobs:
         run: flutter pub get
 
       - name: Check formatting
-        run: dart format --output=none --set-exit-if-changed lib test
+        run: dart format --output=none --set-exit-if-changed lib test tool
 
       # The generated lib/l10n/app_localizations*.dart files are committed;
       # they must match the ARB files (LANG-2).
