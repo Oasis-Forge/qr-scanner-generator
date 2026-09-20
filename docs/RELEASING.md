@@ -41,7 +41,7 @@ Settings → Rules → Rulesets → New branch ruleset, target `main`:
 
 Google Play requires a public privacy policy URL.
 1. Settings → Pages → Deploy from a branch → `main` / `/docs`.
-2. The policy is then live at `https://oasis-forge.github.io/qr-scanner-generator/privacy/`, the URL Settings opens (SET-6) and the one Play and AdMob need. Done 2026-09-20.
+2. The policy is then live at `https://oasis-forge.github.io/qr-scanner-generator/privacy-policy/`, the URL Settings opens (SET-6) and the one Play and AdMob need. Done 2026-09-20.
 
 Every file in `docs/` gets published.
 
@@ -72,7 +72,7 @@ Where ads may appear, how often, and what Pro unlocks are rules in `docs/PRODUCT
 3. **app-ads.txt:** AdMob verifies apps through an `app-ads.txt` file at the root of the developer website on the Play listing. The Pages URL above is a sub-path, so confirm where the root file can live (for example an `Oasis-Forge/oasis-forge.github.io` repo) before the listing goes live.
 4. **Pro:** Play Console → Monetize → Products → In-app products: create one managed, one-time product for Pro. It can only be created after an AAB with the billing permission is uploaded. Add testers under Settings → License testing so closed-test purchases aren't charged.
 5. **Crash reports:** create a Firebase project with the Android app; `flutterfire configure` writes `google-services.json` and Gradle config, no Kotlin. Set `firebase_crashlytics_collection_enabled` to `false` in the manifest; collection starts only when the user turns on "Send crash reports" in Settings (PRIV-3, spike S14).
-6. **Data safety form** (Play Console → App content): declare what the ads SDK and Crashlytics collect and share. Keep it matched to `docs/privacy/index.html` and the release manifest's permissions (RUN-2).
+6. **Data safety form** (Play Console → App content): declare what the ads SDK and Crashlytics collect and share. Keep it matched to `docs/privacy-policy/index.html` and the release manifest's permissions (RUN-2).
 
 ## One-time setup: Claude GitHub Action
 

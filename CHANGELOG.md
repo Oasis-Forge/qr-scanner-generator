@@ -4,11 +4,16 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-09-20
+
+### Changed
+- The privacy policy moved to https://oasis-forge.github.io/qr-scanner-generator/privacy-policy/, which is the address Settings opens.
+
 ## [0.8.1] - 2026-09-20
 
 ### Changed
 - The app now shows as "QR Scanner + Generator" under the launcher icon, in Arabic too.
-- The privacy policy has its own page, written for what this version actually does, with oasisforge.support@gmail.com as the contact: https://oasis-forge.github.io/qr-scanner-generator/privacy/
+- The privacy policy has its own page, written for what this version actually does, with oasisforge.support@gmail.com as the contact: https://oasis-forge.github.io/qr-scanner-generator/privacy-policy/
 
 ### Fixed
 - Release builds are signed with the upload key when one is set up, so a build can be uploaded to Google Play.
