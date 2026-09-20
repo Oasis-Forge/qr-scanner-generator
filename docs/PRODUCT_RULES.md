@@ -340,6 +340,20 @@ This file defines how QR Scanner + Generator behaves: the defaults, limits, orde
 - **LOCK-2** With app lock on, the app locks at launch and after at least 1 minute in the background, and hides History, Trash, results, backup and its recent-apps preview until unlocked.
 - **LOCK-3** If the phone no longer has biometrics or a screen lock, app lock turns itself off instead of locking the user out.
 
+## 22. Launcher icon and splash
+
+**They do:** On the launcher they take a keyword-stuffed name, "QR Code Reader and Scanner - QR Scanner", rather than the app's own. Their icon artwork, adaptive-icon layers, themed-icon support and launch window: not verified.
+
+**Learn:** The icon is the app's first and most-repeated appearance, and it is seen at 48 px in a grid of competitors that nearly all draw the same literal code. A mark of our own is recognised faster than the category is. The launch window is not a place to say anything: it exists only so the app does not flash white on the way to a dark scanner (RUN-1, RUN-7).
+
+- **ICON-1** The icon is drawn from one committed source and rendered to the platform files by a tool; no generated file is hand-edited, and regenerating produces no diff. A test reads the shipped Android resource back and fails when it no longer matches the source, because each step is run by hand and a skipped one leaves a stale icon that nothing else catches. The Play 512 px listing icon comes from the same source; it isn't generated yet, and ships with the listing rather than the app.
+- **ICON-2** The mark is the concentric square of a QR code's finder pattern, in signal `#C9F24D` on the chassis `#0E0D0B`. It is the same in light and dark, because the app keeps its own palette (SET-1).
+- **ICON-3** The Android icon is adaptive: a chassis background layer and the mark as foreground. A launcher shows only the inner 72 dp of the 108 dp canvas, and 66 dp is the most a mark may be without a mask clipping it, so the mark is drawn at 44 dp — about two thirds of what is seen — and the chassis stays the ground on every mask (ICON-2). Drawn at the 66 dp ceiling it fills 92% of the visible circle and the icon reads as a signal-coloured tile instead.
+- **ICON-4** A monochrome layer ships for Android 13 themed icons: the mark alone, no background, within ICON-3's safe zone.
+- **ICON-5** The mark stays legible at 48 px: no stroke thinner than 4 dp on the 108 dp canvas, and no detail that merges at that size. A test renders the source at 48, 72 and 192 px and checks at each size that the ring, the gap inside it and the centre are each still solid and distinct, so the pattern can't be thinned or filled in unnoticed. It asserts the shapes rather than the pixels, because the goldens would be drawn on Windows and checked on CI's Linux.
+- **ICON-6** The launch window is the chassis with the icon centred, no text and no animation. It is the platform's own cold-start window: the app adds no splash screen, no delay and no minimum display time (RUN-1), and the cold start still meets SCAN-2's budget (RUN-7).
+- **ICON-7** The launcher name stays the app's own name in each language, never keywords (see LANG-2). The store title is chosen separately.
+
 ## Decisions
 
 1. (14 September 2026) Flutter only, with no hand-written Kotlin or Java; no home-screen widgets; no backend in v1 (so no dynamic codes, online link reputation or product database); iOS deferred (ENTRY-4, LINK-3, RES-9).
@@ -349,6 +363,7 @@ This file defines how QR Scanner + Generator behaves: the defaults, limits, orde
 5. (16 September 2026) Pro costs US$1.99, one-time (PRO-3).
 6. (16 September 2026) The closed test still starts on 16 October, with a trimmed first build; the rest ships as updates during the test, before the 2 November production application (`docs/ROADMAP.md`).
 7. (16 September 2026) Backup and restore ship in v1, before the production application (BAK-1–BAK-7).
+8. (20 September 2026) The launcher mark is the concentric square of a QR code's finder pattern, signal on chassis, over a literal code glyph or viewfinder brackets; the cold-start window is that chassis and that icon, nothing else (ICON-2, ICON-6).
 
 ### Defaults chosen while writing the rules
 

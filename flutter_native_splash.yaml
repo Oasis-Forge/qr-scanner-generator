@@ -1,0 +1,15 @@
+# The cold-start window: the chassis with the mark centred, no text and no
+# animation (ICON-6). It is the platform's own launch window, so it adds no
+# delay of its own and the app still meets SCAN-2's budget (RUN-1, RUN-7).
+# One colour for both themes, because the app keeps its own palette (SET-1).
+# Regenerate with:
+#   dart run flutter_native_splash:create
+flutter_native_splash:
+  color: "#0E0D0B"
+  image: assets/icon/splash.png
+  android_12:
+    image: assets/icon/splash_android12.png
+    color: "#0E0D0B"
+    icon_background_color: "#0E0D0B"
+  ios: false
+  web: false

@@ -97,12 +97,12 @@ Shipped to the closed track as updates; the testers' 14-day clock keeps running.
 ## Phase 3: Store readiness (Oct 1–9)
 Play needs most of this before the closed-test release can be reviewed, so it overlaps Phase 2a.
 - [x] Display name "QR Scanner + Generator" in the launcher, and its Arabic name (2026-09-20). Store title still to choose (30 characters at most, no competitor names).
-- [ ] Launcher icons and splash screen, generated from one committed source (`docs/STACK_NOTES.md`)
+- [x] Launcher icons and splash screen (ICON-1–ICON-7), generated from one committed source (2026-09-20). The mark is painted in `tool/app_icon_painter.dart`; `docs/STACK_NOTES.md` has the regeneration steps.
 - [ ] Store IDs, permanent after the first upload and free of personal names: `com.oasisforge.qrscanner`
 - [x] Privacy policy published on Pages at `/qr-scanner-generator/privacy-policy/`, linked from Settings (SET-6) and listed on the Oasis Forge site (2026-09-20). Keep it updated for every feature that touches user data (PRIV-6).
 - [x] The release build declares only the permissions the listing admits to (RUN-2). Fill `ALLOWED` in `release.yml` with the camera, internet, network state, billing, the ad ID, and those the ads SDK adds, checked with `aapt2`.
 - [ ] Play app content: data safety, ads declaration, content rating, target audience 13+, app access (no login)
-- [ ] Store listing in English and Arabic: short and full description, icon, feature graphic, phone screenshots
+- [ ] Store listing in English and Arabic: short and full description, the 512 px icon and 1024×500 feature graphic (draw both from `tool/app_icon_painter.dart`, as ICON-1 says), phone screenshots
 - [ ] `app-ads.txt` published at the root of the developer website on the listing (`docs/RELEASING.md`)
 - [ ] Closed-test release submitted by Oct 9, since a new account's first review can take days
 
@@ -131,4 +131,4 @@ Late checks. The review prompt comes last, so it asks about finished features.
 - Move `lib/core/` into the shared core repo when Notes starts (Nov 2)
 
 ## Known bugs
-None yet: no app code exists.
+None open. The app is built and its suite is green; this section is for what the closed test and the pre-launch report turn up.

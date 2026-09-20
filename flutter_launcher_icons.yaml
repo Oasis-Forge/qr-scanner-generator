@@ -1,0 +1,21 @@
+# The launcher icon, from the images tool/render_app_icons_test.dart draws
+# into assets/icon/ (ICON-1). Android only; iOS is deferred. Regenerate with:
+#   dart run flutter_launcher_icons
+flutter_launcher_icons:
+  # The square icon, for launchers that don't use adaptive layers.
+  image_path: assets/icon/icon.png
+  android: true
+  # The chassis, the mark, and the mark again for Android 13 themed icons
+  # (ICON-3, ICON-4). The generator adds no inset, so the mark keeps exactly
+  # the safe zone the painter gave it.
+  adaptive_icon_background: assets/icon/icon_background.png
+  adaptive_icon_foreground: assets/icon/icon_foreground.png
+  adaptive_icon_monochrome: assets/icon/icon_monochrome.png
+  adaptive_icon_foreground_inset: 0
+  ios: false
+  web:
+    generate: false
+  windows:
+    generate: false
+  macos:
+    generate: false
