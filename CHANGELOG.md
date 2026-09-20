@@ -4,6 +4,15 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-09-20
+
+### Changed
+- The app now shows as "QR Scanner + Generator" under the launcher icon, in Arabic too.
+- The privacy policy has its own page, written for what this version actually does, with oasisforge.support@gmail.com as the contact: https://oasis-forge.github.io/qr-scanner-generator/privacy/
+
+### Fixed
+- Release builds are signed with the upload key when one is set up, so a build can be uploaded to Google Play.
+
 ## [0.8.0] - 2026-09-21
 
 ### Added

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The name under the launcher icon (LANG-2's task-switcher title comes from
+     the message files instead). -->
+<resources>
+    <string name="app_name">QR Scanner + Generator</string>
+</resources>
