@@ -4,6 +4,11 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-09-20
+
+### Changed
+- Nothing users can see: a handoff guide for developers picking the project up, and two roadmap lines brought up to date.
+
 ## [0.9.0] - 2026-09-20
 
 ### Changed

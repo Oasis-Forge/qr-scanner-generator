@@ -96,10 +96,10 @@ Shipped to the closed track as updates; the testers' 14-day clock keeps running.
 
 ## Phase 3: Store readiness (Oct 1–9)
 Play needs most of this before the closed-test release can be reviewed, so it overlaps Phase 2a.
-- [ ] Display name "QR Scanner + Generator" in the launcher; store title chosen (30 characters at most, no competitor names)
+- [x] Display name "QR Scanner + Generator" in the launcher, and its Arabic name (2026-09-20). Store title still to choose (30 characters at most, no competitor names).
 - [ ] Launcher icons and splash screen, generated from one committed source (`docs/STACK_NOTES.md`)
 - [ ] Store IDs, permanent after the first upload and free of personal names: `com.oasisforge.qrscanner`
-- [ ] Privacy policy published on Pages, linked from Settings (SET-6) and Play, and updated for every feature that touches user data (PRIV-6)
+- [x] Privacy policy published on Pages at `/qr-scanner-generator/privacy-policy/`, linked from Settings (SET-6) and listed on the Oasis Forge site (2026-09-20). Keep it updated for every feature that touches user data (PRIV-6).
 - [x] The release build declares only the permissions the listing admits to (RUN-2). Fill `ALLOWED` in `release.yml` with the camera, internet, network state, billing, the ad ID, and those the ads SDK adds, checked with `aapt2`.
 - [ ] Play app content: data safety, ads declaration, content rating, target audience 13+, app access (no login)
 - [ ] Store listing in English and Arabic: short and full description, icon, feature graphic, phone screenshots
