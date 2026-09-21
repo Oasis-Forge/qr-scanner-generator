@@ -24,6 +24,7 @@ Data flows one way: screen → state → storage/service. A write lands first, t
 - `lib/l10n/`: one `app_<code>.arb` per language (20, LANG-7), `languages.dart` naming each in its own language, and the generated `app_localizations.dart`, all committed; CI regenerates and fails on a diff. Never hand-edit the ARB files across languages: `tool/add_messages.dart` changes a message in every file at once, and `tool/new_language.dart` adds a language from the English one.
 - `lib/screens/`: presentational only, reading state with `context.read/watch`.
 - `test/`: mirrors `lib/`, plus `test/helpers/` (in-memory database, fakes, pump helpers) and the accessibility and text-scale harnesses.
+- `integration_test/`: not run by `flutter test`. It renders the Play listing's graphics on a device from the real screens (`docs/RELEASING.md` → Store listing). The listing's text and the rendered images live in `store/`, which is gitignored because the repo is public.
 
 ## Conventions
 - Product principles: no ad in the working area (viewfinder, scan result, generator editor), and the largest button is always the real action; nothing opens before the user has seen where it leads; the free app does the whole core job, and Pro is a one-time purchase that removes ads, never a subscription; no account, and scans, codes and history leave the device only when the user shares or exports them; ads and crash reports run only as far as the user's consent allows. Every feature keeps them.

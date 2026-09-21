@@ -4,6 +4,11 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.12.2] - 2026-09-21
+
+### Changed
+- Nothing users can see: the Google Play listing — its text in twenty languages, and its screenshots, feature graphic and icon — is now drawn from the app itself rather than assembled by hand, so what the store shows is what the app does.
+
 ## [0.12.1] - 2026-09-21
 
 ### Changed

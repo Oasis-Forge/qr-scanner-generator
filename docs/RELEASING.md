@@ -118,3 +118,37 @@ Run `/install-github-app` from a `claude` terminal, or install the Claude GitHub
 ## App icon and splash screen
 
 Draw them from one committed source, generate the platform files with the stack's tools, and commit the results. The commands are in `docs/STACK_NOTES.md`.
+
+## Store listing
+
+Everything the listing needs lives in `store/`, which `.gitignore` keeps out of the public repository; `store/play/README.txt` says what is where. Only the captions and titles are committed, in `integration_test/store_captions.dart`, because the renderer needs them to compile and CI analyzes that folder.
+
+### Text
+
+`store/play/source/listing.txt` holds all twenty languages, one block each, and is the only file edited by hand. Build the rest from it:
+
+```bash
+dart store/play/source/build_listing.dart store/play/source/listing.txt store/play
+```
+
+That writes `store/play/store-listing-translations.csv` for **Main store listing → Manage translations → bulk import**, and `store/play/text/<code>.txt` to paste by hand if the import misreads a language. It refuses to write anything if a title is over 30 characters, a short description over 80, or a full description over 4000, and prints the count for each language either way — Play rejects an over-long field on import without saying which one. English is left out of the CSV: it is the default listing, typed on the main page.
+
+Only claim what ships. The listing describes the app at v0.12.0, which has no search, no export or backup, no barcode *generation* and no styled codes; those are Phase 2b, and a listing that promises them is a listing Play can pull.
+
+### Graphics
+
+`integration_test/store_screenshots_test.dart` renders them on the emulator from the real screens with sample data: six captioned phone screenshots (1080×1920) and a feature graphic (1024×500) per language, plus the 512×512 store icon once. Android draws the text itself, so every script looks exactly as it does on a phone.
+
+```bash
+adb shell "rm -rf /sdcard/Download/store-screenshots"
+flutter test integration_test/store_screenshots_test.dart -d emulator-5554
+adb pull /sdcard/Download/store-screenshots/<code> store/play/graphics
+```
+
+- **Clear the whole folder first, not just one language.** The runner uninstalls the app when it finishes, and the next install cannot overwrite the files the old one wrote — the write fails with `Permission denied, errno = 13`. Leaving `icon-512.png` behind in the parent folder is enough to fail a run whose language folders were cleared.
+- **Quote the device path** in every `adb shell` and `adb pull` from Git Bash, or wrap the whole command in quotes. Unquoted, Git Bash rewrites `/sdcard/...` into `C:/Program Files/Git/sdcard/...`: the pull says "No such file or directory", and the `rm` silently deletes nothing, which then looks like a permissions problem.
+- `--dart-define=ONLY=en-US,ar` renders only those languages.
+- The scanner shot needs `CameraPermissionState.granted`, or it renders the permission gate instead of the viewfinder, and a fake camera that paints a poster — the emulator's virtual scene is far too soft to photograph.
+- The icon and both graphics use the launcher mark's own painter (`tool/app_icon_painter.dart`), so the store and the phone can't drift apart (ICON-1).
+
+Play also needs the listing's developer website to be the **site root** (`https://oasis-forge.github.io/`), not the privacy policy's sub-path, or AdMob will not find `app-ads.txt`.

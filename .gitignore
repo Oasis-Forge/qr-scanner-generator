@@ -53,3 +53,7 @@ android/key.properties
 *.jks
 *.keystore
 .env*
+
+# Store listing text, graphics and their sources (see store/play/README.txt).
+# The repository is public; the listing is drafted here before it is public.
+/store/
