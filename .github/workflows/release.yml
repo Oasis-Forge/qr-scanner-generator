@@ -49,22 +49,28 @@ jobs:
           if [ "$GITHUB_REF" != refs/heads/main ]; then
             echo "Not on main: building $name as a check only." >> "$GITHUB_STEP_SUMMARY"
           else
-            # CI compares each PR against main's version, so two PRs opened
-            # together can both pass with the same one. The first merge moves
-            # main; the second would then ship as part of no release, leaving
-            # main's code unreleased and the bundle older than its own
-            # changelog. Silently doing nothing is the one outcome worth
-            # refusing, so on main the gate runs again against the commit
-            # before this merge.
+            # Most merges are not releases (decided 2026-09-21): the version
+            # stands still until the user decides to cut one. When it does
+            # move, the gate runs again here against the commit before this
+            # merge, because CI compared the branch against main and two
+            # branches opened together can both pass with the same version —
+            # the first merge moves main, and the second would otherwise land
+            # as part of no release, leaving its code out of every changelog.
             bash scripts/version.sh check
-            release=true
+            release=$(bash scripts/version.sh changed)
+            if [ "$release" != true ]; then
+              echo "No release in this merge: main stays on $name." >> "$GITHUB_STEP_SUMMARY"
+            fi
           fi
           { echo "name=$name"; echo "release=$release"; } >> "$GITHUB_OUTPUT"
 
   build:
     name: Build and check
     needs: version
-    if: needs.version.outputs.release == 'true' || github.event_name == 'workflow_dispatch'
+    # Every merge builds, release or not: this job is the proof that the
+    # release build still compiles on a clean machine and that RUN-2's
+    # permission list still holds. Only the summary changes when the version
+    # stood still.
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:

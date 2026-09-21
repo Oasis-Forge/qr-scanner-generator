@@ -1,9 +1,10 @@
 # Releasing
 
-Every PR merged to `main` is a release. The app version is the source of truth: `x.y.z` follows [Semantic Versioning](https://semver.org) (major for breaking changes, minor for new features, patch for fixes and everything else). Mobile stores also need a build number `N` (`x.y.z+N`) that grows by one with every release. `bash scripts/version.sh name` and `build` read them.
+A release is cut when the user asks for one, not on every merge (decided 2026-09-21). The app version is the source of truth: `x.y.z` follows [Semantic Versioning](https://semver.org) (major for breaking changes, minor for new features, patch for fixes and everything else). Mobile stores also need a build number `N` (`x.y.z+N`) that grows by one with every release. `bash scripts/version.sh name` and `build` read them.
 
-1. **Before merging**, bump the version on the branch with `/release [major|minor|patch]`, or by hand: edit the version and add a `## [x.y.z] - YYYY-MM-DD` entry to `CHANGELOG.md`. CI fails if the version isn't above the one on `main` or has no changelog entry. Dependabot PRs are exempt and ship with the next release.
-2. **On merge**, `release.yml` builds the release artifacts as a check, runs the permission gate, and runs the version gate a second time. It publishes nothing and tags nothing (see below).
+1. **Most branches are not releases.** Put the change under `## [Unreleased]` in `CHANGELOG.md` and leave the version alone. CI passes a branch whose version stands still, so nothing forces a release — the decision is the user's.
+2. **When the user asks for one**, bump the version on the branch with `/release [major|minor|patch]`, or by hand: edit the version and move the Unreleased entries under a `## [x.y.z] - YYYY-MM-DD` heading. From there CI fails if the version is not above the one on `main`, or has no changelog entry, or reuses a build number.
+3. **On merge**, `release.yml` builds the release artifacts as a check and runs the permission gate, whether or not this merge is a release. When the version did move, it runs the version gate a second time against the commit before the merge. It publishes nothing and tags nothing (see below).
 
 Any other platform's release workflow is run by hand from the Actions tab, or with `gh workflow run <workflow>.yml --ref main`.
 
@@ -152,3 +153,17 @@ adb pull /sdcard/Download/store-screenshots/<code> store/play/graphics
 - The icon and both graphics use the launcher mark's own painter (`tool/app_icon_painter.dart`), so the store and the phone can't drift apart (ICON-1).
 
 Play also needs the listing's developer website to be the **site root** (`https://oasis-forge.github.io/`), not the privacy policy's sub-path, or AdMob will not find `app-ads.txt`.
+
+### Release notes
+
+Every release carries its notes in all twenty languages (decided 2026-09-21): a tester reading the app in Urdu should read the note in Urdu too. The source is one block per language, the same shape as the listing's, and the only file edited by hand:
+
+```bash
+dart tool/build_release_notes.dart store/play/source/release-notes/X.Y.Z.txt store/play
+```
+
+That writes `store/play/release-notes/X.Y.Z.txt`: every language inside its own `<en-US>` … `</en-US>` tag, which is the entire contents of the release's **Release notes** field. Paste it once and Play splits it. The builder refuses to write if a language is over **500 characters**, missing, or not a listing language, and prints each count either way.
+
+- **Write the English first and keep it short.** German and Russian run about a third longer, so English much over 380 characters produces translations Play rejects — and it rejects the whole paste, naming no language.
+- **A release with nothing a user can see gets notes about the build, not an invented feature.** "Nothing users can see" is the right thing to write in `CHANGELOG.md` and the wrong thing to tell a tester.
+- Translate with the same fan-out the listing used, grounded in `lib/l10n/app_<code>.arb`, so the note and the app use the same words for History, Create and Wi-Fi.
