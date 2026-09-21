@@ -35,7 +35,7 @@ Set up before the first feature, while it's cheap.
 - [x] Finish `/kickoff`: Android scaffold as `com.oasisforge.qrscanner`, version `0.1.0+1`, merged `.gitignore`, strict lints, `/verify` green, kickoff skill deleted; repo `Oasis-Forge/qr-scanner-generator` (public) (2026-09-16)
 - [x] GitHub repo, Dependabot, CI (checks, Flutter-only guard, Android build) green on a first PR (#1, 2026-09-16)
 - [ ] `main` ruleset: PR required, the CI checks required, no force pushes or deletion (`docs/RELEASING.md`)
-- [x] Every merged PR is a release: the CI version check, then a build-as-a-check on merge. Tags and GitHub Releases were dropped on 2026-09-21 and the existing tags deleted; nothing is published from CI (`docs/RELEASING.md`).
+- [x] The release gate: the CI version check, then a build-as-a-check on merge. Tags and GitHub Releases were dropped on 2026-09-21 and the existing tags deleted; nothing is published from CI. Releasing on every merge went the same day: the user decides when a release is cut, and the check passes a branch whose version stands still (`docs/RELEASING.md`).
 - [x] The release workflow runs once without secrets (unsigned artifacts, nothing published): it ran on the `v0.1.0` merge, 2026-09-16
 - [x] Privacy policy served by GitHub Pages at `https://oasis-forge.github.io/qr-scanner-generator/privacy-policy/` (`docs/privacy-policy/index.html`), 2026-09-20
 - [x] Re-check package versions on pub.dev and run the licence check (S7); each version is pinned when its feature adds it (`docs/research/technical-constraints.md` → Spike results, 2026-09-16)
@@ -102,7 +102,8 @@ Play needs most of this before the closed-test release can be reviewed, so it ov
 - [x] Privacy policy published on Pages at `/qr-scanner-generator/privacy-policy/`, linked from Settings (SET-6) and listed on the Oasis Forge site (2026-09-20). Keep it updated for every feature that touches user data (PRIV-6).
 - [x] The release build declares only the permissions the listing admits to (RUN-2). Fill `ALLOWED` in `release.yml` with the camera, internet, network state, billing, the ad ID, and those the ads SDK adds, checked with `aapt2`.
 - [ ] Play app content: data safety, ads declaration, content rating, target audience 13+, app access (no login)
-- [ ] Store listing in English and Arabic: short and full description, the 512 px icon and 1024×500 feature graphic (draw both from `tool/app_icon_painter.dart`, as ICON-1 says), phone screenshots
+- [x] Store listing drawn from the app itself, in all twenty languages (2026-09-21): title, short and full description, six captioned phone screenshots and a 1024×500 feature graphic per language, and the 512 px icon, rendered from the real screens by `integration_test/store_screenshots_test.dart`. It waits on the upload. No tablet screenshots yet, so Play will flag large screens.
+- [x] Release notes in all twenty languages with every release (2026-09-21), built by `tool/build_release_notes.dart` from one hand-written source per version (`docs/RELEASING.md`).
 - [x] `app-ads.txt` published at the root of the developer website on the listing (`docs/RELEASING.md`). Live at `https://oasis-forge.github.io/app-ads.txt` with the AdMob publisher line; checked 2026-09-21.
 - [ ] Closed-test release submitted by Oct 9, since a new account's first review can take days
 
@@ -111,7 +112,7 @@ Late checks. The review prompt comes last, so it asks about finished features.
 - [ ] Review prompt (SET-9)
 - [ ] Scan-reliability pass on real phones: confirm GEN-12's 80% meter, STY-3's 20% logo cap, and SCAN-2 and SCAN-3's budgets from S6. Amend the rules if a number changes.
 - [ ] Pre-launch report read for every closed-track upload; crashes and accessibility findings fixed or listed under Known bugs
-- [ ] Listing translated into all ten languages (LANG-7); data safety and policy checked against the final manifest (PRIV-6)
+- [ ] Data safety and the policy checked against the final manifest (PRIV-6). The listing itself is already in all twenty languages (LANG-7, 2026-09-21); it needs rewriting only where a Phase 2b feature changes what it claims.
 
 ## Phase 5: Release (Nov 2–13)
 - [x] ~~Play service account and `PLAY_SERVICE_ACCOUNT_JSON`, so releases upload to Play automatically.~~ Dropped 2026-09-21: nothing publishes to Play from GitHub. Every bundle is built locally with `flutter build appbundle --release` and uploaded by hand, so no service account exists and the keystore never leaves the machine (`docs/RELEASING.md`).

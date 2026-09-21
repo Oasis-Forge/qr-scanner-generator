@@ -3,8 +3,12 @@
 #
 #   scripts/version.sh name    print x.y.z
 #   scripts/version.sh build   print the build number N (0 when there is none)
-#   scripts/version.sh check   fail unless the version is above the base branch's
-#                              and CHANGELOG.md has a "## [x.y.z] - YYYY-MM-DD" entry
+#   scripts/version.sh check   pass when the version stands still; when it is
+#                              raised, fail unless it is above the base
+#                              branch's and CHANGELOG.md has a
+#                              "## [x.y.z] - YYYY-MM-DD" entry for it
+#   scripts/version.sh changed print true when the version differs from the
+#                              base branch's, false when it stands still
 #   scripts/version.sh notes   print the CHANGELOG.md entry for the current version
 #
 # The version lives in the first file found of pubspec.yaml (x.y.z+N),
@@ -116,8 +120,17 @@ case "${1:-}" in
 
     if [ -n "$last_name" ]; then
       highest=$(printf '%s\n%s\n' "$last_name" "$name" | sort -V | tail -n 1)
-      if [ "$name" = "$last_name" ] || [ "$highest" != "$name" ]; then
-        fail "$base_branch was already on $last_name: raise the version above it (major, minor, or patch)"
+      if [ "$highest" != "$name" ]; then
+        fail "$base_branch is on $last_name: this branch went back to $name"
+      fi
+      # Not every branch is a release (decided 2026-09-21). The user decides
+      # when to cut one; until then the version stands still, and standing
+      # still is not an error. A version that moves is still checked in full,
+      # including a build number raised on its own — Play refuses an upload
+      # whose build number it has already seen, even under the same x.y.z.
+      if [ "$name" = "$last_name" ] && [ "$build" = "$last_build" ]; then
+        echo "No release here: still $name+$build, the same as $base_branch."
+        exit 0
       fi
       if [ "$build" != 0 ] && [ "$build" -le "$last_build" ]; then
         fail "$base_branch was already on build $last_build: raise the build number above it"
@@ -126,5 +139,15 @@ case "${1:-}" in
     changelog_entry "$name" > /dev/null || fail "CHANGELOG.md needs a '## [$name] - YYYY-MM-DD' entry"
     echo "Releasing $name+$build (was ${last_name:-nothing yet})."
     ;;
-  *) sed -n '4,8p' "$0" >&2; exit 2 ;;
+  changed)
+    read -r changed_name changed_build <<< "$(base_branch_version)" || true
+    if [ -z "${changed_name:-}" ] ||
+       [ "$name" != "$changed_name" ] ||
+       [ "$build" != "${changed_build:-0}" ]; then
+      echo true
+    else
+      echo false
+    fi
+    ;;
+  *) sed -n '4,11p' "$0" >&2; exit 2 ;;
 esac

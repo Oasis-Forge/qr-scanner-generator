@@ -1,8 +1,12 @@
 # Changelog
 
-Notable changes per release, written for users. Versions follow [Semantic Versioning](https://semver.org) and match the app version. Nothing is tagged, so this file and the commit that raised the version are the record of a release (see `docs/RELEASING.md`). Every merged PR is a release.
+Notable changes per release, written for users. Versions follow [Semantic Versioning](https://semver.org) and match the app version. Nothing is tagged, so this file and the commit that raised the version are the record of a release (see `docs/RELEASING.md`). A release is cut when the user asks for one, not on every merge: what lands in between waits under **Unreleased**.
 
 ## [Unreleased]
+
+### Changed
+- Nothing users can see: a release is no longer forced on every merge. What changes waits here under Unreleased until a release is asked for, and the version check now passes a branch that leaves the version alone instead of failing it.
+- Nothing users can see: a release carries its notes in all twenty languages the app speaks, built from one file per version the same way the store listing is, so a tester reading the app in Urdu reads the note in Urdu.
 
 ## [0.12.3] - 2026-09-21
 

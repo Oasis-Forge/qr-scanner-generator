@@ -1,6 +1,6 @@
 # Handoff
 
-For the next developer. Written 20 September 2026, at v0.9.0.
+For the next developer. Written 20 September 2026 at v0.9.0; brought up to date 21 September 2026 at v0.12.3.
 
 Read this once, then work from `CLAUDE.md` (how this repo is built) and `docs/ROADMAP.md` (what is left). This page says where things stand, what is waiting on a person rather than on code, and the traps that cost time.
 
@@ -19,10 +19,12 @@ The behaviour is written down, rule by rule with stable IDs, in `docs/PRODUCT_RU
 
 - **Everything planned for the closed test is built:** the scanner and permissions, result screens and payload parsers, on-device link safety, History with an undoable delete, the generator with save and share, ads with consent, Pro, and Settings.
 - **v0.9.0 replaced the Material look with the app's own design** (see *The design*, below).
-- 1,421 tests pass; the analyzer and the format check are clean.
-- Fourteen pull requests are merged; each one was a release. `v0.9.0` and `v0.9.1` are both tagged with draft releases (checked 2026-09-20).
+- 3,311 tests pass; the analyzer and the format check are clean.
+- Twenty-two pull requests are merged. Each was a release until 21 September 2026, when that stopped being automatic: **a release is cut when the maintainer asks for one**, and everything merged in between waits under **Unreleased** in `CHANGELOG.md`. **Nothing is tagged**, either. Every tag was deleted on 2026-09-21, and the record of a version is now its `CHANGELOG.md` entry and the commit that raised it.
 - **v0.10.0 gave the app its launcher icon and cold-start window** (see *The design*, below), so the last code blocker is cleared.
-- **The app has never been uploaded to Google Play.** That is now what stands between here and a closed test, and everything it needs is a person's decision rather than code: the upload key, the Play Console entries, the store listing and the testers.
+- **v0.11.0 gave the app twenty languages,** each listed under its own name. Greek is translated but held back on a font bug (*Known bugs* in `docs/ROADMAP.md`).
+- **v0.12.2 drew the whole Play listing from the app itself** — text in twenty languages, six captioned screenshots and a feature graphic per language — and v0.12.4 added release notes in twenty languages to every release (`docs/RELEASING.md`).
+- **The app has never been uploaded to Google Play.** That is all that stands between here and a closed test, and what is left is a person's to do rather than code: the Play Console entries, the upload itself, and the testers. The upload key exists and the listing is drafted.
 
 ## Getting it running
 
@@ -45,7 +47,7 @@ Data flows one way: screen → state → storage or service. A write lands first
 - `lib/screens/` — presentational only.
 - `test/` mirrors `lib/`, plus `test/helpers/` and the accessibility and text-size harnesses.
 
-128 Dart files under `lib/`, 72 test files. `tool/` sits outside both: it holds the icon painter and the renderer that writes `assets/icon/`, and the format check covers it.
+147 Dart files under `lib/`, the generated localisations included, and 72 test files. `tool/` sits outside both: the icon painter and the renderer that writes `assets/icon/`, the two tools that edit the ARB files across all twenty languages at once, and the builders for the store captions and a release's notes. The format check covers it. `integration_test/` is not run by `flutter test` either: it renders the Play listing's graphics on a device from the real screens.
 
 ## The design
 
@@ -70,7 +72,7 @@ v0.10.0 added the app's mark (ICON-1–ICON-7): the concentric square of a QR co
 ## Working rules
 
 - **One branch per theme, one PR to `main`.** Never stack on an unmerged branch.
-- **Every merged PR is a release.** Bump the version and add a `CHANGELOG.md` entry on the branch (the `/release` skill does it); CI fails without it. The merge tags `vX.Y.Z` and drafts a GitHub release.
+- **A release is the maintainer's call, and most PRs are not one.** The change goes under `## [Unreleased]` in `CHANGELOG.md` and the version stands still; CI passes a branch that does not move it, and checks one that does. **Nothing is tagged and nothing is published from anywhere** (2026-09-21): the bundle Play receives is built on this machine and uploaded by hand, and a release carries its notes in all twenty languages.
 - **Drive it by hand before the PR.** Anything that shows on screen gets run on a device, and the PR says what was driven and what was only tested. `/ship` walks through the gate.
 - **Tests assert what the user sees** — text on screen, the contents of a file — never just that something exists. Every model or state change gets a test.
 - **Flutter only.** No hand-written Kotlin or Java; CI enforces it. Manifest XML and Gradle config are fine.
@@ -94,14 +96,14 @@ v0.10.0 added the app's mark (ICON-1–ICON-7): the concentric square of a QR co
 
 1. **Crash reports** (PRIV-3): the Settings row is hidden behind `crashReportsAvailable` in `lib/screens/settings/privacy_section.dart` until a Firebase `google-services.json` exists. Spike S14 first: no Firebase traffic before the switch is on.
 2. **Open questions** for the product owner: Create forms show "This field is required." on an untouched blank form; the link result could show its checks as a short inspection report (needs a rule first); SCAN-7's "up to 2×" auto-zoom cap cannot be enforced with Flutter alone.
-3. **Phase 2b**, during the closed test: eight more languages, more scan entry points, the remaining result types, extended link safety, History organisation, the rest of the generator, then export and backup. `docs/ROADMAP.md` has the order and the reasons.
+3. **Phase 2b**, during the closed test: more scan entry points, the remaining result types, extended link safety, History organisation, the rest of the generator, then export and backup. `docs/ROADMAP.md` has the order and the reasons.
 
 ### Waiting on a person, not on code
 
-- **The upload key.** Create it, back it up, and write `android/key.properties` pointing at it (`docs/RELEASING.md`). It stays on this machine: nothing publishes from CI, so the GitHub keystore secrets aren't needed (2026-09-21). Until the file exists every release build is signed with a debug key, which Play refuses. The Gradle side is already wired.
+- **The first upload.** Everything else in Play is blocked behind it: the `remove_ads` product needs an uploaded build carrying the billing permission, and the API cannot create an app's first release. The bundle is built here, signed with the upload key, and uploaded by hand.
 - **Play Console:** create the app, upload the first bundle by hand (the API cannot create an app's first release), then create the `remove_ads` product at US$1.99 and add license testers so a real purchase can be driven.
 - **Play app content:** data safety (declare AdMob and the consent tool, Play Billing, and ML Kit's usage statistics), ads declaration, content rating, target audience 13+, app access with no login.
-- **Store listing** in English and Arabic: title, descriptions, a 512 px icon, a 1024×500 feature graphic, screenshots.
+- **Putting the listing into Play:** the CSV bulk import under Main store listing → Manage translations, the graphics folder for each language, and the release's notes pasted into the release itself. All of it is written and rendered already, in `store/play/`. **Tablet screenshots (7-inch and 10-inch) are not rendered yet**, so Play will flag large screens until they are.
 - **Testers:** a group of 20+ so at least 12 are opted in for 14 continuous days.
 - **`main` branch protection** is still off.
 - **Real phones** for spike S5 (joining a Wi-Fi network) and S6 (cold start to first scan). The emulator's scene is too soft to confirm a live read inside the target.
@@ -111,3 +113,5 @@ v0.10.0 added the app's mark (ICON-1–ICON-7): the concentric square of a QR co
 - The privacy policy is written and published at `https://oasis-forge.github.io/qr-scanner-generator/privacy-policy/`, and Settings opens it. It describes only what ships today; each deferred feature returns to the page in the PR that ships it.
 - AdMob is set up: the app ID is in the manifest, the banner unit is `bannerAdUnitId` in `lib/main.dart` (release builds only; debug uses Google's test unit), the consent messages are published, and `app-ads.txt` is live at the Oasis Forge site root.
 - Release signing, the app's launcher name in English and Arabic, and the permission allow-list are all in place.
+- **The upload key exists.** `android/key.properties` points at it and a release build is signed with it — checked on the 0.12.3 bundle, `CN=hassan kalash, OU=oasis forge`, not the debug key Play refuses. It never leaves this machine, so the GitHub keystore secrets are not needed.
+- **The store listing is written and rendered** in all twenty languages, and so are a release's notes: text, six captioned screenshots and a feature graphic per language, and the 512 px icon. It all sits in `store/play/`, which is gitignored because the repository is public; `store/play/README.txt` says what is where and how to rebuild it.
