@@ -98,7 +98,7 @@ v0.10.0 added the app's mark (ICON-1–ICON-7): the concentric square of a QR co
 
 ### Waiting on a person, not on code
 
-- **The upload key.** Create it, back it up, and set `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` and `ANDROID_KEY_PASSWORD` in GitHub (`docs/RELEASING.md`). Until then release builds are signed with a debug key, which Play refuses. The Gradle side is already wired.
+- **The upload key.** Create it, back it up, and write `android/key.properties` pointing at it (`docs/RELEASING.md`). It stays on this machine: nothing publishes from CI, so the GitHub keystore secrets aren't needed (2026-09-21). Until the file exists every release build is signed with a debug key, which Play refuses. The Gradle side is already wired.
 - **Play Console:** create the app, upload the first bundle by hand (the API cannot create an app's first release), then create the `remove_ads` product at US$1.99 and add license testers so a real purchase can be driven.
 - **Play app content:** data safety (declare AdMob and the consent tool, Play Billing, and ML Kit's usage statistics), ads declaration, content rating, target audience 13+, app access with no login.
 - **Store listing** in English and Arabic: title, descriptions, a 512 px icon, a 1024×500 feature graphic, screenshots.

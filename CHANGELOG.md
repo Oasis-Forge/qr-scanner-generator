@@ -1,8 +1,13 @@
 # Changelog
 
-Notable changes per release, written for users. Versions follow [Semantic Versioning](https://semver.org) and match the app version and the `vX.Y.Z` git tags. Every merged PR is a release (see `docs/RELEASING.md`).
+Notable changes per release, written for users. Versions follow [Semantic Versioning](https://semver.org) and match the app version. Nothing is tagged, so this file and the commit that raised the version are the record of a release (see `docs/RELEASING.md`). Every merged PR is a release.
 
 ## [Unreleased]
+
+## [0.11.2] - 2026-09-21
+
+### Changed
+- Nothing users can see: five places in the project's own documentation still described the old release process, and now match how it actually works.
 
 ## [0.11.1] - 2026-09-21
 

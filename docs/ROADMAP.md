@@ -103,7 +103,7 @@ Play needs most of this before the closed-test release can be reviewed, so it ov
 - [x] The release build declares only the permissions the listing admits to (RUN-2). Fill `ALLOWED` in `release.yml` with the camera, internet, network state, billing, the ad ID, and those the ads SDK adds, checked with `aapt2`.
 - [ ] Play app content: data safety, ads declaration, content rating, target audience 13+, app access (no login)
 - [ ] Store listing in English and Arabic: short and full description, the 512 px icon and 1024×500 feature graphic (draw both from `tool/app_icon_painter.dart`, as ICON-1 says), phone screenshots
-- [ ] `app-ads.txt` published at the root of the developer website on the listing (`docs/RELEASING.md`)
+- [x] `app-ads.txt` published at the root of the developer website on the listing (`docs/RELEASING.md`). Live at `https://oasis-forge.github.io/app-ads.txt` with the AdMob publisher line; checked 2026-09-21.
 - [ ] Closed-test release submitted by Oct 9, since a new account's first review can take days
 
 ## Phase 4: Before release (Oct 26–30)
