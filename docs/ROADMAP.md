@@ -40,12 +40,12 @@ Set up before the first feature, while it's cheap.
 - [x] Privacy policy served by GitHub Pages at `https://oasis-forge.github.io/qr-scanner-generator/privacy-policy/` (`docs/privacy-policy/index.html`), 2026-09-20
 - [x] Re-check package versions on pub.dev and run the licence check (S7); each version is pinned when its feature adds it (`docs/research/technical-constraints.md` → Spike results, 2026-09-16)
 - [x] Spikes S1 (virtual-scene scanning; answered 2026-09-17), S2 (`analyzeImage` on API 36/37), S3 (`flutter_zxing` from the OneDrive path) and S8 (camera permission states), plus the desk spikes S11 (Public Suffix List source) and S13 (barcode PNG rendering). Book real phones for S5 and S6 on Sep 28 – Oct 2. S2, S3, S8, S11 and S13 answered 2026-09-16 (`docs/research/technical-constraints.md` → Spike results).
-- [ ] Accounts:
+- [ ] Accounts: all done bar one — the Play Console app, the upload keystore, AdMob with its consent messages and the support email are all in place (2026-09-21). **Only the Firebase project is missing**, and crash reports wait on it.
   - Play Console app `com.oasisforge.qrscanner` with Play App Signing and the upload keystore
   - the upload keystore created and backed up, with `android/key.properties` pointing at it locally (`docs/RELEASING.md`), so the bundle is signed with the upload key. GitHub secrets aren't needed: nothing publishes to Play from GitHub (decided 2026-09-21)
-  - AdMob app, consent messages, and a Firebase project (`docs/RELEASING.md`)
+  - AdMob app and consent messages, done; **a Firebase project, still missing** (`docs/RELEASING.md`). An interstitial ad unit is missing too: ADS-9 ships inert until one exists (`lib/main.dart`, `interstitialAdUnitId`).
   - a non-personal support email for the listing and feedback (SET-8)
-- [ ] Testers: a Google Group, recruiting 20+ now so at least 12 are opted in on Oct 16 and stay for 14 days
+- [x] Testers assigned to the internal track (2026-09-21). The count still has to hold: at least 12 opted in on Oct 16, staying 14 continuous days.
 
 ## Phase 1: Foundations (Sep 21–25)
 Groundwork every feature builds on. Settle everything that shapes stored data now, before testers have any.
@@ -79,8 +79,9 @@ In dependency order, one theme per PR. Everything else in Phase 2 arrives during
   - SAVE-1, SAVE-2, SAVE-4, SAVE-5
 - [x] **Ads, consent, Pro, settings:** ADS-1–ADS-8, PRO-1–PRO-7, PRIV-1, PRIV-2, PRIV-4–PRIV-8, SET-1 (Settings row), SET-2, SET-3, SET-5–SET-8. Release builds request the app's own banner unit (created 2026-09-19); debug builds use Google's test unit.
 - [ ] **Crash reports:** PRIV-3 with spike S14 (no Firebase traffic before opt-in), once `google-services.json` arrives. The Settings row stays hidden until then (`crashReportsAvailable` in `lib/screens/settings/privacy_section.dart`).
-- [ ] Internal-testing AAB uploaded by hand by Oct 2, and every upload after it (decided 2026-09-21). The `remove_ads` product needs an uploaded build with the billing permission. The bundle is built here; it can only be uploaded once `android/key.properties` exists, or it is debug-signed and Play refuses it.
-- [ ] Right after that upload: the `remove_ads` product at US$1.99 and license testers (PRO-1, PRO-3), so the Pro PR is driven with a test purchase before Oct 9
+- [x] Internal-testing AAB uploaded by hand (2026-09-21, v0.12.3), and every upload after it is by hand too (decided 2026-09-21). The bundle is built here and can only be uploaded once `android/key.properties` exists, or it is debug-signed and Play refuses it.
+- [ ] **The interstitial needs an AdMob unit and a listing correction.** ADS-9 shipped in v0.13.0 and is inert in release: `interstitialAdUnitId` in `lib/main.dart` is empty, which shows no interstitial rather than Google's test ad. It also makes one sentence of the store listing untrue in all twenty languages — "Ads appear only at the bottom of History, Settings and the Create screen". The English source is corrected; the nineteen translations and the CSV need rebuilding before the listing is uploaded again. Nothing reaches users until the unit exists.
+- [x] The `remove_ads` product at US$1.99 with license testers (PRO-1, PRO-3), and the whole Pro flow driven on the emulator against a real test order (2026-09-21): bought, banners gone from all three screens, survived a restart, ownership re-found from Play after the app data was wiped, and Restore purchase confirmed. The test account owns Pro now, so cancel the order in Play Console to test buying again — or to see any ad at all on that device.
 - [ ] Spikes S5 (Wi-Fi join) and S6 (cold start to first scan) on real phones, Sep 28 – Oct 2; S12 (share-target permissions) before Oct 19
 
 ## Phase 2b: v1 during the closed test (Oct 19–30)
@@ -101,8 +102,8 @@ Play needs most of this before the closed-test release can be reviewed, so it ov
 - [ ] Store IDs, permanent after the first upload and free of personal names: `com.oasisforge.qrscanner`
 - [x] Privacy policy published on Pages at `/qr-scanner-generator/privacy-policy/`, linked from Settings (SET-6) and listed on the Oasis Forge site (2026-09-20). Keep it updated for every feature that touches user data (PRIV-6).
 - [x] The release build declares only the permissions the listing admits to (RUN-2). Fill `ALLOWED` in `release.yml` with the camera, internet, network state, billing, the ad ID, and those the ads SDK adds, checked with `aapt2`.
-- [ ] Play app content: data safety, ads declaration, content rating, target audience 13+, app access (no login)
-- [x] Store listing drawn from the app itself, in all twenty languages (2026-09-21): title, short and full description, six captioned phone screenshots and a 1024×500 feature graphic per language, and the 512 px icon, rendered from the real screens by `integration_test/store_screenshots_test.dart`. It waits on the upload. No tablet screenshots yet, so Play will flag large screens.
+- [x] Play app content: data safety, ads declaration, content rating, target audience 13+, app access (2026-09-21). The data-safety answers cover what AdMob collects, since the app itself collects nothing; they change again in the PR that adds crash reports (PRIV-6).
+- [x] Store listing written, rendered and uploaded, in all twenty languages (2026-09-21): title, short and full description, six captioned phone screenshots and a 1024×500 feature graphic per language, and the 512 px icon, rendered from the real screens by `integration_test/store_screenshots_test.dart`. It waits on the upload. No tablet screenshots yet, so Play will flag large screens.
 - [x] Release notes in all twenty languages with every release (2026-09-21), built by `tool/build_release_notes.dart` from one hand-written source per version (`docs/RELEASING.md`).
 - [x] `app-ads.txt` published at the root of the developer website on the listing (`docs/RELEASING.md`). Live at `https://oasis-forge.github.io/app-ads.txt` with the AdMob publisher line; checked 2026-09-21.
 - [ ] Closed-test release submitted by Oct 9, since a new account's first review can take days
