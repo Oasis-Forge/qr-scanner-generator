@@ -4,6 +4,7 @@ import 'package:qrscanner/core/services/billing_service.dart';
 import 'package:qrscanner/core/services/consent_service.dart';
 import 'package:qrscanner/core/store/key_value_store.dart';
 import 'package:qrscanner/state/ads_state.dart';
+import 'package:qrscanner/state/interstitial_session.dart';
 import 'package:qrscanner/state/pro_state.dart';
 import 'package:qrscanner/state/success_counts.dart';
 
@@ -52,6 +53,7 @@ void main() {
   late NoopConsentService consent;
   late SuccessCounts successCounts;
   late ProState proState;
+  late InterstitialSession interstitialSession;
   late AdsState adsState;
 
   /// Builds [adsState] from fresh fakes. [owned] and [afterFirstSuccess] seed
@@ -63,8 +65,9 @@ void main() {
     bool personalizedAllowed = false,
     bool owned = false,
     bool afterFirstSuccess = true,
+    bool interstitialLoads = false,
   }) async {
-    ads = NoopAdsService();
+    ads = NoopAdsService(interstitialLoads: interstitialLoads);
     consent = NoopConsentService(
       seededStatus: consentStatus,
       personalizedAllowed: personalizedAllowed,
@@ -84,11 +87,13 @@ void main() {
     );
     await proState.load();
     await proState.startupCheck;
+    interstitialSession = InterstitialSession();
     adsState = AdsState(
       ads: ads,
       consent: consent,
       successCounts: successCounts,
       proState: proState,
+      interstitialSession: interstitialSession,
     );
   }
 
@@ -296,6 +301,84 @@ void main() {
       await adsState.disposeSlot(AdSlots.settings);
 
       expect(ads.calls, contains('disposeBanner: ${AdSlots.settings}'));
+    });
+  });
+
+  group('the interstitial (ADS-9)', () {
+    test('is shown when every other ad rule already allows an ad', () async {
+      await build(
+        consentStatus: ConsentStatus.notNeeded,
+        interstitialLoads: true,
+      );
+
+      expect(adsState.interstitialAllowed, isTrue);
+      expect(await adsState.maybeShowInterstitial(), isTrue);
+      expect(ads.calls, contains('showInterstitial'));
+      expect(interstitialSession.shown, isTrue);
+    });
+
+    test('only once for each time the app is opened', () async {
+      await build(
+        consentStatus: ConsentStatus.notNeeded,
+        interstitialLoads: true,
+      );
+      expect(await adsState.maybeShowInterstitial(), isTrue);
+
+      expect(adsState.interstitialAllowed, isFalse);
+      expect(await adsState.maybeShowInterstitial(), isFalse);
+      expect(
+        ads.calls.where((String call) => call == 'showInterstitial').length,
+        1,
+      );
+    });
+
+    test('ADS-6: none before the install\'s first success, and none is even '
+        'requested', () async {
+      await build(
+        consentStatus: ConsentStatus.notNeeded,
+        interstitialLoads: true,
+        afterFirstSuccess: false,
+      );
+
+      expect(adsState.interstitialAllowed, isFalse);
+      expect(await adsState.maybeShowInterstitial(), isFalse);
+      expect(ads.calls, isEmpty);
+    });
+
+    test(
+      'ADS-7: a Pro owner gets none, and none is requested for them',
+      () async {
+        await build(
+          consentStatus: ConsentStatus.notNeeded,
+          interstitialLoads: true,
+          owned: true,
+        );
+
+        expect(adsState.interstitialAllowed, isFalse);
+        expect(await adsState.maybeShowInterstitial(), isFalse);
+        expect(ads.calls, isEmpty);
+      },
+    );
+
+    test('ADS-5, PRIV-1: consent waiting on its form allows no interstitial, '
+        'and the form is never shown for one', () async {
+      await build(
+        consentStatus: ConsentStatus.formRequired,
+        interstitialLoads: true,
+      );
+
+      expect(await adsState.maybeShowInterstitial(), isFalse);
+      expect(ads.calls, isEmpty);
+      expect(consent.calls, isNot(contains('showFormIfRequired')));
+    });
+
+    test('an ad that never arrives leaves the session its one', () async {
+      await build(consentStatus: ConsentStatus.notNeeded);
+
+      expect(await adsState.maybeShowInterstitial(), isFalse);
+      expect(interstitialSession.shown, isFalse);
+      // Still allowed: nobody saw anything, so nothing was spent.
+      expect(adsState.interstitialAllowed, isTrue);
     });
   });
 }

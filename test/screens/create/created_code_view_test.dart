@@ -5,8 +5,12 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:qrscanner/core/services/ads_service.dart';
+import 'package:qrscanner/core/services/consent_service.dart';
 import 'package:qrscanner/core/services/share_service.dart';
 import 'package:qrscanner/db/record_dao.dart';
+import 'package:qrscanner/services/app_services.dart';
+import 'package:qrscanner/state/interstitial_session.dart';
 import 'package:qrscanner/generator/file_naming.dart';
 import 'package:qrscanner/generator/generator_form.dart';
 import 'package:qrscanner/models/record_enums.dart';
@@ -314,6 +318,87 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(SnackBar), findsNothing);
+    });
+
+    testWidgets('ADS-9: a saved code is followed by the one interstitial', (
+      WidgetTester tester,
+    ) async {
+      final SeedableImageDecoder decoder = SeedableImageDecoder();
+      final NoopAdsService ads = NoopAdsService(interstitialLoads: true);
+      // Consent is resolved for the session before any ad may be asked for
+      // (ADS-5). main() does this at startup (PRIV-1); a test has to.
+      final NoopConsentService consent = NoopConsentService(
+        seededStatus: ConsentStatus.notNeeded,
+      );
+      await consent.refresh();
+      final InterstitialSession session = InterstitialSession();
+      final SuccessCounts counts = SuccessCounts(FakeKeyValueStore());
+      await counts.load();
+      // ADS-6 is already met: this install has scanned something before.
+      await counts.recordSuccessfulScan();
+      addTearDown(counts.dispose);
+      final GeneratorState state = buildState(imageDecoder: decoder);
+      seedMatchingCheck(decoder, 'hello');
+      await state.create();
+
+      await pumpApp(
+        tester,
+        ChangeNotifierProvider<GeneratorState>.value(
+          value: state,
+          child: const Scaffold(body: CreatedCodeView()),
+        ),
+        services: AppServices.fakes().copyWith(ads: ads, consent: consent),
+        successCounts: counts,
+        interstitialSession: session,
+      );
+      await tester.tap(find.byKey(CreatedCodeView.saveButtonKey));
+      await tester.pumpAndSettle();
+
+      expect(ads.calls, contains('showInterstitial'));
+      expect(session.shown, isTrue);
+      // The save still said what it did: the ad follows the confirmation, it
+      // does not replace it (ADS-9).
+      expect(find.byType(SnackBar), findsOneWidget);
+      await tester.pumpAndSettle(const Duration(seconds: 5));
+    });
+
+    testWidgets('ADS-9: a cancelled save is not finished work, so no ad is '
+        'even requested', (WidgetTester tester) async {
+      final SeedableImageDecoder decoder = SeedableImageDecoder();
+      final NoopAdsService ads = NoopAdsService(interstitialLoads: true);
+      // Consent is resolved for the session before any ad may be asked for
+      // (ADS-5). main() does this at startup (PRIV-1); a test has to.
+      final NoopConsentService consent = NoopConsentService(
+        seededStatus: ConsentStatus.notNeeded,
+      );
+      await consent.refresh();
+      final InterstitialSession session = InterstitialSession();
+      final SuccessCounts counts = SuccessCounts(FakeKeyValueStore());
+      await counts.load();
+      await counts.recordSuccessfulScan();
+      addTearDown(counts.dispose);
+      final GeneratorState state = buildState(
+        imageDecoder: decoder,
+        shareService: NoopShareService(saveOutcome: SaveOutcome.cancelled),
+      );
+      seedMatchingCheck(decoder, 'hello');
+      await state.create();
+
+      await pumpApp(
+        tester,
+        ChangeNotifierProvider<GeneratorState>.value(
+          value: state,
+          child: const Scaffold(body: CreatedCodeView()),
+        ),
+        services: AppServices.fakes().copyWith(ads: ads, consent: consent),
+        successCounts: counts,
+        interstitialSession: session,
+      );
+      await tester.tap(find.byKey(CreatedCodeView.saveButtonKey));
+      await tester.pumpAndSettle();
+
+      expect(ads.calls, isEmpty);
+      expect(session.shown, isFalse);
     });
 
     testWidgets('SAVE-1: a failed save is confirmed with a message', (

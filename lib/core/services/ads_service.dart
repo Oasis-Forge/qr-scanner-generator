@@ -1,13 +1,15 @@
 import 'package:flutter/widgets.dart';
 
-/// Adaptive banner ads.
+/// Adaptive banner ads, and the one interstitial ADS-9 allows.
 ///
-/// Banners are the only ad format in this interface on purpose: no interstitial,
-/// app-open, rewarded or native ad may ship (ADS-2), so none of them can be
-/// asked for here. The caller decides where a banner may appear (ADS-1), holds
-/// its height before it loads (ADS-4), requests none until consent is resolved
-/// (ADS-5), none before the first successful scan or create (ADS-6), and none at
-/// all for a Pro owner (ADS-7).
+/// Those two formats are all this interface offers, on purpose: no app-open,
+/// rewarded or native ad may ship (ADS-2, amended 2026-09-21), so none of them
+/// can be asked for here. The caller decides where a banner may appear (ADS-1),
+/// holds its height before it loads (ADS-4), requests none until consent is
+/// resolved (ADS-5), none before the first successful scan or create (ADS-6),
+/// and none at all for a Pro owner (ADS-7). The interstitial answers to every
+/// one of those rules too; when it may be shown is ADS-9, and the decision is
+/// `AdsState`'s, not this service's.
 abstract class AdsService {
   /// Prepares the ad SDK. Requests no ad by itself.
   Future<void> initialize();
@@ -36,6 +38,22 @@ abstract class AdsService {
 
   /// Releases [slot]'s banner.
   Future<void> disposeBanner(String slot);
+
+  /// Requests the one interstitial ADS-9 allows and reports whether one is
+  /// ready to show.
+  ///
+  /// [personalized] comes from the consent state, exactly as it does for a
+  /// banner (ADS-5). Requesting one is not showing one: the caller loads it
+  /// ahead of the moment it may appear, so the ad is ready when the work
+  /// finishes rather than making the user wait for it.
+  Future<bool> loadInterstitial({required bool personalized});
+
+  /// Shows a loaded interstitial and reports whether one was actually shown.
+  ///
+  /// `false` when none had loaded, which is an ordinary outcome and never an
+  /// error the user should see: the save or the share has already succeeded,
+  /// and an ad that did not arrive changes nothing about it.
+  Future<bool> showInterstitial();
 }
 
 /// An [AdsService] that requests no ad and shows none.
@@ -45,7 +63,7 @@ abstract class AdsService {
 /// for, including whether the request would have been personalised (ADS-5), and
 /// [requestedSlots] lists the placements a banner was requested for (ADS-1).
 class NoopAdsService implements AdsService {
-  NoopAdsService({this.reservedHeight = 50});
+  NoopAdsService({this.reservedHeight = 50, this.interstitialLoads = false});
 
   /// Every call the app decides to make, in order, such as
   /// `'loadBanner: history (360.0 dp, personalized: false)'`.
@@ -64,6 +82,10 @@ class NoopAdsService implements AdsService {
 
   /// The height [bannerHeight] reports, without asking any SDK.
   final double reservedHeight;
+
+  /// What [loadInterstitial] and [showInterstitial] report. False by default,
+  /// so a screen under test is never interrupted by an ad it didn't ask for.
+  final bool interstitialLoads;
 
   @override
   Future<void> initialize() async {
@@ -96,5 +118,22 @@ class NoopAdsService implements AdsService {
   @override
   Future<void> disposeBanner(String slot) async {
     calls.add('disposeBanner: $slot');
+  }
+
+  /// Reports whatever [interstitialLoads] says, so a test can have one arrive
+  /// or fail to arrive without an SDK.
+  @override
+  Future<bool> loadInterstitial({required bool personalized}) async {
+    calls.add('loadInterstitial: (personalized: $personalized)');
+    return interstitialLoads;
+  }
+
+  /// Records the attempt and reports [interstitialLoads]: a fake shows nothing,
+  /// and a test asserts on [calls] instead of on a full-screen ad it cannot
+  /// see. That an ad was *asked for* is the thing ADS-9 is about.
+  @override
+  Future<bool> showInterstitial() async {
+    calls.add('showInterstitial');
+    return interstitialLoads;
   }
 }

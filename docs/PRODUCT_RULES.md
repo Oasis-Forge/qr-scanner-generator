@@ -250,13 +250,14 @@ This file defines how QR Scanner + Generator behaves: the defaults, limits, orde
 **Learn:** An ad must never compete with the action people came for, look like that action, or move under a finger.
 
 - **ADS-1** Ads appear on three screens only: the History list, the top level of Settings, and the Create type picker. Never on the scanner, any result (a History reopen included), a generator form or created code, the link sheets, Trash, export, backup, batch review, first run, or any dialog.
-- **ADS-2** Adaptive banners only: no interstitial, app-open, rewarded or native ads. None of our own controls imitates an ad's styling.
+- **ADS-2** Adaptive banners, and the one interstitial ADS-9 allows (amended 2026-09-21): no app-open, rewarded or native ads. None of our own controls imitates an ad's styling.
 - **ADS-3** A banner sits in a fixed, non-scrolling area, never inside a scrolling list, separated by a divider and at least 16 dp from the content and from the navigation bar. Before release, the placement is checked against AdMob's banner implementation guidance.
 - **ADS-4** The banner's height is reserved before an ad loads, so loading, failing or refreshing never moves a control.
 - **ADS-5** No ad is requested until consent is resolved for the session (PRIV-1). If it can't be resolved, for example offline, no ads show that session. Where consent is refused, only non-personalised ads show.
 - **ADS-6** No ad shows before the install's first successful scan or create (DATA-8).
 - **ADS-7** Pro owners see no ads, and no ad requests are made for them.
 - **ADS-8** An ad's own layout may stay left to right in right-to-left languages; the SDK draws it.
+- **ADS-9** One interstitial, and only this one (added 2026-09-21). It may show after a created code has been saved or shared, once the system's own file picker or share sheet has closed and the app's confirmation has been seen — never before the action finishes, and never in place of its result. At most one for each time the app is opened, whatever else is saved or shared. It is an ad like any other, so ADS-5, ADS-6 and ADS-7 all apply: no request until consent is resolved, none before the install's first successful scan or create, none at all for a Pro owner. It never appears anywhere ADS-1 already forbids an ad — not on the viewfinder, a result, a form, or the created code itself while its buttons are still the point. Save and Share stay the two largest controls on that screen and nothing shares it with them (SAVE-1); the interstitial exists only in the moment after the work is done.
 
 ## 16. Pro
 
@@ -367,6 +368,8 @@ This file defines how QR Scanner + Generator behaves: the defaults, limits, orde
 9. (21 September 2026) Twenty languages, following the portfolio's expense app, rather than the ten LANG-7 first set out. Greek was translated with them and held back: a language ships only when the app can draw it, and the bundled typefaces cover Greek only partly. Their names are never translated (LANG-1). The overflow harness renders all of them; the accessibility harness stays on English and Arabic, since what it checks doesn't vary by language (LANG-6).
 
 10. (21 September 2026) The language switcher is a dropdown, not chips (LANG-1). Driven on the emulator at v0.11.1, the twenty-one chips ran ten rows down the screen and left sound, vibration, copy on scan and the Privacy, Pro and About groups below the fold — a list long enough to hide the settings around it is no longer a switcher. Chips stay wherever the options fit in a glance, so Theme keeps them.
+
+11. (21 September 2026) One interstitial ships, after a created code is saved or shared, at most once per app session (ADS-2 amended, ADS-9). ADS-2 had ruled every full-screen format out, and the reason still stands — the competitor's worst review theme is ads crowding the work, and this app is sold on the opposite. So the format is allowed only where the work is already finished: never on the viewfinder, a result or a form, never before the save or share completes, and never twice in one session. Every other ad rule applies to it unchanged, which means a Pro owner never sees one and neither does anyone before their first scan or created code.
 
 ### Defaults chosen while writing the rules
 

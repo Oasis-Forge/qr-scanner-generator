@@ -13,6 +13,11 @@ import '../ads_service.dart';
 const String testAdaptiveBannerAdUnitId =
     'ca-app-pub-3940256099942544/9214589741';
 
+/// Google's public TEST interstitial ad unit id, from the same sample list
+/// (ADS-9). Used for every build that must never request a real ad.
+const String testInterstitialAdUnitId =
+    'ca-app-pub-3940256099942544/1033173712';
+
 /// The dp height to reserve for [size] (ADS-4).
 ///
 /// [size] is `null` when the platform couldn't compute an adaptive size yet,
@@ -30,10 +35,11 @@ double heightFromAdaptiveSize(AdSize? size, {double fallbackHeight = 50}) =>
 AdRequest buildBannerAdRequest({required bool personalized}) =>
     AdRequest(nonPersonalizedAds: !personalized);
 
-/// Adaptive banner ads through `google_mobile_ads` (ADS-2).
+/// Adaptive banner ads, and ADS-9's one interstitial, through
+/// `google_mobile_ads` (ADS-2, amended 2026-09-21).
 ///
-/// Only [BannerAd] and [AdSize]'s anchored-adaptive sizing are used anywhere
-/// in this file: no interstitial, app-open, rewarded or native ad type is
+/// Only [BannerAd], [InterstitialAd] and [AdSize]'s anchored-adaptive sizing
+/// are used anywhere in this file: no app-open, rewarded or native ad type is
 /// imported, referenced or requested, on purpose (ADS-2). [bannerHeight] asks
 /// the SDK for the height a banner at [widthDp] will take without loading
 /// anything, so a caller can reserve the space first (ADS-4); [loadBanner]
@@ -43,10 +49,24 @@ AdRequest buildBannerAdRequest({required bool personalized}) =>
 ///
 /// Built only by the app's entry point.
 class AdmobAdsService implements AdsService {
-  AdmobAdsService({this.adUnitId = testAdaptiveBannerAdUnitId});
+  AdmobAdsService({
+    this.adUnitId = testAdaptiveBannerAdUnitId,
+    this.interstitialAdUnitId = testInterstitialAdUnitId,
+  });
 
   /// The banner ad unit requested for every slot.
   final String adUnitId;
+
+  /// The interstitial ad unit (ADS-9).
+  ///
+  /// Empty means there is no interstitial for this build: [loadInterstitial]
+  /// answers `false` without touching the SDK, and nothing is ever shown. A
+  /// release with no unit of its own shows no interstitial at all, which is
+  /// the right failure — better than serving Google's test ad to real users.
+  final String interstitialAdUnitId;
+
+  /// The interstitial that finished loading, waiting to be shown once.
+  InterstitialAd? _loadedInterstitial;
 
   /// The banner that finished loading for each slot, keyed by [loadBanner]'s
   /// `slot`. A slot only appears here once its [onAdLoaded] listener has
@@ -126,6 +146,70 @@ class AdmobAdsService implements AdsService {
     _pendingBanners[slot] = banner;
     await banner.load();
     return loaded.future;
+  }
+
+  @override
+  Future<bool> loadInterstitial({required bool personalized}) async {
+    if (interstitialAdUnitId.isEmpty || _loadedInterstitial != null) {
+      return _loadedInterstitial != null;
+    }
+    try {
+      await initialize();
+    } on Object {
+      _started = null;
+      return false;
+    }
+    final Completer<bool> loaded = Completer<bool>();
+    await InterstitialAd.load(
+      adUnitId: interstitialAdUnitId,
+      request: buildBannerAdRequest(personalized: personalized),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          _loadedInterstitial = ad;
+          if (!loaded.isCompleted) {
+            loaded.complete(true);
+          }
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          if (!loaded.isCompleted) {
+            loaded.complete(false);
+          }
+        },
+      ),
+    );
+    return loaded.future;
+  }
+
+  @override
+  Future<bool> showInterstitial() async {
+    final InterstitialAd? ad = _loadedInterstitial;
+    if (ad == null) {
+      return false;
+    }
+    // Cleared before showing, not after: an interstitial is single-use, and a
+    // failure to show must not leave a spent ad behind for the next caller.
+    _loadedInterstitial = null;
+    // Reports what actually reached the screen, not that show() was called.
+    // An interstitial cannot appear while the activity is in the background —
+    // a share sheet still open over it, for instance — and the caller must not
+    // spend the session's one ad (ADS-9) on something nobody saw.
+    final Completer<bool> shown = Completer<bool>();
+    void settle(bool value) {
+      if (!shown.isCompleted) {
+        shown.complete(value);
+      }
+    }
+
+    ad.fullScreenContentCallback = FullScreenContentCallback<InterstitialAd>(
+      onAdShowedFullScreenContent: (InterstitialAd ad) => settle(true),
+      onAdDismissedFullScreenContent: (InterstitialAd ad) => ad.dispose(),
+      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        ad.dispose();
+        settle(false);
+      },
+    );
+    await ad.show();
+    return shown.future;
   }
 
   @override

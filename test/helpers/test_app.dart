@@ -14,6 +14,7 @@ import 'package:qrscanner/l10n/app_localizations.dart';
 import 'package:qrscanner/screens/settings_screen.dart';
 import 'package:qrscanner/services/app_services.dart';
 import 'package:qrscanner/state/history_state.dart';
+import 'package:qrscanner/state/interstitial_session.dart';
 import 'package:qrscanner/state/pro_state.dart';
 import 'package:qrscanner/state/settings_state.dart';
 import 'package:qrscanner/state/success_counts.dart';
@@ -155,6 +156,7 @@ Future<TestApp> pumpApp(
   FakeKeyValueStore? store,
   Map<String, String>? stored,
   SuccessCounts? successCounts,
+  InterstitialSession? interstitialSession,
   Size surfaceSize = phoneSurfaceSize,
 }) async {
   final FakeKeyValueStore appStore = store ?? FakeKeyValueStore(stored);
@@ -182,6 +184,11 @@ Future<TestApp> pumpApp(
         ChangeNotifierProvider<SuccessCounts>.value(value: appCounts),
         Provider<RecordDao>.value(value: appRecords),
         Provider<AppServices>.value(value: appServices),
+        // ADS-9's one interstitial per run of the app: a fresh, unspent one
+        // for every test, unless a test hands in one it wants to inspect.
+        Provider<InterstitialSession>.value(
+          value: interstitialSession ?? InterstitialSession(),
+        ),
         // History (HIS-1), over the same records and settings, as the app
         // provides it, so a screen that opens the History tab finds it.
         ChangeNotifierProvider<HistoryState>(
