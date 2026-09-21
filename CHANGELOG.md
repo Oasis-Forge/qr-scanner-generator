@@ -4,6 +4,11 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.12.3] - 2026-09-21
+
+### Changed
+- Nothing users can see: building the Android app left behind a folder of Kotlin compiler output that the project wasn't ignoring, so it showed up as a stray change and could have been committed by accident.
+
 ## [0.12.2] - 2026-09-21
 
 ### Changed
