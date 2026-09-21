@@ -57,7 +57,7 @@ jobs:
             # the first merge moves main, and the second would otherwise land
             # as part of no release, leaving its code out of every changelog.
             bash scripts/version.sh check
-            release=$(bash scripts/version.sh changed)
+            release=$(bash scripts/version.sh released)
             if [ "$release" != true ]; then
               echo "No release in this merge: main stays on $name." >> "$GITHUB_STEP_SUMMARY"
             fi
