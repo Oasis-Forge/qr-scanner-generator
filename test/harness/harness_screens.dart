@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:qrscanner/l10n/app_localizations.dart';
 import 'package:qrscanner/models/record_enums.dart';
 import 'package:qrscanner/models/scan_record.dart';
 import 'package:qrscanner/screens/app_shell.dart';
@@ -44,15 +45,12 @@ final List<HarnessScreen> scannerHarnessScreens = <HarnessScreen>[
   HarnessScreen(
     name: 'the app shell on the Scan tab',
     build: () => const ScannerScope(child: AppShell()),
-    readableText: const <String, String>{'en': 'CREATE', 'ar': 'إنشاء'},
+    readableText: (AppLocalizations l10n) => l10n.navCreate.toUpperCase(),
   ),
   HarnessScreen(
     name: 'the scanner asking for the camera (RUN-1)',
     build: () => const ScannerScope(child: ScannerScreen()),
-    readableText: const <String, String>{
-      'en': 'Allow camera',
-      'ar': 'السماح بالكاميرا',
-    },
+    readableText: (AppLocalizations l10n) => l10n.cameraAllowButton,
   ),
   HarnessScreen(
     name: 'the scanner after a denial (RUN-4)',
@@ -65,10 +63,7 @@ final List<HarnessScreen> scannerHarnessScreens = <HarnessScreen>[
       ),
       child: const ScannerScreen(),
     ),
-    readableText: const <String, String>{
-      'en': 'Scan a photo',
-      'ar': 'مسح صورة',
-    },
+    readableText: (AppLocalizations l10n) => l10n.scanFromPhotoButton,
   ),
   HarnessScreen(
     name: 'the scanner once Android stops asking (RUN-6)',
@@ -78,10 +73,7 @@ final List<HarnessScreen> scannerHarnessScreens = <HarnessScreen>[
       ),
       child: const ScannerScreen(),
     ),
-    readableText: const <String, String>{
-      'en': 'Open settings',
-      'ar': 'فتح الإعدادات',
-    },
+    readableText: (AppLocalizations l10n) => l10n.cameraOpenSettingsButton,
   ),
   HarnessScreen(
     name: 'the scanner when the camera does not start',
@@ -91,10 +83,7 @@ final List<HarnessScreen> scannerHarnessScreens = <HarnessScreen>[
       ),
       child: const ScannerScreen(),
     ),
-    readableText: const <String, String>{
-      'en': 'The camera could not start. Another app may be using it.',
-      'ar': 'تعذّر تشغيل الكاميرا. ربما يستخدمها تطبيق آخر.',
-    },
+    readableText: (AppLocalizations l10n) => l10n.scanCameraUnavailable,
   ),
   HarnessScreen(
     name: 'the live scanner (RUN-7)',
@@ -102,10 +91,7 @@ final List<HarnessScreen> scannerHarnessScreens = <HarnessScreen>[
       services: _scannerServices(),
       child: const ScannerScreen(),
     ),
-    readableText: const <String, String>{
-      'en': 'Point the camera at a code',
-      'ar': 'وجّه الكاميرا نحو رمز',
-    },
+    readableText: (AppLocalizations l10n) => l10n.scanTargetHint,
   ),
   HarnessScreen(
     name: 'the list of codes over the live scanner (SCAN-13)',
@@ -125,10 +111,7 @@ final List<HarnessScreen> scannerHarnessScreens = <HarnessScreen>[
       onCreated: (ScannerState scanner) => scanner.pickPhoto(),
       child: const ScannerScreen(),
     ),
-    readableText: const <String, String>{
-      'en': '2 codes found',
-      'ar': 'تم العثور على رمزين',
-    },
+    readableText: (AppLocalizations l10n) => l10n.scanChoicesTitle(2),
   ),
   HarnessScreen(
     name: '"No code found" over the live scanner (SCAN-11)',
@@ -137,10 +120,7 @@ final List<HarnessScreen> scannerHarnessScreens = <HarnessScreen>[
       onCreated: (ScannerState scanner) => scanner.pickPhoto(),
       child: const ScannerScreen(),
     ),
-    readableText: const <String, String>{
-      'en': 'No code found',
-      'ar': 'لم يُعثر على رمز',
-    },
+    readableText: (AppLocalizations l10n) => l10n.noCodeFoundTitle,
   ),
   HarnessScreen(
     name: 'a link result (RES-1)',
@@ -157,10 +137,8 @@ final List<HarnessScreen> scannerHarnessScreens = <HarnessScreen>[
         isSaved: true,
       ),
     ),
-    readableText: const <String, String>{
-      'en': 'Link · QR code',
-      'ar': 'رابط · رمز QR',
-    },
+    readableText: (AppLocalizations l10n) =>
+        l10n.resultTypeAndFormat(l10n.parsedTypeUrl, l10n.symbologyQr),
   ),
   HarnessScreen(
     name: 'a binary result that could not be saved (RES-13)',
@@ -178,36 +156,24 @@ final List<HarnessScreen> scannerHarnessScreens = <HarnessScreen>[
         saveFailed: true,
       ),
     ),
-    readableText: const <String, String>{
-      'en': 'Binary data, 3 bytes',
-      'ar': 'بيانات ثنائية، 3 بايتات',
-    },
+    readableText: (AppLocalizations l10n) => l10n.scanBinaryData(3),
   ),
   HarnessScreen(
     name: 'typed entry (SCAN-12)',
     build: () => const ManualEntryScreen(),
-    readableText: const <String, String>{
-      'en': 'Code content',
-      'ar': 'محتوى الرمز',
-    },
+    readableText: (AppLocalizations l10n) => l10n.manualEntryFieldLabel,
   ),
   HarnessScreen(
     name: 'the History screen, empty (HIS-11)',
     build: () => _historyScreen(const <ScanRecord>[]),
-    readableText: const <String, String>{
-      'en': 'Codes you scan or create will show up here.',
-      'ar': 'ستظهر هنا الرموز التي تمسحها أو تنشئها.',
-    },
+    readableText: (AppLocalizations l10n) => l10n.historyEmptyMessage,
   ),
   HarnessScreen(
     name: 'the History screen, with rows (HIS-4)',
     build: () => _historyScreen(historyHarnessRecords()),
-    // A link's content is never translated (LANG-5): the same string proves
-    // the screen drew its rows in either language.
-    readableText: const <String, String>{
-      'en': 'https://example.com/harness',
-      'ar': 'https://example.com/harness',
-    },
+    // A link's content is never translated (LANG-5), so the same string
+    // proves the screen drew its rows whatever the language.
+    readableText: (AppLocalizations l10n) => 'https://example.com/harness',
   ),
 ];
 
@@ -238,7 +204,8 @@ final List<HarnessScreen> settingsHarnessScreens = <HarnessScreen>[
   HarnessScreen(
     name: 'the settings screen in its full form (SET-5)',
     build: () => const SettingsScope(child: SettingsScreen()),
-    readableText: const <String, String>{'en': 'GENERAL', 'ar': 'عام'},
+    readableText: (AppLocalizations l10n) =>
+        l10n.settingsGroupGeneral.toUpperCase(),
   ),
 ];
 
@@ -256,10 +223,7 @@ final List<HarnessScreen> generatorHarnessScreens = <HarnessScreen>[
     name: 'the Create type picker (GEN-1)',
     build: () =>
         GeneratorScope(dao: MemoryRecordDao(), child: const CreateScreen()),
-    readableText: const <String, String>{
-      'en': 'CHOOSE WHAT TO CREATE',
-      'ar': 'اختر ما تريد إنشاءه',
-    },
+    readableText: (AppLocalizations l10n) => l10n.createSubtitle.toUpperCase(),
   ),
   HarnessScreen(
     name: 'the Wi-Fi Create form (GEN-5)',
@@ -268,10 +232,7 @@ final List<HarnessScreen> generatorHarnessScreens = <HarnessScreen>[
       initialType: ParsedType.wifi,
       child: const Scaffold(body: CreateFormBody()),
     ),
-    readableText: const <String, String>{
-      'en': 'Network name',
-      'ar': 'اسم الشبكة',
-    },
+    readableText: (AppLocalizations l10n) => l10n.createWifiSsidLabel,
   ),
   HarnessScreen(
     name: 'the created-code screen (STY-1, SAVE-1)',
@@ -289,7 +250,7 @@ final List<HarnessScreen> generatorHarnessScreens = <HarnessScreen>[
       },
       child: const Scaffold(body: CreatedCodeView()),
     ),
-    readableText: const <String, String>{'en': 'Save', 'ar': 'حفظ'},
+    readableText: (AppLocalizations l10n) => l10n.createSaveButton,
   ),
 ];
 

@@ -56,9 +56,13 @@ void main() {
     'LANG-1: a device language the app does not have falls back to English on '
     'the failure screen',
     (WidgetTester tester) async {
+      // Languages the app genuinely doesn't have. French and German used to
+      // stand in here and became real ones in v0.11.0 (LANG-7); Swedish and
+      // Czech are outside the twenty-one, so pick from there if this ever
+      // needs changing again.
       _deviceLanguages(tester, const <Locale>[
-        Locale('fr', 'FR'),
-        Locale('de'),
+        Locale('sv', 'SE'),
+        Locale('cs'),
       ]);
 
       await tester.pumpWidget(const DatabaseUnavailableApp());

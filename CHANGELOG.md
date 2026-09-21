@@ -4,6 +4,18 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-09-21
+
+### Added
+- The app speaks eighteen more languages: Bengali, Simplified Chinese, Dutch, French, German, Hindi, Indonesian, Italian, Japanese, Korean, Polish, Portuguese, Russian, Spanish, Thai, Turkish, Urdu and Vietnamese — twenty in all. It follows the phone's language on its own, and Settings lists every one.
+- Each language is listed under its own name — Deutsch, 日本語, العربية — so you can find yours even if the app has opened in one you don't read.
+
+### Fixed
+- A group heading in Settings ran off the side of the screen at the largest text size in Russian, and in any other language whose word for it is long.
+
+### Known issues
+- Greek isn't offered yet. It is translated, but the app's two typefaces cover only part of the Greek alphabet, so accents came out beside their letters instead of on them. It will arrive once a typeface that covers Greek ships with the app.
+
 ## [0.10.0] - 2026-09-20
 
 ### Added

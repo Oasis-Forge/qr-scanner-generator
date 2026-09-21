@@ -34,10 +34,7 @@ void main() {
 
             // The screen really drew its content in this language, so the
             // overflow check is not passing over a blank frame.
-            expect(
-              find.text(screen.textIn(locale.languageCode)),
-              findsOneWidget,
-            );
+            expect(find.text(screen.textIn(locale)), findsOneWidget);
             expectNoOverflow(tester);
           },
         );

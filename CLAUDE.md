@@ -21,7 +21,7 @@ Data flows one way: screen → state → storage/service. A write lands first, t
 - `lib/db/`: `migrations/step_NNN_*.dart` in an ordered list, plus the DAOs. A merged step is never edited.
 - `lib/services/`: device capabilities this app adds (camera scanner, image decoder, permissions, Wi-Fi, system intents), each an interface with a `Noop` fake; `app_services.dart` holds one of each, and only `main.dart` builds real ones.
 - `lib/state/`: `ChangeNotifier`s (settings, success counts, later history and the generator).
-- `lib/l10n/`: `app_en.arb`, `app_ar.arb`, and the generated `app_localizations.dart`, all committed; CI regenerates and fails on a diff.
+- `lib/l10n/`: one `app_<code>.arb` per language (20, LANG-7), `languages.dart` naming each in its own language, and the generated `app_localizations.dart`, all committed; CI regenerates and fails on a diff. Never hand-edit the ARB files across languages: `tool/add_messages.dart` changes a message in every file at once, and `tool/new_language.dart` adds a language from the English one.
 - `lib/screens/`: presentational only, reading state with `context.read/watch`.
 - `test/`: mirrors `lib/`, plus `test/helpers/` (in-memory database, fakes, pump helpers) and the accessibility and text-scale harnesses.
 

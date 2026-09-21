@@ -86,7 +86,7 @@ In dependency order, one theme per PR. Everything else in Phase 2 arrives during
 ## Phase 2b: v1 during the closed test (Oct 19–30)
 - [x] **The app's own look** (2026-09-20): the instrument design — chassis, signal colour, paper for content, Space Grotesk and IBM Plex Mono, registration marks, hairline rails. Designed on a canvas first, then built (v0.9.0).
 Shipped to the closed track as updates; the testers' 14-day clock keeps running.
-- [ ] **Languages** (LANG-7): French, Spanish, German, Portuguese (Brazil), Hindi, Indonesian, Russian, Turkish. First, so every later PR translates as it goes.
+- [x] **Languages** (LANG-7): eighteen added at once — Bengali, Simplified Chinese, Dutch, French, German, Hindi, Indonesian, Italian, Japanese, Korean, Polish, Portuguese, Russian, Spanish, Thai, Turkish, Urdu, Vietnamese — for twenty in total (2026-09-21). Greek was translated too and is held back until a font that covers it is bundled (Known bugs). Done first, so every later PR translates as it goes.
 - [ ] **Scan modes and entry points:** SCAN-8, SCAN-10, SCAN-14 with HIS-6, ENTRY-1, ENTRY-2 (only if S12 passes)
 - [ ] **More results:** RES-5 (only if S5 passes; otherwise RES-4's flow stays), RES-8, RES-10, RES-11, SET-4
 - [ ] **Link safety, extended:** LINK-2's registrable domain (S11), LINK-6 with its bundled tables and credits, LINK-7 with its data-safety update (PRIV-6)
@@ -131,4 +131,4 @@ Late checks. The review prompt comes last, so it asks about finished features.
 - Move `lib/core/` into the shared core repo when Notes starts (Nov 2)
 
 ## Known bugs
-None open. The app is built and its suite is green; this section is for what the closed test and the pre-launch report turn up.
+- **Greek renders wrongly, and it is the fonts, not the translation** (found 2026-09-21, driven on the emulator at v0.11.0). Accents sit detached after their letter ("Προεπιλογη΄" for "Προεπιλογή", "Φωτεινο΄" for "Φωτεινό") and sigma comes out as a Latin or lunate C in the uppercased rail and headers ("ϹΑΡΩϹΗ", "ΡΥΘΜΊCΕΙC"). The ARB is correct — the source bytes are precomposed U+03AC. Space Grotesk and IBM Plex Mono carry *part* of Greek, so Flutter takes the plain letters from them and the accented ones from a fallback font, and the two don't match. Every other non-Latin script is clean precisely because the bundled fonts have no coverage at all and the whole run falls back together. Greek is therefore NOT offered yet: `el` is commented out of `lib/l10n/languages.dart` and `app_el.arb` is not in the tree. Its translation is kept at `tool/translations/el.json`, so restoring it once a Greek-covering font is bundled is one line plus `dart tool/new_language.dart el tool/translations/el.json` (LANG-7). Nothing else is affected.

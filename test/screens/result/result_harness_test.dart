@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:qrscanner/l10n/app_localizations.dart';
 import 'package:qrscanner/models/record_enums.dart';
 import 'package:qrscanner/screens/result_screen.dart';
 import 'package:qrscanner/state/scan_outcome.dart';
@@ -24,14 +25,15 @@ class _Case {
 
   final String name;
   final ScanOutcome outcome;
-  final Map<String, String> readableText;
+  final String Function(AppLocalizations l10n) readableText;
 }
 
 final List<_Case> _cases = <_Case>[
   _Case(
     'a link',
     _outcome('https://example.com/a/long/enough/path?q=1', ParsedType.url),
-    const <String, String>{'en': 'Link · QR code', 'ar': 'رابط · رمز QR'},
+    (AppLocalizations l10n) =>
+        l10n.resultTypeAndFormat(l10n.parsedTypeUrl, l10n.symbologyQr),
   ),
   _Case(
     'a Wi-Fi network',
@@ -39,10 +41,8 @@ final List<_Case> _cases = <_Case>[
       'WIFI:T:WPA;S:A Rather Long Home Network Name;P:aRatherLongPassword123;;',
       ParsedType.wifi,
     ),
-    const <String, String>{
-      'en': 'Wi-Fi · QR code',
-      'ar': 'شبكة Wi-Fi · رمز QR',
-    },
+    (AppLocalizations l10n) =>
+        l10n.resultTypeAndFormat(l10n.parsedTypeWifi, l10n.symbologyQr),
   ),
   _Case(
     'a contact',
@@ -52,10 +52,8 @@ final List<_Case> _cases = <_Case>[
       'END:VCARD',
       ParsedType.contact,
     ),
-    const <String, String>{
-      'en': 'Contact · QR code',
-      'ar': 'جهة اتصال · رمز QR',
-    },
+    (AppLocalizations l10n) =>
+        l10n.resultTypeAndFormat(l10n.parsedTypeContact, l10n.symbologyQr),
   ),
   _Case(
     'a calendar event',
@@ -66,15 +64,14 @@ final List<_Case> _cases = <_Case>[
       'DESCRIPTION:Bring the roadmap and the coffee\nEND:VEVENT',
       ParsedType.event,
     ),
-    const <String, String>{'en': 'Event · QR code', 'ar': 'حدث · رمز QR'},
+    (AppLocalizations l10n) =>
+        l10n.resultTypeAndFormat(l10n.parsedTypeEvent, l10n.symbologyQr),
   ),
   _Case(
     'a phone number',
     _outcome('tel:+15551234567', ParsedType.phone),
-    const <String, String>{
-      'en': 'Phone number · QR code',
-      'ar': 'رقم هاتف · رمز QR',
-    },
+    (AppLocalizations l10n) =>
+        l10n.resultTypeAndFormat(l10n.parsedTypePhone, l10n.symbologyQr),
   ),
   _Case(
     'an SMS',
@@ -82,7 +79,8 @@ final List<_Case> _cases = <_Case>[
       'SMSTO:+15551234567:A rather long pre-filled message body',
       ParsedType.sms,
     ),
-    const <String, String>{'en': 'SMS · QR code', 'ar': 'رسالة نصية · رمز QR'},
+    (AppLocalizations l10n) =>
+        l10n.resultTypeAndFormat(l10n.parsedTypeSms, l10n.symbologyQr),
   ),
   _Case(
     'an email',
@@ -91,15 +89,14 @@ final List<_Case> _cases = <_Case>[
       '&body=A rather long pre-filled body of the message',
       ParsedType.email,
     ),
-    const <String, String>{
-      'en': 'Email · QR code',
-      'ar': 'بريد إلكتروني · رمز QR',
-    },
+    (AppLocalizations l10n) =>
+        l10n.resultTypeAndFormat(l10n.parsedTypeEmail, l10n.symbologyQr),
   ),
   _Case(
     'a product',
     _outcome('4006381333931', ParsedType.product, symbology: Symbology.ean13),
-    const <String, String>{'en': 'Product · EAN-13', 'ar': 'منتج · EAN-13'},
+    (AppLocalizations l10n) =>
+        l10n.resultTypeAndFormat(l10n.parsedTypeProduct, l10n.symbologyEan13),
   ),
   _Case(
     'a location',
@@ -107,7 +104,8 @@ final List<_Case> _cases = <_Case>[
       'geo:51.5,-0.12?q=51.5,-0.12(A rather long place name)',
       ParsedType.geo,
     ),
-    const <String, String>{'en': 'Location · QR code', 'ar': 'موقع · رمز QR'},
+    (AppLocalizations l10n) =>
+        l10n.resultTypeAndFormat(l10n.parsedTypeGeo, l10n.symbologyQr),
   ),
   _Case(
     'plain text',
@@ -115,7 +113,8 @@ final List<_Case> _cases = <_Case>[
       'A rather long piece of plain text that fits no other type',
       ParsedType.text,
     ),
-    const <String, String>{'en': 'Text · QR code', 'ar': 'نص · رمز QR'},
+    (AppLocalizations l10n) =>
+        l10n.resultTypeAndFormat(l10n.parsedTypeText, l10n.symbologyQr),
   ),
   _Case(
     'binary data',
@@ -130,10 +129,8 @@ final List<_Case> _cases = <_Case>[
       source: RecordSource.camera,
       isSaved: true,
     ),
-    const <String, String>{
-      'en': 'Unknown · QR code',
-      'ar': 'غير معروف · رمز QR',
-    },
+    (AppLocalizations l10n) =>
+        l10n.resultTypeAndFormat(l10n.parsedTypeUnknown, l10n.symbologyQr),
   ),
 ];
 
@@ -156,7 +153,7 @@ void main() {
           );
 
           expect(
-            find.text(testCase.readableText[locale.languageCode]!),
+            find.text(testCase.readableText(lookupAppLocalizations(locale))),
             findsOneWidget,
           );
           await expectEveryIconHasALabel(tester);
@@ -173,7 +170,7 @@ void main() {
           );
 
           expect(
-            find.text(testCase.readableText[locale.languageCode]!),
+            find.text(testCase.readableText(lookupAppLocalizations(locale))),
             findsOneWidget,
           );
           await expectTapTargetsAtLeast48dp(tester);
@@ -190,7 +187,7 @@ void main() {
           );
 
           expect(
-            find.text(testCase.readableText[locale.languageCode]!),
+            find.text(testCase.readableText(lookupAppLocalizations(locale))),
             findsOneWidget,
           );
           expectNoOverflow(tester);

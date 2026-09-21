@@ -322,13 +322,13 @@ This file defines how QR Scanner + Generator behaves: the defaults, limits, orde
 
 **Learn:** A translated app feels native only when dates, numbers, search and layout direction are right too, and a clipped label looks broken.
 
-- **LANG-1** The app follows the device language and falls back to English. Settings offers "System default" and each language in its own name, and a change applies without a restart.
+- **LANG-1** The app follows the device language and falls back to English. Settings offers "System default" and each language in its own name, and a change applies without a restart. Those names are never translated (amended 2026-09-21): someone who has opened the app in a language they can't read still has to find their own, and "Deutsch" is findable where a translated "German" is not. The list is built from one place, so a new language is a message file and a line.
 - **LANG-2** Every user-facing text comes from the message files, with ICU plurals and placeholders, share text included; file names stay ASCII (SAVE-4). CI fails on a missing message or mismatched placeholders.
 - **LANG-3** Dates and numbers follow the chosen language. Exported and backup files don't (EXP-2, BAK-1).
 - **LANG-4** Search ignores case and accents in every language, including Turkish dotted and dotless i.
 - **LANG-5** Right-to-left languages mirror navigation, lists, swipe directions, icon rows, sliders and arrows. URLs, numbers, codes and phone numbers stay left to right inside them.
-- **LANG-6** Translations are machine-made in the same PR as the English text. Widget tests render the main screens in every language at 2.0× text on a phone-size screen and fail on overflow.
-- **LANG-7** English and Arabic at closed test. v1 adds French, Spanish, German, Portuguese (Brazil), Hindi, Indonesian, Russian and Turkish, for ten in total. Later languages are chosen from testers' and users' locales.
+- **LANG-6** Translations are machine-made in the same PR as the English text, and a second pass checks each language against the English before it lands: placeholders intact, ICU plurals using the categories that language actually has, and apostrophes doubled for `use-escaping`. Widget tests render the main screens in **every** language at 2.0× text on a phone-size screen and fail on overflow, because how long a label runs is exactly what differs between languages. The accessibility harness runs English and Arabic only (amended 2026-09-21): what it checks — that every control has a name and a large enough target — is the same in all of them, so running it 21 times re-checks one fact 21 ways.
+- **LANG-7** English and Arabic at closed test. v1 adds Bengali, Simplified Chinese, Dutch, French, German, Hindi, Indonesian, Italian, Japanese, Korean, Polish, Portuguese, Russian, Spanish, Thai, Turkish, Urdu and Vietnamese, for twenty in total (amended 2026-09-21, following the portfolio's expense app). A language ships only when the app can draw it: Greek is translated and held back because the bundled typefaces cover it only partly, and the app renders its accents beside the letters instead of on them (Known bugs in `docs/ROADMAP.md`). Later languages are chosen from testers' and users' locales; `tool/new_language.dart` adds one from the English file.
 
 ## 21. App lock
 
@@ -364,6 +364,7 @@ This file defines how QR Scanner + Generator behaves: the defaults, limits, orde
 6. (16 September 2026) The closed test still starts on 16 October, with a trimmed first build; the rest ships as updates during the test, before the 2 November production application (`docs/ROADMAP.md`).
 7. (16 September 2026) Backup and restore ship in v1, before the production application (BAK-1–BAK-7).
 8. (20 September 2026) The launcher mark is the concentric square of a QR code's finder pattern, signal on chassis, over a literal code glyph or viewfinder brackets; the cold-start window is that chassis and that icon, nothing else (ICON-2, ICON-6).
+9. (21 September 2026) Twenty languages, following the portfolio's expense app, rather than the ten LANG-7 first set out. Greek was translated with them and held back: a language ships only when the app can draw it, and the bundled typefaces cover Greek only partly. Their names are never translated (LANG-1). The overflow harness renders all of them; the accessibility harness stays on English and Arabic, since what it checks doesn't vary by language (LANG-6).
 
 ### Defaults chosen while writing the rules
 

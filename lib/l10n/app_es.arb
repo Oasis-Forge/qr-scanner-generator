@@ -1,75 +1,75 @@
 {
-  "@@locale": "en",
+  "@@locale": "es",
 
   "appTitle": "QR Scanner + Generator",
   "@appTitle": {
     "description": "LANG-2. The app name, shown in the task switcher and as the fallback screen title."
   },
 
-  "navScan": "Scan",
+  "navScan": "Escanear",
   "@navScan": {
     "description": "SCAN-1. Bottom navigation destination for the live scanner."
   },
-  "navCreate": "Create",
+  "navCreate": "Crear",
   "@navCreate": {
     "description": "SCAN-1. Bottom navigation destination for the code generator."
   },
-  "navHistory": "History",
+  "navHistory": "Historial",
   "@navHistory": {
     "description": "SCAN-1. Bottom navigation destination for the list of scanned and created codes."
   },
-  "navSettings": "Settings",
+  "navSettings": "Ajustes",
   "@navSettings": {
     "description": "SCAN-1. Bottom navigation destination for Settings."
   },
 
-  "cameraPermissionReason": "The camera is used only to read codes on this device.",
+  "cameraPermissionReason": "La cámara se usa solo para leer códigos en este dispositivo.",
   "@cameraPermissionReason": {
     "description": "RUN-1. The one reason shown on the scanner placeholder before the camera is allowed. Translations must stay at or under 70 characters."
   },
-  "cameraAllowButton": "Allow camera",
+  "cameraAllowButton": "Permitir cámara",
   "@cameraAllowButton": {
     "description": "RUN-1. Largest control on the scanner placeholder; opens the system camera prompt."
   },
-  "cameraOpenSettingsButton": "Open settings",
+  "cameraOpenSettingsButton": "Abrir ajustes",
   "@cameraOpenSettingsButton": {
     "description": "RUN-6. Replaces the allow button once Android will not show its prompt again; opens the app permission page."
   },
-  "scanFromPhotoButton": "Scan a photo",
+  "scanFromPhotoButton": "Escanear una foto",
   "@scanFromPhotoButton": {
     "description": "RUN-4, SCAN-11. Opens the system photo picker to decode a code from an image."
   },
-  "typeCodeButton": "Type a code",
+  "typeCodeButton": "Escribir un código",
   "@typeCodeButton": {
     "description": "RUN-4, SCAN-12. Opens typed entry, which runs the same parsers as a camera scan."
   },
 
-  "placeholderCreateMessage": "Creating codes arrives in the next test build.",
+  "placeholderCreateMessage": "La creación de códigos llega en la próxima versión de prueba.",
   "@placeholderCreateMessage": {
     "description": "SCAN-1. Body of the Create tab until the generator ships: says plainly that it is not in this build yet."
   },
-  "placeholderHistoryMessage": "The History list arrives in the next test build. Your scans are already kept on this phone.",
+  "placeholderHistoryMessage": "La lista del historial llega en la próxima versión de prueba. Tus escaneos ya se guardan en este teléfono.",
   "@placeholderHistoryMessage": {
     "description": "SCAN-1, DATA-4. Body of the History tab until the list ships. Scans are written from this build on, so it says they are kept, and only on the phone."
   },
 
-  "scanReadyStatus": "Ready",
+  "scanReadyStatus": "Listo",
   "@scanReadyStatus": {
     "description": "SCAN-4. The word beside the live scanner's marker, saying the camera is looking. Shown in capitals in the app's monospaced voice."
   },
-  "scanTargetHint": "Point the camera at a code",
+  "scanTargetHint": "Apunta la cámara a un código",
   "@scanTargetHint": {
     "description": "SCAN-4. One line on the live scanner, under the square target. Detection is automatic: there is no shutter to press."
   },
-  "scanCameraUnavailable": "The camera could not start. Another app may be using it.",
+  "scanCameraUnavailable": "No se pudo iniciar la cámara. Puede que otra app la esté usando.",
   "@scanCameraUnavailable": {
     "description": "The camera is allowed but did not start (no usable back camera, or another app holds it). Shown with Scan a photo and Type a code."
   },
-  "scanTorchOn": "Turn on the torch",
+  "scanTorchOn": "Encender la linterna",
   "@scanTorchOn": {
     "description": "SCAN-6, A11Y-1. Screen-reader name and tooltip of the torch button while the torch is off."
   },
-  "scanTorchOff": "Turn off the torch",
+  "scanTorchOff": "Apagar la linterna",
   "@scanTorchOff": {
     "description": "SCAN-6, A11Y-1. Screen-reader name and tooltip of the torch button while the torch is on."
   },
@@ -88,19 +88,19 @@
       }
     }
   },
-  "scanReadingPhoto": "Reading the photo",
+  "scanReadingPhoto": "Leyendo la foto",
   "@scanReadingPhoto": {
     "description": "SCAN-11, A11Y-1. Screen-reader name of the progress indicator shown while a picked photo is decoded."
   },
-  "scanPhotoPickerFailed": "The photo picker did not open. Try again.",
+  "scanPhotoPickerFailed": "No se abrió el selector de fotos. Inténtalo de nuevo.",
   "@scanPhotoPickerFailed": {
     "description": "SCAN-11. Snackbar when the system photo picker could not be opened."
   },
-  "scanSettingsDidNotOpen": "Settings did not open. Allow the camera from your phone settings.",
+  "scanSettingsDidNotOpen": "Los ajustes no se abrieron. Permite la cámara desde los ajustes del teléfono.",
   "@scanSettingsDidNotOpen": {
     "description": "RUN-6. Snackbar when Open settings could not open the app permission page."
   },
-  "scanDetectedAnnouncement": "{format} detected: {type}",
+  "scanDetectedAnnouncement": "Se detectó {format}: {type}",
   "@scanDetectedAnnouncement": {
     "description": "A11Y-3. Spoken by screen readers when the camera or a photo reads a code. Both placeholders take already translated labels.",
     "placeholders": {
@@ -114,7 +114,7 @@
       }
     }
   },
-  "scanTypeDetectedAnnouncement": "{type} detected",
+  "scanTypeDetectedAnnouncement": "Se detectó {type}",
   "@scanTypeDetectedAnnouncement": {
     "description": "A11Y-3. As scanDetectedAnnouncement, for a code whose format has no name. The placeholder takes an already translated type label.",
     "placeholders": {
@@ -124,7 +124,7 @@
       }
     }
   },
-  "scanChoicesAnnouncement": "{count, plural, one{1 code detected} other{{count} codes detected}}",
+  "scanChoicesAnnouncement": "{count, plural, one{1 código detectado} other{{count} códigos detectados}}",
   "@scanChoicesAnnouncement": {
     "description": "A11Y-3, SCAN-13. Spoken by screen readers when one pass finds two or more codes and the list opens.",
     "placeholders": {
@@ -134,7 +134,7 @@
       }
     }
   },
-  "scanChoicesTitle": "{count, plural, one{1 code found} other{{count} codes found}}",
+  "scanChoicesTitle": "{count, plural, one{1 código encontrado} other{{count} códigos encontrados}}",
   "@scanChoicesTitle": {
     "description": "SCAN-13. Heading of the list shown when one pass finds two or more codes.",
     "placeholders": {
@@ -144,11 +144,11 @@
       }
     }
   },
-  "scanChoicesHint": "Choose the code to open.",
+  "scanChoicesHint": "Elige el código que quieres abrir.",
   "@scanChoicesHint": {
     "description": "SCAN-13. One line under the heading of the list of codes."
   },
-  "scanBinaryData": "{count, plural, one{Binary data, 1 byte} other{Binary data, {count} bytes}}",
+  "scanBinaryData": "{count, plural, one{Datos binarios, 1 byte} other{Datos binarios, {count} bytes}}",
   "@scanBinaryData": {
     "description": "RES-13, SCAN-13. Shown instead of a payload that is not valid text, on the result and in the list of codes.",
     "placeholders": {
@@ -158,36 +158,36 @@
       }
     }
   },
-  "noCodeFoundTitle": "No code found",
+  "noCodeFoundTitle": "Ningún código encontrado",
   "@noCodeFoundTitle": {
     "description": "SCAN-11. Heading shown when a picked photo holds no readable code."
   },
-  "noCodeFoundHint": "Make sure the whole code is in the photo, sharp and well lit.",
+  "noCodeFoundHint": "Asegúrate de que el código completo esté en la foto, nítido y bien iluminado.",
   "@noCodeFoundHint": {
     "description": "SCAN-11. The one hint under No code found."
   },
-  "tryAnotherPhotoButton": "Try another photo",
+  "tryAnotherPhotoButton": "Probar otra foto",
   "@tryAnotherPhotoButton": {
     "description": "SCAN-11. Largest control on No code found; opens the photo picker again."
   },
-  "actionClose": "Close",
+  "actionClose": "Cerrar",
   "@actionClose": {
     "description": "A11Y-1. Screen-reader name and tooltip of the close buttons on the list of codes and on No code found."
   },
 
-  "manualEntryTitle": "Type a code",
+  "manualEntryTitle": "Escribir un código",
   "@manualEntryTitle": {
     "description": "SCAN-12. Title of the typed-entry screen."
   },
-  "manualEntryFieldLabel": "Code content",
+  "manualEntryFieldLabel": "Contenido del código",
   "@manualEntryFieldLabel": {
     "description": "SCAN-12. Label of the multi-line field the content is typed into."
   },
-  "manualEntryFieldHint": "A link, some text or a barcode number",
+  "manualEntryFieldHint": "Un enlace, un texto o un número de código de barras",
   "@manualEntryFieldHint": {
     "description": "SCAN-12. Hint inside the empty typed-entry field."
   },
-  "manualEntryScanButton": "Scan",
+  "manualEntryScanButton": "Escanear",
   "@manualEntryScanButton": {
     "description": "SCAN-12. Largest control on typed entry, disabled while the field is empty; opens the same result as a camera scan."
   },
@@ -196,7 +196,7 @@
   "@settingsGroupGeneral": {
     "description": "SET-5. First Settings group: theme, language, sound, vibration, copy on scan, search engine."
   },
-  "settingsGroupPrivacy": "Privacy",
+  "settingsGroupPrivacy": "Privacidad",
   "@settingsGroupPrivacy": {
     "description": "SET-5. Second Settings group: save history, send crash reports, privacy options."
   },
@@ -204,62 +204,62 @@
   "@settingsGroupPro": {
     "description": "SET-5, PRO-1. Third Settings group: remove ads, restore purchase. Pro is the product name, not a description."
   },
-  "settingsGroupAbout": "About",
+  "settingsGroupAbout": "Acerca de",
   "@settingsGroupAbout": {
     "description": "SET-5. Fourth Settings group: feedback, privacy policy, open-source licences, version."
   },
 
-  "settingsTheme": "Theme",
+  "settingsTheme": "Tema",
   "@settingsTheme": {
     "description": "SET-1, SET-5. Settings row that opens the theme choice."
   },
-  "settingsLanguage": "Language",
+  "settingsLanguage": "Idioma",
   "@settingsLanguage": {
     "description": "LANG-1, SET-5. Settings row that opens the language choice."
   },
-  "settingsSoundOnScan": "Sound on scan",
+  "settingsSoundOnScan": "Sonido al escanear",
   "@settingsSoundOnScan": {
     "description": "SET-2, SET-5. Switch for the scan sound, off by default."
   },
-  "settingsVibrateOnScan": "Vibrate on scan",
+  "settingsVibrateOnScan": "Vibrar al escanear",
   "@settingsVibrateOnScan": {
     "description": "SET-2, SET-5. Switch for the scan vibration, on by default."
   },
-  "settingsCopyOnScan": "Copy on scan",
+  "settingsCopyOnScan": "Copiar al escanear",
   "@settingsCopyOnScan": {
     "description": "SET-3, SET-5. Switch that copies the decoded text once the result is on screen, off by default."
   },
-  "settingsSearchEngine": "Search engine",
+  "settingsSearchEngine": "Buscador",
   "@settingsSearchEngine": {
     "description": "SET-4, SET-5. Settings row that chooses the engine used by Search the web."
   },
 
-  "settingsSaveHistory": "Save history",
+  "settingsSaveHistory": "Guardar historial",
   "@settingsSaveHistory": {
     "description": "HIS-8, SET-5. Switch that stores scans and created codes, on by default."
   },
-  "settingsSendCrashReports": "Send crash reports",
+  "settingsSendCrashReports": "Enviar informes de fallos",
   "@settingsSendCrashReports": {
     "description": "PRIV-3, SET-5. Switch that turns on crash reporting, off by default."
   },
-  "settingsPrivacyOptions": "Privacy options",
+  "settingsPrivacyOptions": "Opciones de privacidad",
   "@settingsPrivacyOptions": {
     "description": "PRIV-2, SET-5. Settings row shown only where the consent SDK reports the region needs it."
   },
 
-  "settingsRemoveAds": "Remove ads",
+  "settingsRemoveAds": "Quitar anuncios",
   "@settingsRemoveAds": {
     "description": "PRO-4, SET-5. Settings row that starts the one-time Pro purchase."
   },
-  "settingsRemoveAdsSubtitle": "One-time purchase",
+  "settingsRemoveAdsSubtitle": "Compra única",
   "@settingsRemoveAdsSubtitle": {
     "description": "PRO-1, PRO-3, PRO-5. Second line under Remove ads. Never a subscription, and no price or discount is shown here."
   },
-  "settingsRestorePurchase": "Restore purchase",
+  "settingsRestorePurchase": "Restaurar compra",
   "@settingsRestorePurchase": {
     "description": "PRO-6, SET-5. Settings row next to Remove ads that re-checks ownership."
   },
-  "settingsRemoveAdsPrice": "One-time purchase · {price}",
+  "settingsRemoveAdsPrice": "Compra única · {price}",
   "@settingsRemoveAdsPrice": {
     "description": "PRO-4, PRO-5. Second line under Remove ads once the store's own price has loaded; replaces settingsRemoveAdsSubtitle. Also the label of the Pro prompt's buy button once a price is known. The placeholder is the store's own localised price string, never reformatted.",
     "placeholders": {
@@ -269,53 +269,53 @@
       }
     }
   },
-  "settingsProOwned": "Ads removed",
+  "settingsProOwned": "Anuncios quitados",
   "@settingsProOwned": {
     "description": "PRO-2, PRO-4, SET-5. Replaces settingsRemoveAds and settingsRemoveAdsSubtitle once Pro is owned; there is nothing left to buy or restore."
   },
 
-  "proBuyFailed": "Could not complete the purchase. Try again.",
+  "proBuyFailed": "No se pudo completar la compra. Inténtalo de nuevo.",
   "@proBuyFailed": {
     "description": "PRO-1. Snackbar when a purchase attempt errored or the store was unavailable; a cancelled or still-pending purchase shows nothing."
   },
-  "proRestoreSuccess": "Purchase restored.",
+  "proRestoreSuccess": "Compra restaurada.",
   "@proRestoreSuccess": {
     "description": "PRO-6. Snackbar after Restore purchase found the product owned."
   },
-  "proRestoreNotFound": "No previous purchase was found.",
+  "proRestoreNotFound": "No se encontró ninguna compra anterior.",
   "@proRestoreNotFound": {
     "description": "PRO-6. Snackbar after Restore purchase reached the store but found nothing owned."
   },
-  "proRestoreFailed": "Could not check the store. Try again.",
+  "proRestoreFailed": "No se pudo consultar la tienda. Inténtalo de nuevo.",
   "@proRestoreFailed": {
     "description": "PRO-6. Snackbar after Restore purchase could not reach the store at all, e.g. offline."
   },
-  "proPromptTitle": "Remove ads?",
+  "proPromptTitle": "¿Quitar anuncios?",
   "@proPromptTitle": {
     "description": "PRO-4. Heading of the one dismissible Pro prompt."
   },
-  "proPromptBody": "A one-time purchase, never a subscription.",
+  "proPromptBody": "Una compra única, nunca una suscripción.",
   "@proPromptBody": {
     "description": "PRO-1, PRO-4. Body text of the Pro prompt."
   },
-  "proPromptDismissTooltip": "Dismiss",
+  "proPromptDismissTooltip": "Descartar",
   "@proPromptDismissTooltip": {
     "description": "PRO-4, A11Y-1. Screen-reader name of the Pro prompt's close icon button."
   },
 
-  "settingsFeedback": "Feedback",
+  "settingsFeedback": "Comentarios",
   "@settingsFeedback": {
     "description": "SET-8, SET-5. Settings row that opens the feedback form."
   },
-  "settingsPrivacyPolicy": "Privacy policy",
+  "settingsPrivacyPolicy": "Política de privacidad",
   "@settingsPrivacyPolicy": {
     "description": "SET-6, SET-5. Settings row that opens the published policy in Custom Tabs."
   },
-  "settingsOpenSourceLicences": "Open-source licences",
+  "settingsOpenSourceLicences": "Licencias de código abierto",
   "@settingsOpenSourceLicences": {
     "description": "SET-7, SET-5. Settings row that opens the Flutter licence page."
   },
-  "settingsVersion": "Version",
+  "settingsVersion": "Versión",
   "@settingsVersion": {
     "description": "SET-5. Label of the last About row."
   },
@@ -333,48 +333,48 @@
       }
     }
   },
-  "settingsLinkOpenFailed": "Could not open the link.",
+  "settingsLinkOpenFailed": "No se pudo abrir el enlace.",
   "@settingsLinkOpenFailed": {
     "description": "SET-6. Snackbar when the privacy policy could not be opened: no app can show a web link, or the hand-off failed."
   },
 
-  "feedbackCategoryLabel": "Category",
+  "feedbackCategoryLabel": "Categoría",
   "@feedbackCategoryLabel": {
     "description": "SET-8. Heading above the feedback screen's category chips."
   },
-  "feedbackCategoryScanning": "Scanning",
+  "feedbackCategoryScanning": "Escaneo",
   "@feedbackCategoryScanning": {
     "description": "SET-8. Feedback category chip."
   },
-  "feedbackCategoryResults": "Results",
+  "feedbackCategoryResults": "Resultados",
   "@feedbackCategoryResults": {
     "description": "SET-8. Feedback category chip."
   },
-  "feedbackCategoryCreatingCodes": "Creating codes",
+  "feedbackCategoryCreatingCodes": "Creación de códigos",
   "@feedbackCategoryCreatingCodes": {
     "description": "SET-8. Feedback category chip."
   },
-  "feedbackCategoryAds": "Ads",
+  "feedbackCategoryAds": "Anuncios",
   "@feedbackCategoryAds": {
     "description": "SET-8. Feedback category chip."
   },
-  "feedbackCategoryOther": "Other",
+  "feedbackCategoryOther": "Otro",
   "@feedbackCategoryOther": {
     "description": "SET-8. Feedback category chip."
   },
-  "feedbackMessageHint": "What happened, and what did you expect?",
+  "feedbackMessageHint": "¿Qué pasó y qué esperabas?",
   "@feedbackMessageHint": {
     "description": "SET-8. Hint text inside the feedback screen's empty text box."
   },
-  "feedbackSendButton": "Send",
+  "feedbackSendButton": "Enviar",
   "@feedbackSendButton": {
     "description": "SET-8. Largest button on the feedback screen; opens the email app and sends nothing itself. Disabled until a category is chosen."
   },
-  "feedbackSendNoHandler": "No email app is set up on this device.",
+  "feedbackSendNoHandler": "No hay ninguna app de correo configurada en este dispositivo.",
   "@feedbackSendNoHandler": {
     "description": "SET-8, RES-14. Snackbar when no installed app can compose an email."
   },
-  "feedbackEmailSubject": "{appTitle} feedback ({version}+{build}, {androidVersion})",
+  "feedbackEmailSubject": "Comentarios sobre {appTitle} ({version}+{build}, {androidVersion})",
   "@feedbackEmailSubject": {
     "description": "SET-8. Subject line of the feedback email, with the app and Android versions. androidVersion already reads like \"Android 14\"; nothing else adds the word \"Android\".",
     "placeholders": {
@@ -397,29 +397,29 @@
     }
   },
 
-  "themeSystemDefault": "System default",
+  "themeSystemDefault": "Predeterminado del sistema",
   "@themeSystemDefault": {
     "description": "SET-1. Theme choice that follows the phone setting; the initial choice."
   },
-  "themeLight": "Light",
+  "themeLight": "Claro",
   "@themeLight": {
     "description": "SET-1. Light theme choice."
   },
-  "themeDark": "Dark",
+  "themeDark": "Oscuro",
   "@themeDark": {
     "description": "SET-1. Dark theme choice."
   },
 
-  "languageSystemDefault": "System default",
+  "languageSystemDefault": "Predeterminado del sistema",
   "@languageSystemDefault": {
     "description": "LANG-1. Language choice that follows the device language and falls back to English. Kept apart from themeSystemDefault because languages that inflect need different wording here."
   },
 
-  "historyHeaderToday": "Today",
+  "historyHeaderToday": "Hoy",
   "@historyHeaderToday": {
     "description": "DATE-2, HIS-3. Date header for rows from the current local calendar day."
   },
-  "historyHeaderYesterday": "Yesterday",
+  "historyHeaderYesterday": "Ayer",
   "@historyHeaderYesterday": {
     "description": "DATE-2, HIS-3. Date header for rows from the previous local calendar day."
   },
@@ -456,7 +456,7 @@
       }
     }
   },
-  "historyCodeCount": "{count, plural, zero{No codes} one{1 code} other{{count} codes}}",
+  "historyCodeCount": "{count, plural, zero{Ningún código} one{1 código} other{{count} códigos}}",
   "@historyCodeCount": {
     "description": "HIS-6, DATA-8. A count of codes, used for a saved batch row and for empty states.",
     "placeholders": {
@@ -466,43 +466,43 @@
       }
     }
   },
-  "historySegmentAll": "All",
+  "historySegmentAll": "Todos",
   "@historySegmentAll": {
     "description": "HIS-1. Segmented control option showing every live record, scanned and created."
   },
-  "historySegmentScanned": "Scanned",
+  "historySegmentScanned": "Escaneados",
   "@historySegmentScanned": {
     "description": "HIS-1. Segmented control option showing only records of kind scan."
   },
-  "historySegmentCreated": "Created",
+  "historySegmentCreated": "Creados",
   "@historySegmentCreated": {
     "description": "HIS-1. Segmented control option showing only records of kind created."
   },
-  "historyEmptyMessage": "Codes you scan or create will show up here.",
+  "historyEmptyMessage": "Los códigos que escanees o crees aparecerán aquí.",
   "@historyEmptyMessage": {
     "description": "HIS-11. The one line shown when History holds no live records at all."
   },
-  "historyEmptyScanButton": "Scan a code",
+  "historyEmptyScanButton": "Escanear un código",
   "@historyEmptyScanButton": {
     "description": "HIS-11. On the empty History screen; switches to the Scan tab."
   },
-  "historyEmptyCreateButton": "Create a code",
+  "historyEmptyCreateButton": "Crear un código",
   "@historyEmptyCreateButton": {
     "description": "HIS-11. On the empty History screen; switches to the Create tab."
   },
-  "historyEmptyNotSavingMessage": "New scans aren''t being saved.",
+  "historyEmptyNotSavingMessage": "Los escaneos nuevos no se están guardando.",
   "@historyEmptyNotSavingMessage": {
     "description": "HIS-8, HIS-11. Second line on the empty History screen while Save history is off."
   },
-  "historyEmptySettingsButton": "Go to Settings",
+  "historyEmptySettingsButton": "Ir a Ajustes",
   "@historyEmptySettingsButton": {
     "description": "HIS-8, HIS-11. On the empty History screen while Save history is off; switches to the Settings tab."
   },
-  "historyLoading": "Loading History",
+  "historyLoading": "Cargando el historial",
   "@historyLoading": {
     "description": "HIS-1, A11Y-1. Screen-reader label for the spinner shown for the moment before History's first read completes."
   },
-  "historyDeletedSnackbar": "{count, plural, one{1 item deleted} other{{count} items deleted}}",
+  "historyDeletedSnackbar": "{count, plural, one{1 elemento eliminado} other{{count} elementos eliminados}}",
   "@historyDeletedSnackbar": {
     "description": "DEL-2. Snackbar confirming a delete, with Undo beside it for HistoryState.undoWindow.",
     "placeholders": {
@@ -512,23 +512,23 @@
       }
     }
   },
-  "historyUndoButton": "Undo",
+  "historyUndoButton": "Deshacer",
   "@historyUndoButton": {
     "description": "DEL-2. Action on historyDeletedSnackbar; restores what was just deleted."
   },
-  "historyDeleteFailed": "Could not delete. Try again.",
+  "historyDeleteFailed": "No se pudo eliminar. Inténtalo de nuevo.",
   "@historyDeleteFailed": {
     "description": "DEL-2. Snackbar when moving one or more records to Trash failed; History still shows them."
   },
-  "historyUndoFailed": "Could not undo. Try again.",
+  "historyUndoFailed": "No se pudo deshacer. Inténtalo de nuevo.",
   "@historyUndoFailed": {
     "description": "DEL-2. Snackbar when restoring from Trash failed; the records stay out of History."
   },
-  "historyLoadFailed": "History couldn''t be loaded. Try again.",
+  "historyLoadFailed": "No se pudo cargar el historial. Inténtalo de nuevo.",
   "@historyLoadFailed": {
     "description": "HIS-1. Snackbar when History could not be read from the database; the rows already shown stay."
   },
-  "historySelectedCount": "{count, plural, one{1 selected} other{{count} selected}}",
+  "historySelectedCount": "{count, plural, one{1 seleccionado} other{{count} seleccionados}}",
   "@historySelectedCount": {
     "description": "DEL-2. Title of History's app bar while rows are selected for deletion.",
     "placeholders": {
@@ -538,16 +538,16 @@
       }
     }
   },
-  "historyDeleteSelectedButton": "Delete",
+  "historyDeleteSelectedButton": "Eliminar",
   "@historyDeleteSelectedButton": {
     "description": "DEL-2, A11Y-1. Screen-reader label and tooltip of the action that deletes every selected row."
   },
-  "historyCancelSelectionButton": "Cancel selection",
+  "historyCancelSelectionButton": "Cancelar selección",
   "@historyCancelSelectionButton": {
     "description": "DEL-2, A11Y-1. Screen-reader label and tooltip of the action that leaves selection mode without deleting."
   },
 
-  "copiedSnackbar": "Copied {what}",
+  "copiedSnackbar": "Se copió {what}",
   "@copiedSnackbar": {
     "description": "SET-3, RES-2. Snackbar confirming what was copied. The placeholder takes an already translated noun, such as the link or the password.",
     "placeholders": {
@@ -557,16 +557,16 @@
       }
     }
   },
-  "copiedWhatLink": "the link",
+  "copiedWhatLink": "el enlace",
   "@copiedWhatLink": {
     "description": "SET-3, RES-1. Fills copiedSnackbar after a link was copied."
   },
-  "copiedWhatContent": "the content",
+  "copiedWhatContent": "el contenido",
   "@copiedWhatContent": {
     "description": "SET-3, RES-1. Fills copiedSnackbar after the decoded content of any other type was copied."
   },
 
-  "resultTitle": "Result",
+  "resultTitle": "Resultado",
   "@resultTitle": {
     "description": "RES-1, RES-3. Title of the result screen, whatever the source of the code."
   },
@@ -584,28 +584,28 @@
       }
     }
   },
-  "resultCopyButton": "Copy",
+  "resultCopyButton": "Copiar",
   "@resultCopyButton": {
     "description": "RES-1. Copies the exact decoded text."
   },
-  "resultShareButton": "Share",
+  "resultShareButton": "Compartir",
   "@resultShareButton": {
     "description": "RES-1. Opens the system share sheet with the exact decoded text."
   },
-  "resultNotSaved": "This scan could not be saved to History.",
+  "resultNotSaved": "Este escaneo no se pudo guardar en el historial.",
   "@resultNotSaved": {
     "description": "DATA-4. Shown on a result when Save history is on but writing the scan failed; the result still works."
   },
-  "resultCopyFailed": "Could not copy. Try again.",
+  "resultCopyFailed": "No se pudo copiar. Inténtalo de nuevo.",
   "@resultCopyFailed": {
     "description": "RES-1. Snackbar when the clipboard refused the text."
   },
-  "resultShareFailed": "Could not open sharing. Try again.",
+  "resultShareFailed": "No se pudo abrir el menú de compartir. Inténtalo de nuevo.",
   "@resultShareFailed": {
     "description": "RES-1. Snackbar when the system share sheet could not be opened."
   },
 
-  "parsedTypeUrl": "Link",
+  "parsedTypeUrl": "Enlace",
   "@parsedTypeUrl": {
     "description": "DATA-1. Label of the url type, on results and in the list of codes."
   },
@@ -613,19 +613,19 @@
   "@parsedTypeWifi": {
     "description": "DATA-1, RES-4. Label of the wifi type."
   },
-  "parsedTypeText": "Text",
+  "parsedTypeText": "Texto",
   "@parsedTypeText": {
     "description": "DATA-1. Label of the text type: plain text that fits no other type."
   },
-  "parsedTypeContact": "Contact",
+  "parsedTypeContact": "Contacto",
   "@parsedTypeContact": {
     "description": "DATA-1, RES-6. Label of the contact type (vCard, MeCard)."
   },
-  "parsedTypePhone": "Phone number",
+  "parsedTypePhone": "Número de teléfono",
   "@parsedTypePhone": {
     "description": "DATA-1, RES-7. Label of the phone type."
   },
-  "parsedTypeEmail": "Email",
+  "parsedTypeEmail": "Correo",
   "@parsedTypeEmail": {
     "description": "DATA-1, RES-7. Label of the email type."
   },
@@ -633,15 +633,15 @@
   "@parsedTypeSms": {
     "description": "DATA-1, RES-7. Label of the sms type: a text message with an optional body."
   },
-  "parsedTypeGeo": "Location",
+  "parsedTypeGeo": "Ubicación",
   "@parsedTypeGeo": {
     "description": "DATA-1, RES-8. Label of the geo type."
   },
-  "parsedTypeEvent": "Event",
+  "parsedTypeEvent": "Evento",
   "@parsedTypeEvent": {
     "description": "DATA-1, RES-6. Label of the event type (iCalendar)."
   },
-  "parsedTypeProduct": "Product",
+  "parsedTypeProduct": "Producto",
   "@parsedTypeProduct": {
     "description": "DATA-1, RES-9. Label of the product type (EAN, UPC, ISBN)."
   },
@@ -649,12 +649,12 @@
   "@parsedTypeAppStore": {
     "description": "DATA-1, GEN-10. Label of the app_store type: a Play Store app."
   },
-  "parsedTypeUnknown": "Unknown",
+  "parsedTypeUnknown": "Desconocido",
   "@parsedTypeUnknown": {
     "description": "DATA-1, RES-13. Label of the unknown type: a payload that fits no type."
   },
 
-  "symbologyQr": "QR code",
+  "symbologyQr": "Código QR",
   "@symbologyQr": {
     "description": "DATA-1, SCAN-9. Name of the QR code format."
   },
@@ -706,102 +706,102 @@
   "@symbologyUpcE": {
     "description": "DATA-1, SCAN-9, RES-9. Name of the UPC-E format; a proper name."
   },
-  "symbologyUnknown": "Unknown format",
+  "symbologyUnknown": "Formato desconocido",
   "@symbologyUnknown": {
     "description": "DATA-1. Name shown for a format this build cannot name."
   },
 
-  "errorStorageUnavailable": "The app cannot open its storage. Close it and open it again.",
+  "errorStorageUnavailable": "La app no puede abrir su almacenamiento. Ciérrala y vuelve a abrirla.",
   "@errorStorageUnavailable": {
     "description": "LANG-2. Fills the screen when the app database will not open at launch, so the app says what happened instead of crashing or showing a blank frame. Not errorSaveFailed: nothing was being saved."
   },
-  "errorSaveFailed": "Nothing was saved. Try again.",
+  "errorSaveFailed": "No se guardó nada. Inténtalo de nuevo.",
   "@errorSaveFailed": {
     "description": "Reliable writes: shown when a write fails and the change was rolled back, so no partial record is left."
   },
-  "actionRetry": "Retry",
+  "actionRetry": "Reintentar",
   "@actionRetry": {
     "description": "Button that runs the failed action again, shown with errorSaveFailed."
   },
 
-  "copiedWhatPassword": "the password",
+  "copiedWhatPassword": "la contraseña",
   "@copiedWhatPassword": {
     "description": "SET-3, RES-4. Fills copiedSnackbar after a Wi-Fi password was copied."
   },
-  "resultHandOffFailed": "Could not open. Try again.",
+  "resultHandOffFailed": "No se pudo abrir. Inténtalo de nuevo.",
   "@resultHandOffFailed": {
     "description": "RES-6, RES-7, RES-9. Snackbar when a hand-off to a system app, or a web search, could not be started."
   },
-  "resultUnavailableWifiSettings": "Wi-Fi settings can''t be opened on this device.",
+  "resultUnavailableWifiSettings": "Los ajustes de Wi-Fi no se pueden abrir en este dispositivo.",
   "@resultUnavailableWifiSettings": {
     "description": "RES-4, RES-14. One-line reason shown when Open Wi-Fi settings is disabled."
   },
-  "resultUnavailableContacts": "No contacts app is installed.",
+  "resultUnavailableContacts": "No hay ninguna app de contactos instalada.",
   "@resultUnavailableContacts": {
     "description": "RES-6, RES-14. One-line reason shown when Add to contacts is disabled."
   },
-  "resultUnavailableCalendar": "No calendar app is installed.",
+  "resultUnavailableCalendar": "No hay ninguna app de calendario instalada.",
   "@resultUnavailableCalendar": {
     "description": "RES-6, RES-14. One-line reason shown when Add to calendar is disabled."
   },
-  "resultUnavailableDialer": "No phone app is installed.",
+  "resultUnavailableDialer": "No hay ninguna app de teléfono instalada.",
   "@resultUnavailableDialer": {
     "description": "RES-7, RES-14. One-line reason shown when Call is disabled."
   },
-  "resultUnavailableSms": "No messaging app is installed.",
+  "resultUnavailableSms": "No hay ninguna app de mensajes instalada.",
   "@resultUnavailableSms": {
     "description": "RES-7, RES-14. One-line reason shown when Message is disabled on an SMS result."
   },
-  "resultUnavailableEmail": "No email app is installed.",
+  "resultUnavailableEmail": "No hay ninguna app de correo instalada.",
   "@resultUnavailableEmail": {
     "description": "RES-7, RES-14. One-line reason shown when Email is disabled."
   },
-  "resultUnavailableBrowser": "No browser is installed.",
+  "resultUnavailableBrowser": "No hay ningún navegador instalado.",
   "@resultUnavailableBrowser": {
     "description": "RES-9, RES-14. One-line reason shown when Search the web is disabled."
   },
 
-  "resultLinkOpenButton": "Open",
+  "resultLinkOpenButton": "Abrir",
   "@resultLinkOpenButton": {
     "description": "LINK-3, LINK-8. Primary action of a link result with no checks triggered; opens the link in Custom Tabs."
   },
-  "resultLinkReviewButton": "Review",
+  "resultLinkReviewButton": "Revisar",
   "@resultLinkReviewButton": {
     "description": "LINK-3, LINK-4. Primary action of a link result with any check triggered; opens the warning sheet."
   },
-  "resultLinkWarningTitle": "Before you open this link",
+  "resultLinkWarningTitle": "Antes de abrir este enlace",
   "@resultLinkWarningTitle": {
     "description": "LINK-4. Title at the top of the warning sheet."
   },
-  "resultLinkCheckIpAddressHost": "The address is a raw IP number, not a name",
+  "resultLinkCheckIpAddressHost": "La dirección es un número IP, no un nombre",
   "@resultLinkCheckIpAddressHost": {
     "description": "LINK-3, LINK-4. Plain-language line on the warning sheet for the ipAddressHost check."
   },
-  "resultLinkCheckUserinfo": "It contains a user name before the site name",
+  "resultLinkCheckUserinfo": "Contiene un nombre de usuario antes del nombre del sitio",
   "@resultLinkCheckUserinfo": {
     "description": "LINK-3, LINK-4. Plain-language line on the warning sheet for the userinfo check."
   },
-  "resultLinkCheckInsecureScheme": "It isn''t encrypted (http)",
+  "resultLinkCheckInsecureScheme": "No está cifrado (http)",
   "@resultLinkCheckInsecureScheme": {
     "description": "LINK-3, LINK-4. Plain-language line on the warning sheet for the insecureScheme check."
   },
-  "resultLinkCheckNonDefaultPort": "It uses an unusual port",
+  "resultLinkCheckNonDefaultPort": "Usa un puerto poco habitual",
   "@resultLinkCheckNonDefaultPort": {
     "description": "LINK-3, LINK-4. Plain-language line on the warning sheet for the nonDefaultPort check."
   },
-  "resultLinkCheckLongUrl": "It''s unusually long",
+  "resultLinkCheckLongUrl": "Es inusualmente largo",
   "@resultLinkCheckLongUrl": {
     "description": "LINK-3, LINK-4. Plain-language line on the warning sheet for the longUrl check."
   },
-  "resultLinkCopyWithoutOpeningButton": "Copy without opening",
+  "resultLinkCopyWithoutOpeningButton": "Copiar sin abrir",
   "@resultLinkCopyWithoutOpeningButton": {
     "description": "LINK-4. Filled button on the warning sheet; copies the link's exact text without opening it."
   },
-  "resultLinkOpenAnywayButton": "Open anyway",
+  "resultLinkOpenAnywayButton": "Abrir igualmente",
   "@resultLinkOpenAnywayButton": {
     "description": "LINK-4, LINK-8. Outlined button on the warning sheet; opens the link in Custom Tabs despite the checks."
   },
-  "resultLinkBlockedNotice": "{scheme} links can''t be opened here.",
+  "resultLinkBlockedNotice": "Los enlaces {scheme} no se pueden abrir aquí.",
   "@resultLinkBlockedNotice": {
     "description": "LINK-5. Shown instead of Open or Review when the link's scheme is blocked; only Copy and Share remain.",
     "placeholders": {
@@ -811,44 +811,44 @@
       }
     }
   },
-  "resultLinkCalloutMessage": "This app checks links before opening them, so you can see where they lead first.",
+  "resultLinkCalloutMessage": "Esta app revisa los enlaces antes de abrirlos, para que veas primero adónde llevan.",
   "@resultLinkCalloutMessage": {
     "description": "RUN-8, LINK-3. One-time callout shown above the actions on the first link result ever shown."
   },
-  "resultLinkCalloutDismissTooltip": "Dismiss",
+  "resultLinkCalloutDismissTooltip": "Descartar",
   "@resultLinkCalloutDismissTooltip": {
     "description": "RUN-8, A11Y-1. Screen-reader label for the callout's close button; one tap dismisses it for good."
   },
 
-  "resultWifiNetworkNameLabel": "Network name",
+  "resultWifiNetworkNameLabel": "Nombre de la red",
   "@resultWifiNetworkNameLabel": {
     "description": "RES-4. Label above a Wi-Fi result's network name."
   },
-  "resultWifiSecurityLabel": "Security",
+  "resultWifiSecurityLabel": "Seguridad",
   "@resultWifiSecurityLabel": {
     "description": "RES-4. Label above a Wi-Fi result's security type."
   },
-  "resultWifiPasswordLabel": "Password",
+  "resultWifiPasswordLabel": "Contraseña",
   "@resultWifiPasswordLabel": {
     "description": "RES-4. Label above a Wi-Fi result's password, masked until revealed."
   },
-  "resultWifiRevealPasswordTooltip": "Show password",
+  "resultWifiRevealPasswordTooltip": "Mostrar contraseña",
   "@resultWifiRevealPasswordTooltip": {
     "description": "RES-4, A11Y-1. Screen-reader label of the icon button that reveals the masked Wi-Fi password."
   },
-  "resultWifiHidePasswordTooltip": "Hide password",
+  "resultWifiHidePasswordTooltip": "Ocultar contraseña",
   "@resultWifiHidePasswordTooltip": {
     "description": "RES-4, A11Y-1. Screen-reader label of the same icon button once the password is revealed."
   },
-  "resultWifiWepNotice": "Android can''t join WEP networks from apps.",
+  "resultWifiWepNotice": "Android no puede conectarse a redes WEP desde las apps.",
   "@resultWifiWepNotice": {
     "description": "RES-4. Note shown under a WEP network's fields."
   },
-  "resultWifiPrimaryButton": "Open Wi-Fi settings",
+  "resultWifiPrimaryButton": "Abrir ajustes de Wi-Fi",
   "@resultWifiPrimaryButton": {
     "description": "RES-4. Primary action of a Wi-Fi result."
   },
-  "resultWifiCopyPasswordButton": "Copy password",
+  "resultWifiCopyPasswordButton": "Copiar contraseña",
   "@resultWifiCopyPasswordButton": {
     "description": "RES-4. Secondary action that copies only the password, never the whole payload."
   },
@@ -868,53 +868,53 @@
   "@resultWifiSecurityWep": {
     "description": "RES-4. Value of the security field for a WEP network; a proper name."
   },
-  "resultWifiSecurityNone": "Open",
+  "resultWifiSecurityNone": "Abierta",
   "@resultWifiSecurityNone": {
     "description": "RES-4. Value of the security field for a network with no password."
   },
 
-  "resultContactNameLabel": "Name",
+  "resultContactNameLabel": "Nombre",
   "@resultContactNameLabel": {
     "description": "RES-6. Label above a contact result's name."
   },
-  "resultContactPhoneLabel": "Phone",
+  "resultContactPhoneLabel": "Teléfono",
   "@resultContactPhoneLabel": {
     "description": "RES-6. Label above each of a contact result's phone numbers."
   },
-  "resultContactEmailLabel": "Email",
+  "resultContactEmailLabel": "Correo",
   "@resultContactEmailLabel": {
     "description": "RES-6. Label above each of a contact result's email addresses."
   },
-  "resultContactOrganisationLabel": "Organisation",
+  "resultContactOrganisationLabel": "Organización",
   "@resultContactOrganisationLabel": {
     "description": "RES-6. Label above a contact result's organisation."
   },
-  "resultContactPrimaryButton": "Add to contacts",
+  "resultContactPrimaryButton": "Añadir a contactos",
   "@resultContactPrimaryButton": {
     "description": "RES-6. Primary action of a contact result."
   },
 
-  "resultEventTitleLabel": "Title",
+  "resultEventTitleLabel": "Título",
   "@resultEventTitleLabel": {
     "description": "RES-6. Label above an event result's title."
   },
-  "resultEventStartLabel": "Start",
+  "resultEventStartLabel": "Inicio",
   "@resultEventStartLabel": {
     "description": "RES-6. Label above an event result's start, shown exactly as encoded (DATE-3)."
   },
-  "resultEventEndLabel": "End",
+  "resultEventEndLabel": "Fin",
   "@resultEventEndLabel": {
     "description": "RES-6. Label above an event result's end, shown exactly as encoded (DATE-3)."
   },
-  "resultEventLocationLabel": "Location",
+  "resultEventLocationLabel": "Ubicación",
   "@resultEventLocationLabel": {
     "description": "RES-6. Label above an event result's location."
   },
-  "resultEventNotesLabel": "Notes",
+  "resultEventNotesLabel": "Notas",
   "@resultEventNotesLabel": {
     "description": "RES-6. Label above an event result's notes."
   },
-  "resultEventAllDayNotice": "All-day event.",
+  "resultEventAllDayNotice": "Evento de todo el día.",
   "@resultEventAllDayNotice": {
     "description": "RES-6. Note shown on an event result whose start has no time part."
   },
@@ -942,57 +942,57 @@
       }
     }
   },
-  "resultUnavailableEventNoStart": "This event has no start time, so it can''t be added.",
+  "resultUnavailableEventNoStart": "Este evento no tiene hora de inicio, así que no se puede añadir.",
   "@resultUnavailableEventNoStart": {
     "description": "RES-6, RES-14. Why Add to calendar is disabled for an event code with no readable start time."
   },
-  "resultEventPrimaryButton": "Add to calendar",
+  "resultEventPrimaryButton": "Añadir al calendario",
   "@resultEventPrimaryButton": {
     "description": "RES-6. Primary action of an event result."
   },
 
-  "resultPhoneNumberLabel": "Number",
+  "resultPhoneNumberLabel": "Número",
   "@resultPhoneNumberLabel": {
     "description": "RES-7. Label above a phone result's number."
   },
-  "resultPhonePrimaryButton": "Call",
+  "resultPhonePrimaryButton": "Llamar",
   "@resultPhonePrimaryButton": {
     "description": "RES-7. Primary action of a phone result; opens the dialer prefilled and never calls."
   },
-  "resultSmsNumberLabel": "Number",
+  "resultSmsNumberLabel": "Número",
   "@resultSmsNumberLabel": {
     "description": "RES-7. Label above an SMS result's recipient number."
   },
-  "resultSmsMessageLabel": "Message",
+  "resultSmsMessageLabel": "Mensaje",
   "@resultSmsMessageLabel": {
     "description": "RES-7. Label above an SMS result's pre-filled message, when it has one."
   },
-  "resultSmsPrimaryButton": "Message",
+  "resultSmsPrimaryButton": "Enviar mensaje",
   "@resultSmsPrimaryButton": {
     "description": "RES-7. Primary action of an SMS result; opens the messaging app prefilled and never sends."
   },
-  "resultEmailToLabel": "To",
+  "resultEmailToLabel": "Para",
   "@resultEmailToLabel": {
     "description": "RES-7. Label above an email result's recipient address."
   },
-  "resultEmailSubjectLabel": "Subject",
+  "resultEmailSubjectLabel": "Asunto",
   "@resultEmailSubjectLabel": {
     "description": "RES-7. Label above an email result's subject, when it has one."
   },
-  "resultEmailBodyLabel": "Message",
+  "resultEmailBodyLabel": "Mensaje",
   "@resultEmailBodyLabel": {
     "description": "RES-7. Label above an email result's body, when it has one."
   },
-  "resultEmailPrimaryButton": "Email",
+  "resultEmailPrimaryButton": "Enviar correo",
   "@resultEmailPrimaryButton": {
     "description": "RES-7. Primary action of an email result; opens the email app prefilled and never sends."
   },
 
-  "resultProductNumberLabel": "Number",
+  "resultProductNumberLabel": "Número",
   "@resultProductNumberLabel": {
     "description": "RES-9. Label above a product result's number."
   },
-  "resultProductFormatLabel": "Format",
+  "resultProductFormatLabel": "Formato",
   "@resultProductFormatLabel": {
     "description": "RES-9. Label above a product result's format."
   },
@@ -1016,29 +1016,29 @@
   "@resultProductFormatIsbn": {
     "description": "RES-9. Value of the format field for an ISBN, an EAN-13 whose digits mark it as one; a proper name."
   },
-  "resultProductSearchButton": "Search the web",
+  "resultProductSearchButton": "Buscar en la web",
   "@resultProductSearchButton": {
     "description": "RES-9, SET-4. Primary action of a product result; searches with the engine chosen in Settings."
   },
 
-  "resultLocationLatitudeLabel": "Latitude",
+  "resultLocationLatitudeLabel": "Latitud",
   "@resultLocationLatitudeLabel": {
     "description": "RES-8. Label above a location result's latitude."
   },
-  "resultLocationLongitudeLabel": "Longitude",
+  "resultLocationLongitudeLabel": "Longitud",
   "@resultLocationLongitudeLabel": {
     "description": "RES-8. Label above a location result's longitude."
   },
-  "resultLocationNameLabel": "Name",
+  "resultLocationNameLabel": "Nombre",
   "@resultLocationNameLabel": {
     "description": "RES-8. Label above a location result's optional place name."
   },
 
-  "createSubtitle": "Choose what to create",
+  "createSubtitle": "Elige qué crear",
   "@createSubtitle": {
     "description": "GEN-1. One line above the Create type picker's grid."
   },
-  "createUrlFieldLabel": "Web address",
+  "createUrlFieldLabel": "Dirección web",
   "@createUrlFieldLabel": {
     "description": "GEN-3. Label of the URL form's one field."
   },
@@ -1046,7 +1046,7 @@
   "@createUrlFieldHint": {
     "description": "GEN-3. Hint inside the empty URL field."
   },
-  "createUrlHelperText": "The code opens {url}",
+  "createUrlHelperText": "El código abre {url}",
   "@createUrlHelperText": {
     "description": "GEN-3. Helper text under the URL field showing the address that will actually be encoded, https:// added when the user left out a scheme.",
     "placeholders": {
@@ -1056,19 +1056,19 @@
       }
     }
   },
-  "createTextFieldLabel": "Text",
+  "createTextFieldLabel": "Texto",
   "@createTextFieldLabel": {
     "description": "GEN-8. Label of the Text form's one field."
   },
-  "createTextFieldHint": "Anything you want the code to say",
+  "createTextFieldHint": "Lo que quieras que diga el código",
   "@createTextFieldHint": {
     "description": "GEN-8. Hint inside the empty Text field."
   },
-  "createWifiSsidLabel": "Network name",
+  "createWifiSsidLabel": "Nombre de la red",
   "@createWifiSsidLabel": {
     "description": "GEN-5. Label of the Wi-Fi form's network name field."
   },
-  "createWifiSecurityLabel": "Security",
+  "createWifiSecurityLabel": "Seguridad",
   "@createWifiSecurityLabel": {
     "description": "GEN-5. Label of the Wi-Fi form's security choice."
   },
@@ -1076,75 +1076,75 @@
   "@createWifiSecurityWpaWpa2": {
     "description": "GEN-5. The WPA/WPA2 choice in the Wi-Fi form's security list, which writes T:WPA."
   },
-  "createWifiSecurityWepInsecure": "WEP (insecure)",
+  "createWifiSecurityWepInsecure": "WEP (no seguro)",
   "@createWifiSecurityWepInsecure": {
     "description": "GEN-5. The WEP choice in the Wi-Fi form's security list, labelled insecure unlike the plain WEP shown on a result."
   },
-  "createWifiPasswordLabel": "Password",
+  "createWifiPasswordLabel": "Contraseña",
   "@createWifiPasswordLabel": {
     "description": "GEN-5. Label of the Wi-Fi form's password field, masked with a reveal button."
   },
-  "createWifiHiddenLabel": "Hidden network",
+  "createWifiHiddenLabel": "Red oculta",
   "@createWifiHiddenLabel": {
     "description": "GEN-5. Label of the Wi-Fi form's hidden-network switch."
   },
-  "createContactNameLabel": "Name",
+  "createContactNameLabel": "Nombre",
   "@createContactNameLabel": {
     "description": "GEN-6. Label of the Contact form's required name field."
   },
-  "createContactPhoneLabel": "Phone (optional)",
+  "createContactPhoneLabel": "Teléfono (opcional)",
   "@createContactPhoneLabel": {
     "description": "GEN-6. Label of the Contact form's optional phone field."
   },
-  "createContactEmailLabel": "Email (optional)",
+  "createContactEmailLabel": "Correo (opcional)",
   "@createContactEmailLabel": {
     "description": "GEN-6. Label of the Contact form's optional email field."
   },
-  "createContactOrganisationLabel": "Organisation (optional)",
+  "createContactOrganisationLabel": "Organización (opcional)",
   "@createContactOrganisationLabel": {
     "description": "GEN-6. Label of the Contact form's optional organisation field."
   },
-  "createPhoneFieldLabel": "Phone number",
+  "createPhoneFieldLabel": "Número de teléfono",
   "@createPhoneFieldLabel": {
     "description": "GEN-7. Label of the Phone form's one field."
   },
-  "createEmailToLabel": "Email address",
+  "createEmailToLabel": "Dirección de correo",
   "@createEmailToLabel": {
     "description": "GEN-8. Label of the Email form's required recipient field."
   },
-  "createEmailSubjectLabel": "Subject (optional)",
+  "createEmailSubjectLabel": "Asunto (opcional)",
   "@createEmailSubjectLabel": {
     "description": "GEN-8. Label of the Email form's optional subject field."
   },
-  "createEmailBodyLabel": "Message (optional)",
+  "createEmailBodyLabel": "Mensaje (opcional)",
   "@createEmailBodyLabel": {
     "description": "GEN-8. Label of the Email form's optional body field."
   },
-  "createSmsNumberLabel": "Phone number",
+  "createSmsNumberLabel": "Número de teléfono",
   "@createSmsNumberLabel": {
     "description": "GEN-7, GEN-8. Label of the SMS form's required number field."
   },
-  "createSmsMessageLabel": "Message (optional)",
+  "createSmsMessageLabel": "Mensaje (opcional)",
   "@createSmsMessageLabel": {
     "description": "GEN-8. Label of the SMS form's optional message field."
   },
-  "createFieldErrorRequired": "This field is required.",
+  "createFieldErrorRequired": "Este campo es obligatorio.",
   "@createFieldErrorRequired": {
     "description": "GEN-1. Inline error under a required field left empty."
   },
-  "createFieldErrorInvalidUrl": "Enter a web address starting with http:// or https://.",
+  "createFieldErrorInvalidUrl": "Escribe una dirección web que empiece por http:// o https://.",
   "@createFieldErrorInvalidUrl": {
     "description": "GEN-3. Inline error under the URL field when it has no http/https scheme at all."
   },
-  "createFieldErrorInvalidEmail": "Enter a valid email address.",
+  "createFieldErrorInvalidEmail": "Escribe una dirección de correo válida.",
   "@createFieldErrorInvalidEmail": {
     "description": "GEN-8. Inline error under an email field that fails validation."
   },
-  "createFieldErrorInvalidPhone": "Enter a phone number with 3 to 15 digits.",
+  "createFieldErrorInvalidPhone": "Escribe un número de teléfono de 3 a 15 dígitos.",
   "@createFieldErrorInvalidPhone": {
     "description": "GEN-7. Inline error under a phone field that fails validation."
   },
-  "createCapacityMeterLabel": "{percent}% of capacity used",
+  "createCapacityMeterLabel": "{percent}% de la capacidad usada",
   "@createCapacityMeterLabel": {
     "description": "GEN-12. Line under the capacity meter, shown above 80% of the QR byte-mode limit.",
     "placeholders": {
@@ -1154,55 +1154,55 @@
       }
     }
   },
-  "createCapacityOverLimit": "This is too much content for a QR code. Shorten it to continue.",
+  "createCapacityOverLimit": "Es demasiado contenido para un código QR. Acórtalo para continuar.",
   "@createCapacityOverLimit": {
     "description": "GEN-12. Message replacing Create's enabled state once content is over the QR byte-mode limit."
   },
-  "createButtonLabel": "Create",
+  "createButtonLabel": "Crear",
   "@createButtonLabel": {
     "description": "GEN-1. Largest control on a Create form, disabled until the form is valid and within capacity."
   },
-  "createCheckingMessage": "Checking the code scans correctly",
+  "createCheckingMessage": "Comprobando que el código se escanea bien",
   "@createCheckingMessage": {
     "description": "STY-5, A11Y-1. Screen-reader name of the progress indicator shown on the created-code screen while the self-check runs."
   },
-  "createContentLabel": "Content",
+  "createContentLabel": "Contenido",
   "@createContentLabel": {
     "description": "STY-1. Label above the exact text a created code encodes, on the created-code screen."
   },
-  "createCodeImageLabel": "The created QR code",
+  "createCodeImageLabel": "El código QR creado",
   "@createCodeImageLabel": {
     "description": "STY-1, A11Y-1. Screen-reader description of the rendered code image on the created-code screen."
   },
-  "createCheckFailedRenderFailed": "The code could not be created. Shorten the content and try again.",
+  "createCheckFailedRenderFailed": "No se pudo crear el código. Acorta el contenido e inténtalo de nuevo.",
   "@createCheckFailedRenderFailed": {
     "description": "STY-5. Shown on the created-code screen when the encoder itself failed; Save and Share stay disabled. GEN-12 normally blocks Create before this can happen."
   },
-  "createCheckFailedDecodeFailed": "This code could not be checked. Save and Share are turned off.",
+  "createCheckFailedDecodeFailed": "No se pudo comprobar este código. Guardar y Compartir están desactivados.",
   "@createCheckFailedDecodeFailed": {
     "description": "STY-5. Shown on the created-code screen when the rendered code could not be read back at all; Save and Share stay disabled."
   },
-  "createCheckFailedMismatch": "This code did not match what you entered. Save and Share are turned off.",
+  "createCheckFailedMismatch": "Este código no coincide con lo que escribiste. Guardar y Compartir están desactivados.",
   "@createCheckFailedMismatch": {
     "description": "STY-5. Shown on the created-code screen when the rendered code read back as something other than the content it was encoded from; Save and Share stay disabled."
   },
-  "createNotSavedToHistory": "This code could not be saved to History.",
+  "createNotSavedToHistory": "Este código no se pudo guardar en el historial.",
   "@createNotSavedToHistory": {
     "description": "GEN-13, DATA-6. Shown on the created-code screen when Save history is on but writing the created code failed; the code still works."
   },
-  "createSaveButton": "Save",
+  "createSaveButton": "Guardar",
   "@createSaveButton": {
     "description": "SAVE-1. One of the created-code screen's two equal, largest buttons."
   },
-  "createShareButton": "Share",
+  "createShareButton": "Compartir",
   "@createShareButton": {
     "description": "SAVE-1, SAVE-5. The other of the created-code screen's two equal, largest buttons; sends the exact file Save writes."
   },
-  "createSavedSnackbarNoName": "Code saved",
+  "createSavedSnackbarNoName": "Código guardado",
   "@createSavedSnackbarNoName": {
     "description": "SAVE-2. Snackbar confirming a successful save when the system picker gives no file name back."
   },
-  "createSavedSnackbar": "Saved as {name}",
+  "createSavedSnackbar": "Guardado como {name}",
   "@createSavedSnackbar": {
     "description": "SAVE-2. Snackbar confirming a successful save, naming the SAVE-4 file name it was saved under.",
     "placeholders": {
@@ -1212,7 +1212,7 @@
       }
     }
   },
-  "createShareFailed": "Could not open sharing. Try again.",
+  "createShareFailed": "No se pudo abrir el menú de compartir. Inténtalo de nuevo.",
   "@createShareFailed": {
     "description": "SAVE-1. Snackbar when the system share sheet could not be opened for a created code."
   }

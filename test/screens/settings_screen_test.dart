@@ -10,6 +10,7 @@ import 'package:qrscanner/core/services/consent_service.dart';
 import 'package:qrscanner/core/services/link_opener.dart';
 import 'package:qrscanner/core/theme/app_theme.dart';
 import 'package:qrscanner/db/migrations/migrations.dart';
+import 'package:qrscanner/l10n/languages.dart';
 import 'package:qrscanner/db/record_dao.dart';
 import 'package:qrscanner/main.dart';
 import 'package:qrscanner/screens/ads/ad_banner_slot.dart';
@@ -148,7 +149,7 @@ void main() {
           final _Harness harness = await _pumpSettings(tester);
           expect(find.text('Language'), findsOneWidget);
 
-          await _tapShown(tester, find.byKey(GeneralSection.arabicLanguageKey));
+          await _tapShown(tester, find.byKey(Key(languageChoiceKey('ar'))));
           await tester.pumpAndSettle();
 
           expect(harness.settings.localeOverride, const Locale('ar'));
@@ -400,13 +401,16 @@ void main() {
       final SemanticsHandle semantics = tester.ensureSemantics();
       await _pumpSettings(tester);
 
-      const List<(Key, String)> expected = <(Key, String)>[
+      final List<(Key, String)> expected = <(Key, String)>[
         (GeneralSection.systemThemeKey, 'System default'),
         (GeneralSection.lightThemeKey, 'Light'),
         (GeneralSection.darkThemeKey, 'Dark'),
         (GeneralSection.systemLanguageKey, 'System default'),
-        (GeneralSection.englishLanguageKey, 'English'),
-        (GeneralSection.arabicLanguageKey, 'العربية'),
+        // Every language announces its own untranslated name (LANG-1), so a
+        // screen reader set to that language says something its user can
+        // recognise.
+        for (final MapEntry<String, String> language in appLanguages.entries)
+          (Key(languageChoiceKey(language.key)), language.value),
       ];
       for (final (Key key, String label) in expected) {
         expect(
@@ -433,13 +437,13 @@ void main() {
     ) async {
       await _pumpSettings(tester);
 
-      const List<Key> options = <Key>[
+      final List<Key> options = <Key>[
         GeneralSection.systemThemeKey,
         GeneralSection.lightThemeKey,
         GeneralSection.darkThemeKey,
         GeneralSection.systemLanguageKey,
-        GeneralSection.englishLanguageKey,
-        GeneralSection.arabicLanguageKey,
+        for (final String languageCode in appLanguages.keys)
+          Key(languageChoiceKey(languageCode)),
       ];
       for (final Key option in options) {
         final Size size = tester.getSize(find.byKey(option));
