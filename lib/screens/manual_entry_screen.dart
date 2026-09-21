@@ -83,7 +83,6 @@ class _ManualEntryScreenState extends State<ManualEntryScreen> {
                 labelText: l10n.manualEntryFieldLabel,
                 hintText: l10n.manualEntryFieldHint,
                 alignLabelWithHint: true,
-                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 24),
