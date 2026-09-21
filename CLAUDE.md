@@ -36,7 +36,8 @@ Data flows one way: screen → state → storage/service. A write lands first, t
 - Every model/state change gets a test. Tests assert what the user sees (text on screen, contents of a file), never just that output exists.
 - Feature order: model → migration → state → screen → test → analyze.
 - One branch per theme, PR to `main`; CI (`.github/workflows/ci.yml`) must pass.
-- Every merged PR is a release: `/release [major|minor|patch]` on the branch (SemVer + `CHANGELOG.md` entry; CI checks it). The merge tags `vX.Y.Z` and drafts a GitHub Release. The local build goes to `dist/qr-scanner-generator-X.Y.Z.*` (gitignored); rebuild it after any app change on the branch.
+- Every merged PR is a release: `/release [major|minor|patch]` on the branch (SemVer + `CHANGELOG.md` entry; CI checks it). The merge tags `vX.Y.Z`. The local build goes to `dist/qr-scanner-generator-X.Y.Z.*` (gitignored); rebuild it after any app change on the branch.
+- **Nothing is published, from anywhere** (decided 2026-09-21): no GitHub Release, no CI artifact, no Play upload from CI. `release.yml` builds and runs the permission gate as a *check*, then tags. Build the bundle here with `flutter build appbundle --release`, copy it to `dist/qr-scanner-generator-X.Y.Z.aab`, and hand it to the user, who uploads it by hand. It is only uploadable when `android/key.properties` exists; without it the build is debug-signed and Play refuses it. Check with `"$JAVA_HOME/bin/keytool.exe" -printcert -jarfile <aab>` before handing it over (`docs/RELEASING.md`).
 - Before a branch is merged: `/ship` (coverage of changed files, missing tests, drive it by hand, release, PR).
 
 ## Workflow

@@ -1,11 +1,14 @@
 name: Release
 
-# Every merge to main whose pubspec.yaml version (x.y.z+N) has no vX.Y.Z tag yet
-# builds the APK and AAB, tags the merge commit, and attaches the APK to a draft
-# GitHub Release with the CHANGELOG.md entry as notes. With signing and Play
-# secrets, the AAB also goes to Play internal testing as a draft. CI makes every
-# PR bump the version, so every merged PR gets its own APK. Manual runs outside
-# main only build artifacts.
+# Every merge to main builds the APK and AAB and checks the release manifest's
+# permissions (RUN-2).
+#
+# It leaves nothing behind (decided 2026-09-21): no GitHub Release, no artifact,
+# no Play upload, and no tag. The build here is a check that the release build
+# compiles on a clean machine, not a deliverable. What reaches Play is built
+# locally, signed from android/key.properties and uploaded by hand
+# (docs/RELEASING.md). With no tags, the version gate compares a PR against
+# main's own version (scripts/version.sh check).
 
 on:
   push:
@@ -13,7 +16,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: release-${{ github.ref }}
@@ -22,7 +25,6 @@ concurrency:
 env:
   FLUTTER_VERSION: '3.47.4'
   PACKAGE_NAME: 'com.oasisforge.qrscanner'
-  SLUG: 'qr-scanner-generator'
 
 jobs:
   version:
@@ -31,37 +33,43 @@ jobs:
     timeout-minutes: 5
     outputs:
       name: ${{ steps.read.outputs.name }}
-      tag: ${{ steps.read.outputs.tag }}
       release: ${{ steps.read.outputs.release }}
     steps:
+      # Two commits: on main the gate compares this merge against the one
+      # before it (scripts/version.sh check).
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
 
       - name: Read the pubspec.yaml version
         id: read
         run: |
           name=$(bash scripts/version.sh name)
-          tag="v$name"
           release=false
           if [ "$GITHUB_REF" != refs/heads/main ]; then
-            echo "Not on main: building $tag without releasing it." >> "$GITHUB_STEP_SUMMARY"
-          elif git ls-remote --exit-code --tags origin "refs/tags/$tag" > /dev/null; then
-            echo "$tag is already released: nothing to release." >> "$GITHUB_STEP_SUMMARY"
+            echo "Not on main: building $name as a check only." >> "$GITHUB_STEP_SUMMARY"
           else
+            # CI compares each PR against main's version, so two PRs opened
+            # together can both pass with the same one. The first merge moves
+            # main; the second would then ship as part of no release, leaving
+            # main's code unreleased and the bundle older than its own
+            # changelog. Silently doing nothing is the one outcome worth
+            # refusing, so on main the gate runs again against the commit
+            # before this merge.
+            bash scripts/version.sh check
             release=true
           fi
-          { echo "name=$name"; echo "tag=$tag"; echo "release=$release"; } >> "$GITHUB_OUTPUT"
+          { echo "name=$name"; echo "release=$release"; } >> "$GITHUB_OUTPUT"
 
   build:
-    name: Build and publish
+    name: Build and check
     needs: version
     if: needs.version.outputs.release == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
       NAME: ${{ needs.version.outputs.name }}
-      TAG: ${{ needs.version.outputs.tag }}
       RELEASE: ${{ needs.version.outputs.release }}
-      HAS_PLAY_CREDENTIALS: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON != '' }}
     steps:
       - uses: actions/checkout@v7
 
@@ -85,7 +93,7 @@ jobs:
           KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           if [ -z "$KEYSTORE_BASE64" ]; then
-            echo "::warning::ANDROID_KEYSTORE_BASE64 is not set: signing with a throwaway debug key and skipping Play."
+            echo "::notice::ANDROID_KEYSTORE_BASE64 is not set: this build is debug-signed. That is expected — CI publishes nothing, and the bundle that goes to Play is signed and built locally (docs/RELEASING.md)."
             echo "signed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -134,56 +142,27 @@ jobs:
             exit 1
           fi
 
-      - name: Name the files after the version
-        run: |
-          mkdir -p dist
-          cp build/app/outputs/flutter-apk/app-release.apk "dist/$SLUG-$NAME.apk"
-          cp build/app/outputs/bundle/release/app-release.aab "dist/$SLUG-$NAME.aab"
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v7
-        with:
-          name: android-${{ env.TAG }}
-          path: dist/
-          retention-days: 14
-
-      - name: Write release notes
-        if: env.RELEASE == 'true'
-        env:
-          SIGNED: ${{ steps.signing.outputs.signed }}
-        run: |
-          bash scripts/version.sh notes > release-notes.md
-          if [ "$SIGNED" != true ]; then
-            printf '\n> This APK is signed with a throwaway debug key, so it cannot update an installed copy. Back up in the app, uninstall, install this APK, then restore.\n' >> release-notes.md
-          fi
-
-      # The tag records the release; CI's version check compares PRs against it.
-      # A draft release doesn't create its tag, so push it first.
-      - name: Tag the release
+      # This workflow leaves nothing behind (decided 2026-09-21): no GitHub
+      # Release, no artifact, no Play upload, and no tag. It exists to prove the
+      # release build compiles on a clean machine and to hold the RUN-2
+      # permission gate above. The bundle that reaches Play is built locally
+      # with `flutter build appbundle --release`, signed from
+      # `android/key.properties`, and uploaded by hand (`docs/RELEASING.md`).
+      #
+      # Without tags, the version gate compares a PR against main's own version
+      # instead (`scripts/version.sh check`).
+      - name: Say where the uploadable bundle comes from
         if: env.RELEASE == 'true'
         run: |
-          if ! git ls-remote --exit-code --tags origin "refs/tags/$TAG" > /dev/null; then
-            git tag "$TAG" "$GITHUB_SHA"
-            git push origin "refs/tags/$TAG"
-          fi
-
-      # Draft: on a public repo the APK stays private until you publish the release.
-      - name: Attach APK to a draft GitHub Release
-        if: env.RELEASE == 'true'
-        uses: softprops/action-gh-release@v3
-        with:
-          tag_name: ${{ env.TAG }}
-          name: 'QR Scanner + Generator ${{ env.NAME }}'
-          body_path: release-notes.md
-          files: dist/${{ env.SLUG }}-${{ env.NAME }}.apk
-          draft: true
-
-      - name: Upload to Play internal testing
-        if: env.RELEASE == 'true' && steps.signing.outputs.signed == 'true' && env.HAS_PLAY_CREDENTIALS == 'true'
-        uses: r0adkll/upload-google-play@v1
-        with:
-          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-          packageName: ${{ env.PACKAGE_NAME }}
-          releaseFiles: dist/${{ env.SLUG }}-${{ env.NAME }}.aab
-          track: internal
-          status: draft
+          {
+            echo "### $NAME builds"
+            echo
+            echo "Nothing is published from CI, and no tag is pushed. Build the bundle locally and upload it by hand:"
+            echo
+            echo '```powershell'
+            echo '$env:GRADLE_OPTS = "-Dorg.gradle.project.kotlin.incremental=false"'
+            echo 'flutter build appbundle --release'
+            echo '```'
+            echo
+            echo "See docs/RELEASING.md."
+          } >> "$GITHUB_STEP_SUMMARY"
