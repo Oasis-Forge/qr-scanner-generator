@@ -33,6 +33,7 @@ import 'package:qrscanner/services/device/platform_app_version_info.dart';
 import 'package:qrscanner/services/permission_service.dart';
 import 'package:qrscanner/state/generator_state.dart';
 import 'package:qrscanner/state/history_state.dart';
+import 'package:qrscanner/state/interstitial_session.dart';
 import 'package:qrscanner/state/pro_state.dart';
 import 'package:qrscanner/state/scanner_state.dart';
 import 'package:qrscanner/state/settings_state.dart';
@@ -92,6 +93,7 @@ Future<void> main() async {
         records: RecordDao(database),
         services: services,
         proState: proState,
+        interstitialSession: InterstitialSession(),
       ),
     );
     // PRIV-1: consent is refreshed silently at each start; nothing shows. The
@@ -125,6 +127,15 @@ Future<void> main() async {
 /// IDs aren't secrets; the matching app ID is in `AndroidManifest.xml`.
 const String bannerAdUnitId = 'ca-app-pub-8287765177319119/9242359295';
 
+/// The AdMob interstitial unit ADS-9 shows after a created code is saved or
+/// shared, in a release build.
+///
+/// **Empty until one is created in AdMob.** An empty id means no interstitial
+/// at all in release, which is the right way to be incomplete: the alternative
+/// is serving Google's test ad to real users, which earns nothing and breaches
+/// AdMob's own terms. Debug builds always use the test unit below.
+const String interstitialAdUnitId = '';
+
 /// Puts the bundled typefaces' licences on Flutter's own licence page, which
 /// Settings opens (SET-7). Both are the SIL Open Font Licence 1.1.
 void _registerFontLicences() {
@@ -155,6 +166,9 @@ AppServices _deviceServices(KeyValueStore store) {
     // banner, so development never touches the real inventory.
     ads: AdmobAdsService(
       adUnitId: kReleaseMode ? bannerAdUnitId : testAdaptiveBannerAdUnitId,
+      interstitialAdUnitId: kReleaseMode
+          ? interstitialAdUnitId
+          : testInterstitialAdUnitId,
     ),
     consent: UmpConsentService(),
     billing: PlayBillingService(),
@@ -232,6 +246,7 @@ class QrScannerApp extends StatelessWidget {
     required this.records,
     required this.services,
     required this.proState,
+    required this.interstitialSession,
     super.key,
   });
 
@@ -251,6 +266,9 @@ class QrScannerApp extends StatelessWidget {
   /// cache, like [settings].
   final ProState proState;
 
+  /// ADS-9's one interstitial for this run of the app, unspent at launch.
+  final InterstitialSession interstitialSession;
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -260,6 +278,8 @@ class QrScannerApp extends StatelessWidget {
         Provider<RecordDao>.value(value: records),
         Provider<AppServices>.value(value: services),
         ChangeNotifierProvider<ProState>.value(value: proState),
+        // ADS-9's one interstitial per run of the app.
+        Provider<InterstitialSession>.value(value: interstitialSession),
         // The scanner (SCAN-1, RUN-1 to RUN-7), built from the same services,
         // records and settings every other screen reads. It lives as long as
         // the app; the scanner screen enters and leaves it.

@@ -23,6 +23,7 @@ import 'package:qrscanner/screens/settings/pro_section.dart';
 import 'package:qrscanner/screens/settings/privacy_section.dart';
 import 'package:qrscanner/screens/settings_screen.dart';
 import 'package:qrscanner/services/app_services.dart';
+import 'package:qrscanner/state/interstitial_session.dart';
 import 'package:qrscanner/state/pro_state.dart';
 import 'package:qrscanner/state/settings_state.dart';
 import 'package:qrscanner/state/success_counts.dart';
@@ -581,6 +582,7 @@ Future<_Harness> _pumpSettings(
       records: records,
       services: appServices,
       proState: proState,
+      interstitialSession: InterstitialSession(),
     ),
   );
   await tester.pumpAndSettle();

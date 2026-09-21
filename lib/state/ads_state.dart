@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import '../core/services/ads_service.dart';
 import '../core/services/consent_service.dart';
+import 'interstitial_session.dart';
 import 'pro_state.dart';
 import 'success_counts.dart';
 
@@ -44,15 +45,22 @@ class AdsState {
     required ConsentService consent,
     required SuccessCounts successCounts,
     required ProState proState,
+    InterstitialSession? interstitialSession,
   }) : _ads = ads,
        _consent = consent,
        _successCounts = successCounts,
-       _proState = proState;
+       _proState = proState,
+       _session = interstitialSession;
 
   final AdsService _ads;
   final ConsentService _consent;
   final SuccessCounts _successCounts;
   final ProState _proState;
+
+  /// The session's one interstitial (ADS-9), or `null` for a caller that only
+  /// deals in banners — every banner screen builds this class, and none of
+  /// them needs to know an interstitial exists.
+  final InterstitialSession? _session;
 
   /// Whether [slot] may show a banner right now.
   ///
@@ -125,4 +133,45 @@ class AdsState {
 
   /// Releases [slot]'s banner, e.g. when the screen showing it leaves.
   Future<void> disposeSlot(String slot) => _ads.disposeBanner(slot);
+
+  /// Whether ADS-9's interstitial may be shown at this moment.
+  ///
+  /// Everything a banner must satisfy applies unchanged — after the install's
+  /// first success (ADS-6), never for a Pro owner (ADS-7), and only once
+  /// consent for this session already allows ads (ADS-5) — plus the session's
+  /// one not yet spent (ADS-9).
+  ///
+  /// Unlike a banner, this never shows the consent form. PRIV-1 ties that form
+  /// to an ADS-1 screen about to request an ad, and no interstitial is on one;
+  /// unresolved consent simply means no interstitial.
+  bool get interstitialAllowed {
+    final InterstitialSession? session = _session;
+    return session != null &&
+        !session.shown &&
+        _successCounts.hasFirstSuccess &&
+        !_proState.isOwned &&
+        _consent.canRequestAds;
+  }
+
+  /// Requests ADS-9's interstitial and shows it, reporting whether one was
+  /// actually shown.
+  ///
+  /// Spends the session's one only when an ad reached the screen: a request
+  /// that found no ad leaves it for later in the same session, since nobody
+  /// saw anything. Every outcome is silent — the save or share this follows
+  /// has already succeeded and already said so, and an ad that never arrived
+  /// is not something to report.
+  Future<bool> maybeShowInterstitial() async {
+    if (!interstitialAllowed) {
+      return false;
+    }
+    final bool ready = await _ads.loadInterstitial(
+      personalized: _consent.personalizedAdsAllowed,
+    );
+    if (!ready || !await _ads.showInterstitial()) {
+      return false;
+    }
+    _session!.markShown();
+    return true;
+  }
 }
