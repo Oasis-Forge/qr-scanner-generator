@@ -199,10 +199,12 @@ class _LanguageDropdown extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         InputDecorator(
+          // The hairline underline comes from the app's own field style, which
+          // the theme sets through `enabledBorder`; naming a border here would
+          // be overridden and read as though it weren't.
           decoration: const InputDecoration(
-            border: OutlineInputBorder(),
             // The button below brings its own 48 dp height (A11Y-2), so the
-            // box only needs to breathe either side of it.
+            // field only needs to breathe either side of it.
             contentPadding: EdgeInsetsDirectional.symmetric(horizontal: 12),
           ),
           child: DropdownButtonHideUnderline(
