@@ -4,6 +4,11 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.12.1] - 2026-09-21
+
+### Changed
+- Nothing users can see: four fields — every Create form field, the Wi-Fi security picker, manual entry and the feedback message — asked for a boxed outline that the app's own field style has always overridden with its underline. The request never reached the screen, so it is gone and the code now says what the fields actually draw.
+
 ## [0.12.0] - 2026-09-21
 
 ### Changed
