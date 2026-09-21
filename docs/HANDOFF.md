@@ -1,6 +1,6 @@
 # Handoff
 
-For the next developer. Written 20 September 2026 at v0.9.0; brought up to date 21 September 2026 at v0.12.3.
+For the next developer. Written 20 September 2026 at v0.9.0; brought up to date 21 September 2026 at v0.13.0.
 
 Read this once, then work from `CLAUDE.md` (how this repo is built) and `docs/ROADMAP.md` (what is left). This page says where things stand, what is waiting on a person rather than on code, and the traps that cost time.
 
@@ -10,7 +10,7 @@ Scan any QR code or barcode and see exactly where it leads before anything opens
 
 Two rules shape most decisions, and every feature keeps them:
 
-- **No ad in the working area.** Never on the camera, a scan result, a generator form or a created code. Ads appear only at the bottom of History, Settings and the Create list, and only after the user's first successful scan or created code.
+- **No ad in the working area.** Never on the camera, a scan result, a generator form or a created code. Banner ads appear only at the bottom of History, Settings and the Create list, and since v0.13.0 one full-screen ad may follow a code that has been saved or shared — after its confirmation, never instead of it, once per run of the app (ADS-9). All of it only after the user's first successful scan or created code.
 - **Nothing opens before the user has seen where it leads.** A link is checked on the device and shown in full, with the site's name large, before anything hands it to a browser.
 
 The behaviour is written down, rule by rule with stable IDs, in `docs/PRODUCT_RULES.md`. Code, tests and pull requests cite those IDs (`SCAN-4`, `ADS-1`, `PRO-7`). If a feature has no rule yet, write the rule first — the `/spec` skill does that.
@@ -19,12 +19,12 @@ The behaviour is written down, rule by rule with stable IDs, in `docs/PRODUCT_RU
 
 - **Everything planned for the closed test is built:** the scanner and permissions, result screens and payload parsers, on-device link safety, History with an undoable delete, the generator with save and share, ads with consent, Pro, and Settings.
 - **v0.9.0 replaced the Material look with the app's own design** (see *The design*, below).
-- 3,311 tests pass; the analyzer and the format check are clean.
-- Twenty-two pull requests are merged. Each was a release until 21 September 2026, when that stopped being automatic: **a release is cut when the maintainer asks for one**, and everything merged in between waits under **Unreleased** in `CHANGELOG.md`. **Nothing is tagged**, either. Every tag was deleted on 2026-09-21, and the record of a version is now its `CHANGELOG.md` entry and the commit that raised it.
+- 3,319 tests pass; the analyzer and the format check are clean.
+- Twenty-six pull requests are merged. Each was a release until 21 September 2026, when that stopped being automatic: **a release is cut when the maintainer asks for one**, and everything merged in between waits under **Unreleased** in `CHANGELOG.md`. **Nothing is tagged**, either. Every tag was deleted on 2026-09-21, and the record of a version is now its `CHANGELOG.md` entry and the commit that raised it.
 - **v0.10.0 gave the app its launcher icon and cold-start window** (see *The design*, below), so the last code blocker is cleared.
 - **v0.11.0 gave the app twenty languages,** each listed under its own name. Greek is translated but held back on a font bug (*Known bugs* in `docs/ROADMAP.md`).
 - **v0.12.2 drew the whole Play listing from the app itself** — text in twenty languages, six captioned screenshots and a feature graphic per language — and v0.12.4 added release notes in twenty languages to every release (`docs/RELEASING.md`).
-- **The app has never been uploaded to Google Play.** That is all that stands between here and a closed test, and what is left is a person's to do rather than code: the Play Console entries, the upload itself, and the testers. The upload key exists and the listing is drafted.
+- **The app is on Google Play, on the internal test track** (v0.12.3, uploaded 21 September 2026). The Play Console entries, the listing in twenty languages, the app-content declarations and the testers are all done, and a real test purchase of Pro was driven end to end on the emulator. What stands between here and the closed test now is the calendar, two spikes on real phones, and a Firebase project for crash reports.
 
 ## Getting it running
 
@@ -100,12 +100,10 @@ v0.10.0 added the app's mark (ICON-1–ICON-7): the concentric square of a QR co
 
 ### Waiting on a person, not on code
 
-- **The first upload.** Everything else in Play is blocked behind it: the `remove_ads` product needs an uploaded build carrying the billing permission, and the API cannot create an app's first release. The bundle is built here, signed with the upload key, and uploaded by hand.
-- **Play Console:** create the app, upload the first bundle by hand (the API cannot create an app's first release), then create the `remove_ads` product at US$1.99 and add license testers so a real purchase can be driven.
-- **Play app content:** data safety (declare AdMob and the consent tool, Play Billing, and ML Kit's usage statistics), ads declaration, content rating, target audience 13+, app access with no login.
-- **Putting the listing into Play:** the CSV bulk import under Main store listing → Manage translations, the graphics folder for each language, and the release's notes pasted into the release itself. All of it is written and rendered already, in `store/play/`. **Tablet screenshots (7-inch and 10-inch) are not rendered yet**, so Play will flag large screens until they are.
-- **Testers:** a group of 20+ so at least 12 are opted in for 14 continuous days.
-- **`main` branch protection** is still off.
+- **An AdMob interstitial ad unit.** ADS-9 shipped in v0.13.0 but is inert in release until one exists: `interstitialAdUnitId` in `lib/main.dart` is empty on purpose, since an empty id shows no ad rather than Google's test ad. Creating the unit also means correcting one sentence of the store listing in twenty languages, and cancelling the test Pro order, since a Pro owner can never see an ad to check it with (ADS-7).
+- **Play Console, from here on:** every later upload is by hand as well, and each one carries its release notes in twenty languages (`store/play/release-notes/`).
+- **Re-uploading the listing** once the interstitial sentence is retranslated. **Tablet screenshots (7-inch and 10-inch) are still not rendered**, and the app has no large-screen layout to render — no navigation rail, no content width cap — so Play will flag large screens until both are done.
+- **Testers:** assigned to the internal track. The count still has to hold — at least 12 opted in for 14 continuous days.
 - **Real phones** for spike S5 (joining a Wi-Fi network) and S6 (cold start to first scan). The emulator's scene is too soft to confirm a live read inside the target.
 
 ### Already done, so don't redo it
@@ -113,5 +111,7 @@ v0.10.0 added the app's mark (ICON-1–ICON-7): the concentric square of a QR co
 - The privacy policy is written and published at `https://oasis-forge.github.io/qr-scanner-generator/privacy-policy/`, and Settings opens it. It describes only what ships today; each deferred feature returns to the page in the PR that ships it.
 - AdMob is set up: the app ID is in the manifest, the banner unit is `bannerAdUnitId` in `lib/main.dart` (release builds only; debug uses Google's test unit), the consent messages are published, and `app-ads.txt` is live at the Oasis Forge site root.
 - Release signing, the app's launcher name in English and Arabic, and the permission allow-list are all in place.
+- **`main` is protected** (21 September 2026): a pull request is required, both CI checks must pass, force pushes and deletion are blocked, and there is no bypass list — the rules apply to the owner too. To fix `main` in a hurry, turn the ruleset off in Settings → Rules, push, and turn it back on.
+- **Pro works against a real test order** (21 September 2026, on the emulator): `remove_ads` at US$1.99 bought with a license-test card, banners gone from all three screens at once, Pro surviving a force-stop, ownership re-found from Play after the app data was wiped, and Restore purchase confirming "Purchase restored." The test account owns Pro from then on, which by ADS-7 means no ad of any kind appears on that device until the order is cancelled.
 - **The upload key exists.** `android/key.properties` points at it and a release build is signed with it — checked on the 0.12.3 bundle, `CN=hassan kalash, OU=oasis forge`, not the debug key Play refuses. It never leaves this machine, so the GitHub keystore secrets are not needed.
 - **The store listing is written and rendered** in all twenty languages, and so are a release's notes: text, six captioned screenshots and a feature graphic per language, and the 512 px icon. It all sits in `store/play/`, which is gitignored because the repository is public; `store/play/README.txt` says what is where and how to rebuild it.
