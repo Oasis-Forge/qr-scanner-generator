@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 # One version tool for CI, the release workflow, and /release.
 #
-#   scripts/version.sh name    print x.y.z
-#   scripts/version.sh build   print the build number N (0 when there is none)
-#   scripts/version.sh check   pass when the version stands still; when it is
-#                              raised, fail unless it is above the base
-#                              branch's and CHANGELOG.md has a
-#                              "## [x.y.z] - YYYY-MM-DD" entry for it
-#   scripts/version.sh changed print true when the version differs from the
-#                              base branch's, false when it stands still
-#   scripts/version.sh notes   print the CHANGELOG.md entry for the current version
+#   scripts/version.sh name     print x.y.z
+#   scripts/version.sh build    print the build number N (0 when there is none)
+#   scripts/version.sh check    pass when the version stands still, because a
+#                               release is the user's call and most branches are
+#                               not one. When a branch does raise it, fail unless
+#                               it is above the base branch's and CHANGELOG.md
+#                               has a "## [x.y.z] - YYYY-MM-DD" entry for it
+#   scripts/version.sh released print true when this commit raised the version
+#                               above the previous commit's, else false: whether
+#                               a merge to the base branch is a release
+#   scripts/version.sh notes    print the CHANGELOG.md entry for the current version
 #
 # The version lives in the first file found of pubspec.yaml (x.y.z+N),
 # package.json ("version": "x.y.z"), or VERSION (x.y.z or x.y.z+N).
@@ -119,18 +121,20 @@ case "${1:-}" in
     last_build=${last_build:-0}
 
     if [ -n "$last_name" ]; then
-      highest=$(printf '%s\n%s\n' "$last_name" "$name" | sort -V | tail -n 1)
-      if [ "$highest" != "$name" ]; then
-        fail "$base_branch is on $last_name: this branch went back to $name"
-      fi
       # Not every branch is a release (decided 2026-09-21). The user decides
       # when to cut one; until then the version stands still, and standing
-      # still is not an error. A version that moves is still checked in full,
-      # including a build number raised on its own — Play refuses an upload
-      # whose build number it has already seen, even under the same x.y.z.
+      # still is not an error. It used to be the one thing this refused, so
+      # every PR carried a bump nobody had asked for.
       if [ "$name" = "$last_name" ] && [ "$build" = "$last_build" ]; then
         echo "No release here: still $name+$build, the same as $base_branch."
         exit 0
+      fi
+      # Half a move is still a move: the changelog is keyed on x.y.z, so a
+      # build number raised under the version main already has has no entry of
+      # its own to check.
+      highest=$(printf '%s\n%s\n' "$last_name" "$name" | sort -V | tail -n 1)
+      if [ "$name" = "$last_name" ] || [ "$highest" != "$name" ]; then
+        fail "$base_branch was already on $last_name: raise the version above it (major, minor, or patch)"
       fi
       if [ "$build" != 0 ] && [ "$build" -le "$last_build" ]; then
         fail "$base_branch was already on build $last_build: raise the build number above it"
@@ -139,15 +143,26 @@ case "${1:-}" in
     changelog_entry "$name" > /dev/null || fail "CHANGELOG.md needs a '## [$name] - YYYY-MM-DD' entry"
     echo "Releasing $name+$build (was ${last_name:-nothing yet})."
     ;;
-  changed)
-    read -r changed_name changed_build <<< "$(base_branch_version)" || true
-    if [ -z "${changed_name:-}" ] ||
-       [ "$name" != "$changed_name" ] ||
-       [ "$build" != "${changed_build:-0}" ]; then
+  released)
+    # The merge build's question, asked on main where there is no PR to gate:
+    # did this commit raise the version above the one before it? It compares
+    # commits, not branches, so it needs HEAD~1 (fetch-depth 2 in CI) and no
+    # origin. With nothing to compare against, say true rather than quietly
+    # call a release nothing.
+    prev_name=
+    if git rev-parse --verify --quiet HEAD~1 > /dev/null; then
+      read -r prev_name _ < <(git show "HEAD~1:$file" 2>/dev/null | parse "$file") || true
+    fi
+    if [ -z "${prev_name:-}" ]; then
+      echo true
+    elif [ "$prev_name" != "$name" ] &&
+         [ "$(printf '%s\n%s\n' "$prev_name" "$name" | sort -V | tail -n 1)" = "$name" ]; then
       echo true
     else
       echo false
     fi
     ;;
-  *) sed -n '4,11p' "$0" >&2; exit 2 ;;
+  # Everything between the shebang and the first line of code, so a command
+  # added to the header cannot leave the help text describing an older set.
+  *) sed -n '2,/^[^#]/{ /^#/{ s/^# \{0,1\}//; p; } }' "$0" >&2; exit 2 ;;
 esac
