@@ -53,10 +53,7 @@ class _WifiFormFieldsState extends State<WifiFormFields> {
           // The label wraps instead of overflowing at 200% text (A11Y-4).
           isExpanded: true,
           itemHeight: null,
-          decoration: InputDecoration(
-            labelText: l10n.createWifiSecurityLabel,
-            border: const OutlineInputBorder(),
-          ),
+          decoration: InputDecoration(labelText: l10n.createWifiSecurityLabel),
           items: <DropdownMenuItem<WifiSecurity>>[
             for (final WifiSecurity security in wifiSecurityChoices)
               DropdownMenuItem<WifiSecurity>(

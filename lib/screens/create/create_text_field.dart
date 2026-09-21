@@ -81,7 +81,9 @@ class _CreateTextFieldState extends State<CreateTextField> {
         helperMaxLines: 3,
         errorText: widget.errorText,
         errorMaxLines: 3,
-        border: const OutlineInputBorder(),
+        // No border named here: the theme's `enabledBorder` and friends set
+        // the hairline underline and override `border`, so naming one would
+        // read as though it applied.
         suffixIcon: widget.suffixIcon,
       ),
     );

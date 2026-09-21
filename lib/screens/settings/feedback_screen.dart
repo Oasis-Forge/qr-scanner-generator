@@ -147,10 +147,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 controller: _messageController,
                 minLines: 4,
                 maxLines: 8,
-                decoration: InputDecoration(
-                  hintText: l10n.feedbackMessageHint,
-                  border: const OutlineInputBorder(),
-                ),
+                decoration: InputDecoration(hintText: l10n.feedbackMessageHint),
               ),
               const SizedBox(height: 24),
               // The largest button is always the real action (`CLAUDE.md`).
