@@ -35,14 +35,14 @@ Set up before the first feature, while it's cheap.
 - [x] Finish `/kickoff`: Android scaffold as `com.oasisforge.qrscanner`, version `0.1.0+1`, merged `.gitignore`, strict lints, `/verify` green, kickoff skill deleted; repo `Oasis-Forge/qr-scanner-generator` (public) (2026-09-16)
 - [x] GitHub repo, Dependabot, CI (checks, Flutter-only guard, Android build) green on a first PR (#1, 2026-09-16)
 - [ ] `main` ruleset: PR required, the CI checks required, no force pushes or deletion (`docs/RELEASING.md`)
-- [x] Every merged PR is a release: the CI version check, then a tag and a draft GitHub Release on merge. `v0.1.0` is the first (tagged 2026-09-16).
+- [x] Every merged PR is a release: the CI version check, then a build-as-a-check on merge. Tags and GitHub Releases were dropped on 2026-09-21 and the existing tags deleted; nothing is published from CI (`docs/RELEASING.md`).
 - [x] The release workflow runs once without secrets (unsigned artifacts, nothing published): it ran on the `v0.1.0` merge, 2026-09-16
 - [x] Privacy policy served by GitHub Pages at `https://oasis-forge.github.io/qr-scanner-generator/privacy-policy/` (`docs/privacy-policy/index.html`), 2026-09-20
 - [x] Re-check package versions on pub.dev and run the licence check (S7); each version is pinned when its feature adds it (`docs/research/technical-constraints.md` → Spike results, 2026-09-16)
 - [x] Spikes S1 (virtual-scene scanning; answered 2026-09-17), S2 (`analyzeImage` on API 36/37), S3 (`flutter_zxing` from the OneDrive path) and S8 (camera permission states), plus the desk spikes S11 (Public Suffix List source) and S13 (barcode PNG rendering). Book real phones for S5 and S6 on Sep 28 – Oct 2. S2, S3, S8, S11 and S13 answered 2026-09-16 (`docs/research/technical-constraints.md` → Spike results).
 - [ ] Accounts:
   - Play Console app `com.oasisforge.qrscanner` with Play App Signing and the upload keystore
-  - the upload keystore backed up and its secrets set in GitHub (`docs/RELEASING.md`), so every testing upload is signed with the upload key
+  - the upload keystore created and backed up, with `android/key.properties` pointing at it locally (`docs/RELEASING.md`), so the bundle is signed with the upload key. GitHub secrets aren't needed: nothing publishes to Play from GitHub (decided 2026-09-21)
   - AdMob app, consent messages, and a Firebase project (`docs/RELEASING.md`)
   - a non-personal support email for the listing and feedback (SET-8)
 - [ ] Testers: a Google Group, recruiting 20+ now so at least 12 are opted in on Oct 16 and stay for 14 days
@@ -79,7 +79,7 @@ In dependency order, one theme per PR. Everything else in Phase 2 arrives during
   - SAVE-1, SAVE-2, SAVE-4, SAVE-5
 - [x] **Ads, consent, Pro, settings:** ADS-1–ADS-8, PRO-1–PRO-7, PRIV-1, PRIV-2, PRIV-4–PRIV-8, SET-1 (Settings row), SET-2, SET-3, SET-5–SET-8. Release builds request the app's own banner unit (created 2026-09-19); debug builds use Google's test unit.
 - [ ] **Crash reports:** PRIV-3 with spike S14 (no Firebase traffic before opt-in), once `google-services.json` arrives. The Settings row stays hidden until then (`crashReportsAvailable` in `lib/screens/settings/privacy_section.dart`).
-- [ ] Internal-testing AAB uploaded by hand by Oct 2. The first upload can't go through the API, and the `remove_ads` product needs an uploaded build with the billing permission.
+- [ ] Internal-testing AAB uploaded by hand by Oct 2, and every upload after it (decided 2026-09-21). The `remove_ads` product needs an uploaded build with the billing permission. The bundle is built here; it can only be uploaded once `android/key.properties` exists, or it is debug-signed and Play refuses it.
 - [ ] Right after that upload: the `remove_ads` product at US$1.99 and license testers (PRO-1, PRO-3), so the Pro PR is driven with a test purchase before Oct 9
 - [ ] Spikes S5 (Wi-Fi join) and S6 (cold start to first scan) on real phones, Sep 28 – Oct 2; S12 (share-target permissions) before Oct 19
 
@@ -114,7 +114,7 @@ Late checks. The review prompt comes last, so it asks about finished features.
 - [ ] Listing translated into all ten languages (LANG-7); data safety and policy checked against the final manifest (PRIV-6)
 
 ## Phase 5: Release (Nov 2–13)
-- [ ] Finish the one-time setup in `docs/RELEASING.md`: the Play service account and `PLAY_SERVICE_ACCOUNT_JSON`, so releases upload to Play automatically (uploads by hand work until then).
+- [x] ~~Play service account and `PLAY_SERVICE_ACCOUNT_JSON`, so releases upload to Play automatically.~~ Dropped 2026-09-21: nothing publishes to Play from GitHub. Every bundle is built locally with `flutter build appbundle --release` and uploaded by hand, so no service account exists and the keystore never leaves the machine (`docs/RELEASING.md`).
 - [ ] Closed test complete: 12+ testers opted in for 14 continuous days (Oct 16–30).
 - [ ] Apply for production on Nov 2. The decision takes about 1–3 business days (up to 7), then up to about 7 days of review.
 - [ ] Staged rollout 10% → 50% → 100%, holding if the user-perceived crash rate reaches 1.09% or the ANR rate 0.47%.

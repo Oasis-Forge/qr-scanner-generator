@@ -18,7 +18,7 @@ Read on demand: the fill-ins `/kickoff` uses, and the traps earlier Flutter apps
 | `CMD_BUILD_RELEASE` | `flutter build apk --release` (writes `build/app/outputs/flutter-apk/app-release.apk`) |
 | `CMD_RUN` | `flutter run` |
 
-SDK: CI pins the version (`FLUTTER_VERSION` in `ci.yml`). **On the QR machine the bare `flutter` on PATH is the wrong one** — it resolves to `C:\src\flutter` (3.44.8 / Dart 3.12.2), which cannot satisfy this repo's `sdk: ^3.13.3` and fails `pub get` with "version solving failed" (checked 2026-09-20). The pinned SDK is `D:\Desktop\projects\flutter_sdk\flutter\bin\flutter` (3.47.4 / Dart 3.13.3); call it by full path, or put its `bin` ahead of `C:\src\flutter\bin` on PATH. Check `flutter --version` matches the pin before committing. `adb` isn't on PATH either: use `$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe`.
+SDK: CI pins the version (`FLUTTER_VERSION` in `ci.yml`). **On the QR machine the bare `flutter` on PATH is the wrong one** — it resolves to `C:\src\flutter` (3.44.8 / Dart 3.12.2), which cannot satisfy this repo's `sdk: ^3.13.3` and fails `pub get` with "version solving failed" (checked 2026-09-20). The pinned SDK is `D:\Desktop\projects\flutter_sdk\flutter\bin\flutter` (3.47.4 / Dart 3.13.3); call it by full path, or put its `bin` ahead of `C:\src\flutter\bin` on PATH. Check `flutter --version` matches the pin before committing. `adb` isn't on PATH either: use `$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe`. Nor is `keytool`, which matters because it is how a bundle's signer is checked before upload: use `"$JAVA_HOME/bin/keytool.exe"`, since a bare `keytool` prints nothing and reads as a pass.
 
 ## Scaffold
 

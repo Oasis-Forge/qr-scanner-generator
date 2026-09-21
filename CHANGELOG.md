@@ -4,6 +4,11 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.11.1] - 2026-09-21
+
+### Changed
+- Nothing users can see: releases are no longer published from CI. The app bundle that goes to Google Play is built here and uploaded by hand, so one machine makes the build that ships.
+
 ## [0.11.0] - 2026-09-21
 
 ### Added
