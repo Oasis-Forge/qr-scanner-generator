@@ -69,6 +69,6 @@ Data flows one way: screen → state → storage/service. A write lands first, t
 ## Gotchas
 - If the repo is public: never commit secrets or personal data, and never print secrets in workflows.
 - Store IDs are permanent after the first upload and carry no personal names: `com.oasisforge.qrscanner`.
-- Quote paths in shell commands; project paths may contain spaces. The repo is on `D:`, outside the OneDrive root at `C:\Users\hassa\OneDrive` (checked 2026-09-20), so a broken native build is not OneDrive's doing. A release build needs `$env:GRADLE_OPTS = "-Dorg.gradle.project.kotlin.incremental=false"` first, or all nine Kotlin plugin modules fail (`docs/STACK_NOTES.md`).
+- Quote paths in shell commands; project paths may contain spaces. The repo is on `D:`, outside the OneDrive root at `C:\Users\hassa\OneDrive` (checked 2026-09-20), so a broken native build is not OneDrive's doing. Any Android build — `flutter run` included, not just release — needs `$env:GRADLE_OPTS = "-Dorg.gradle.project.kotlin.incremental=false"` first, or all nine Kotlin plugin modules fail (`docs/STACK_NOTES.md`).
 - The bare `flutter` on PATH is 3.44.8 and too old for this repo. Use `D:\Desktop\projects\flutter_sdk\flutter\bin\flutter` (`docs/STACK_NOTES.md`).
 - `adb` isn't on PATH: use `$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe`. The emulator is `Medium_Phone` (API 37, Play Store image, virtual-scene back camera) at `emulator-5554`; the competitor app is installed there for research.

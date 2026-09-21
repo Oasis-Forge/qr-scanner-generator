@@ -46,10 +46,16 @@ void main() {
         expect(find.text('Light'), findsOneWidget);
         expect(find.text('Dark'), findsOneWidget);
         expect(find.text('Language'), findsOneWidget);
+        // Theme's "System default" is a chip; language's is the closed
+        // dropdown, showing the chosen language and no other (LANG-1,
+        // changed 2026-09-21).
+        expect(find.text('System default'), findsNWidgets(2));
+        expect(find.text('English'), findsNothing);
+        expect(find.text('العربية'), findsNothing);
+
+        await _openLanguageMenu(tester);
         expect(find.text('English'), findsOneWidget);
         expect(find.text('العربية'), findsOneWidget);
-        // "System default" is one choice in each switcher.
-        expect(find.text('System default'), findsNWidgets(2));
         // The screen's own title; the rail says the same word in capitals.
         expect(find.text('Settings'), findsOneWidget);
         expect(find.text('SETTINGS'), findsOneWidget);
@@ -149,7 +155,15 @@ void main() {
           final _Harness harness = await _pumpSettings(tester);
           expect(find.text('Language'), findsOneWidget);
 
-          await _tapShown(tester, find.byKey(Key(languageChoiceKey('ar'))));
+          // The dropdown is closed to begin with, so no language but the
+          // chosen one is on screen (LANG-1, changed 2026-09-21).
+          expect(find.text('العربية'), findsNothing);
+          await _openLanguageMenu(tester);
+          expect(find.byKey(Key(languageChoiceKey('ar'))), findsOneWidget);
+          // Tapped by its name, which is what the user has to aim at: the
+          // menu item's own box sits outside the hit path, so tapping the
+          // key warns even where it works.
+          await tester.tap(find.text('العربية'));
           await tester.pumpAndSettle();
 
           expect(harness.settings.localeOverride, const Locale('ar'));
@@ -405,17 +419,29 @@ void main() {
         (GeneralSection.systemThemeKey, 'System default'),
         (GeneralSection.lightThemeKey, 'Light'),
         (GeneralSection.darkThemeKey, 'Dark'),
-        (GeneralSection.systemLanguageKey, 'System default'),
-        // Every language announces its own untranslated name (LANG-1), so a
-        // screen reader set to that language says something its user can
-        // recognise.
-        for (final MapEntry<String, String> language in appLanguages.entries)
-          (Key(languageChoiceKey(language.key)), language.value),
       ];
       for (final (Key key, String label) in expected) {
         expect(
           tester.getSemantics(find.byKey(key)),
           isSemantics(label: label, isButton: true, hasTapAction: true),
+          reason: '$label must be announced by its own name',
+        );
+      }
+
+      // The languages live in the dropdown now (LANG-1, changed
+      // 2026-09-21), so they are announced once it is open. Every one
+      // announces its own untranslated name, so a screen reader set to that
+      // language says something its user can recognise.
+      await _openLanguageMenu(tester);
+      final List<(Key, String)> languages = <(Key, String)>[
+        (GeneralSection.systemLanguageKey, 'System default'),
+        for (final MapEntry<String, String> language in appLanguages.entries)
+          (Key(languageChoiceKey(language.key)), language.value),
+      ];
+      for (final (Key key, String label) in languages) {
+        expect(
+          tester.getSemantics(await _languageInMenu(tester, key)),
+          isSemantics(label: label),
           reason: '$label must be announced by its own name',
         );
       }
@@ -437,26 +463,38 @@ void main() {
     ) async {
       await _pumpSettings(tester);
 
-      final List<Key> options = <Key>[
-        GeneralSection.systemThemeKey,
-        GeneralSection.lightThemeKey,
-        GeneralSection.darkThemeKey,
-        GeneralSection.systemLanguageKey,
-        for (final String languageCode in appLanguages.keys)
-          Key(languageChoiceKey(languageCode)),
-      ];
-      for (final Key option in options) {
-        final Size size = tester.getSize(find.byKey(option));
+      // The closed dropdown is a tap target of its own, and the languages
+      // inside it are targets once it is open (LANG-1, changed 2026-09-21).
+      void expectLargeEnough(Finder option, Object name) {
+        final Size size = tester.getSize(option);
         expect(
           size.width,
           greaterThanOrEqualTo(AppTheme.minTapTargetSize),
-          reason: '$option is too narrow to tap',
+          reason: '$name is too narrow to tap',
         );
         expect(
           size.height,
           greaterThanOrEqualTo(AppTheme.minTapTargetSize),
-          reason: '$option is too short to tap',
+          reason: '$name is too short to tap',
         );
+      }
+
+      for (final Key option in <Key>[
+        GeneralSection.systemThemeKey,
+        GeneralSection.lightThemeKey,
+        GeneralSection.darkThemeKey,
+        GeneralSection.languageDropdownKey,
+      ]) {
+        expectLargeEnough(find.byKey(option), option);
+      }
+
+      await _openLanguageMenu(tester);
+      for (final Key option in <Key>[
+        GeneralSection.systemLanguageKey,
+        for (final String languageCode in appLanguages.keys)
+          Key(languageChoiceKey(languageCode)),
+      ]) {
+        expectLargeEnough(await _languageInMenu(tester, option), option);
       }
     });
   });
@@ -572,6 +610,29 @@ TextDirection _directionOnScreen(WidgetTester tester) =>
 
 /// Scrolls [finder] into view, then taps it: Settings is taller than the test
 /// surface, and a tap below its bottom edge would land on nothing.
+/// Opens the language dropdown, so the languages are in the tree at all
+/// (LANG-1). Closed, it builds only the chosen name.
+Future<void> _openLanguageMenu(WidgetTester tester) async {
+  await _tapShown(tester, find.byKey(GeneralSection.languageDropdownKey));
+  await tester.pumpAndSettle();
+}
+
+/// Scrolls the open dropdown to one language and returns its finder.
+///
+/// The menu is a lazy list: with twenty-one options only those near the top
+/// are built, so a test that walks every language has to bring each one into
+/// view rather than assume it is already there.
+Future<Finder> _languageInMenu(WidgetTester tester, Key key) async {
+  final Finder item = find.byKey(key);
+  await tester.scrollUntilVisible(
+    item,
+    56,
+    scrollable: find.byType(Scrollable).last,
+  );
+  await tester.pumpAndSettle();
+  return item;
+}
+
 Future<void> _tapShown(WidgetTester tester, Finder finder) async {
   // Settings is taller than the screen, so a control below the fold is
   // scrolled to first — but only then. Scrolling one that is already on

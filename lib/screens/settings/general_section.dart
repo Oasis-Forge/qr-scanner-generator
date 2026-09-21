@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/theme/app_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/languages.dart';
 import '../../state/settings_state.dart';
@@ -31,6 +32,9 @@ class GeneralSection extends StatelessWidget {
 
   /// The language choice that follows the device language (LANG-1).
   static const Key systemLanguageKey = Key('settings.language.system');
+
+  /// The closed dropdown that opens the language list (LANG-1).
+  static const Key languageDropdownKey = Key('settings.language');
 
   /// The sound-on-scan switch (SET-2).
   static const Key soundOnScanKey = Key('settings.sound_on_scan');
@@ -79,30 +83,12 @@ class GeneralSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 24),
-        _ChoiceGroup<Locale?>(
+        _LanguageDropdown(
           title: l10n.settingsLanguage,
+          systemDefaultLabel: l10n.languageSystemDefault,
           selected: settings.localeOverride,
           onSelected: (Locale? locale) =>
               context.read<SettingsState>().setLocaleOverride(locale),
-          options: <_Choice<Locale?>>[
-            _Choice<Locale?>(
-              buttonKey: systemLanguageKey,
-              value: null,
-              label: l10n.languageSystemDefault,
-            ),
-            // Every language the app has, each in its own name and never
-            // translated, so it can be found whatever the app is showing
-            // (LANG-1). Built from the one list in `lib/l10n/languages.dart`
-            // rather than spelled out, so adding a language is an ARB file
-            // and a line there.
-            for (final MapEntry<String, String> language
-                in appLanguages.entries)
-              _Choice<Locale?>(
-                buttonKey: Key(languageChoiceKey(language.key)),
-                value: Locale(language.key),
-                label: language.value,
-              ),
-          ],
         ),
         const SizedBox(height: 8),
         SettingsSwitchRow(
@@ -151,6 +137,137 @@ class _Choice<T> {
 ///
 /// The row wraps instead of overflowing, so a long translation at 2.0× text
 /// still fits on a phone (LANG-6, A11Y-4).
+/// One language's name in the open dropdown.
+///
+/// Two rules pull opposite ways here and this holds both. `itemHeight: null`
+/// lets a long name wrap onto a second line at 200% text instead of
+/// overflowing (A11Y-4), but it also drops the menu item's own floor, leaving
+/// a short name like ไทย a 24 dp target — half of what A11Y-2 asks for. The
+/// minimum height puts the floor back without capping the growth.
+class _MenuItemLabel extends StatelessWidget {
+  const _MenuItemLabel(this.label);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: AppTheme.minTapTargetSize),
+      child: Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: Text(label),
+      ),
+    );
+  }
+}
+
+/// The language switcher: a dropdown, not the chip row the other switchers
+/// use (LANG-1, changed 2026-09-21).
+///
+/// Twenty languages plus "System default" is twenty-one chips, and as chips
+/// they filled the whole screen and pushed sound, vibration, copy on scan and
+/// every group below them out of sight. Theme keeps its chips: three options
+/// fit on two rows and are quicker to reach when they are all visible.
+///
+/// The value is the language code rather than the [Locale] itself, because
+/// "System default" is a real choice here and not the absence of one; the
+/// empty string carries it, where a null value would read as "nothing chosen".
+class _LanguageDropdown extends StatelessWidget {
+  const _LanguageDropdown({
+    required this.title,
+    required this.systemDefaultLabel,
+    required this.selected,
+    required this.onSelected,
+  });
+
+  final String title;
+  final String systemDefaultLabel;
+  final Locale? selected;
+  final Future<void> Function(Locale? locale) onSelected;
+
+  /// The code standing for "follow the device language" (LANG-1).
+  static const String _systemDefault = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Semantics(
+          header: true,
+          child: Text(title, style: Theme.of(context).textTheme.titleMedium),
+        ),
+        const SizedBox(height: 12),
+        InputDecorator(
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            // The button below brings its own 48 dp height (A11Y-2), so the
+            // box only needs to breathe either side of it.
+            contentPadding: EdgeInsetsDirectional.symmetric(horizontal: 12),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              key: GeneralSection.languageDropdownKey,
+              value: selected?.languageCode ?? _systemDefault,
+              // What shows is driven by the setting itself, never by the
+              // dropdown's own state, so a write that fails leaves the name
+              // on screen as it was (`CLAUDE.md`: write first, then state).
+              isExpanded: true,
+              // Items grow to fit a name that wraps at 200% text (A11Y-4),
+              // as the Wi-Fi security field does. They keep the 48 dp
+              // minimum height of their own accord (A11Y-2).
+              itemHeight: null,
+              // Only the closed button is built from this, so the keyed
+              // items below exist solely in the open menu and a test that
+              // finds one has really opened it. The closed button is a tap
+              // target in its own right, and only what is inside it can be
+              // tapped — the box's padding around it cannot — so the name
+              // carries the same 48 dp minimum as a menu item (A11Y-2).
+              selectedItemBuilder: (BuildContext context) => <Widget>[
+                _MenuItemLabel(systemDefaultLabel),
+                for (final String name in appLanguages.values)
+                  _MenuItemLabel(name),
+              ],
+              items: <DropdownMenuItem<String>>[
+                DropdownMenuItem<String>(
+                  key: GeneralSection.systemLanguageKey,
+                  value: _systemDefault,
+                  child: _MenuItemLabel(systemDefaultLabel),
+                ),
+                // Every language the app has, each in its own name and never
+                // translated, so it can be found whatever the app is showing
+                // (LANG-1). Built from the one list in
+                // `lib/l10n/languages.dart` rather than spelled out, so
+                // adding a language is an ARB file and a line there.
+                for (final MapEntry<String, String> language
+                    in appLanguages.entries)
+                  DropdownMenuItem<String>(
+                    key: Key(languageChoiceKey(language.key)),
+                    value: language.key,
+                    child: _MenuItemLabel(language.value),
+                  ),
+              ],
+              onChanged: (String? code) {
+                if (code == null) {
+                  return;
+                }
+                unawaited(
+                  writeSetting(
+                    context,
+                    () => onSelected(
+                      code == _systemDefault ? null : Locale(code),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _ChoiceGroup<T> extends StatelessWidget {
   const _ChoiceGroup({
     required this.title,
