@@ -53,7 +53,15 @@ class _WifiFormFieldsState extends State<WifiFormFields> {
           // The label wraps instead of overflowing at 200% text (A11Y-4).
           isExpanded: true,
           itemHeight: null,
-          decoration: InputDecoration(labelText: l10n.createWifiSecurityLabel),
+          // `border` is never painted here: the theme's `enabledBorder` and
+          // friends answer every state this field can be in. It stays for a
+          // second, less obvious reason -- DropdownButtonFormField reads
+          // `border?.isOutline` as the flag that insets the arrow 12 dp from
+          // the trailing edge, so deleting it as dead moves the arrow.
+          decoration: InputDecoration(
+            labelText: l10n.createWifiSecurityLabel,
+            border: const OutlineInputBorder(),
+          ),
           items: <DropdownMenuItem<WifiSecurity>>[
             for (final WifiSecurity security in wifiSecurityChoices)
               DropdownMenuItem<WifiSecurity>(
