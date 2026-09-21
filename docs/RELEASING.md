@@ -50,7 +50,8 @@ Settings → Rules → Rulesets → New branch ruleset, target `main`:
 - Require a pull request before merging.
 - Require status checks to pass: the CI job names. Run CI on one PR first so the names show up in the picker.
 - Block force pushes and deletion.
-- Bypass list: Repository admin.
+- Allowed merge methods: merge and squash, not rebase.
+- **No bypass list** (decided 2026-09-21): the rules apply to the owner too, so a direct push to `main` is refused and a PR merges only once both CI checks pass. To fix `main` in a hurry, disable the ruleset by hand, push, and turn it back on.
 
 ## Public repository
 

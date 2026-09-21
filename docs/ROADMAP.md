@@ -34,7 +34,7 @@ Set up before the first feature, while it's cheap.
 - [x] Flutter pin: 3.47.4 / Dart 3.13.3, matched in the local SDK, `ci.yml`, `release.yml`, `claude.yml` and `CLAUDE.md` (decided 2026-09-16)
 - [x] Finish `/kickoff`: Android scaffold as `com.oasisforge.qrscanner`, version `0.1.0+1`, merged `.gitignore`, strict lints, `/verify` green, kickoff skill deleted; repo `Oasis-Forge/qr-scanner-generator` (public) (2026-09-16)
 - [x] GitHub repo, Dependabot, CI (checks, Flutter-only guard, Android build) green on a first PR (#1, 2026-09-16)
-- [ ] `main` ruleset: PR required, the CI checks required, no force pushes or deletion (`docs/RELEASING.md`)
+- [x] `main` ruleset, live 2026-09-21: pull request required, both CI checks required, no force pushes or deletion, merge and squash only, and no bypass — a direct push is refused for the owner as well (`docs/RELEASING.md`)
 - [x] The release gate: the CI version check, then a build-as-a-check on merge. Tags and GitHub Releases were dropped on 2026-09-21 and the existing tags deleted; nothing is published from CI. Releasing on every merge went the same day: the user decides when a release is cut, and the check passes a branch whose version stands still (`docs/RELEASING.md`).
 - [x] The release workflow runs once without secrets (unsigned artifacts, nothing published): it ran on the `v0.1.0` merge, 2026-09-16
 - [x] Privacy policy served by GitHub Pages at `https://oasis-forge.github.io/qr-scanner-generator/privacy-policy/` (`docs/privacy-policy/index.html`), 2026-09-20

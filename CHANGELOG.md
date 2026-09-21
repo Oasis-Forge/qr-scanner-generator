@@ -5,6 +5,7 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 ## [Unreleased]
 
 ### Changed
+- Nothing users can see: `main` is protected. Nothing reaches it except through a pull request whose checks have passed, and that holds for the owner too.
 - Nothing users can see: a release is no longer forced on every merge. What changes waits here under Unreleased until a release is asked for, and the version check now passes a branch that leaves the version alone instead of failing it.
 - Nothing users can see: a release carries its notes in all twenty languages the app speaks, built from one file per version the same way the store listing is, so a tester reading the app in Urdu reads the note in Urdu.
 
