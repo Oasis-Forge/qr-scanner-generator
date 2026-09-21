@@ -4,6 +4,11 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-09-21
+
+### Changed
+- Settings picks the language from a dropdown now. The twenty languages used to sit on screen as twenty-one buttons that ran ten rows down the page and pushed sound, vibration, copy on scan and everything below them out of sight. The list opens when you want it and closes on the language you chose. Theme still shows its three choices at once.
+
 ## [0.11.2] - 2026-09-21
 
 ### Changed

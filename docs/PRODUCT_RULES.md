@@ -322,7 +322,7 @@ This file defines how QR Scanner + Generator behaves: the defaults, limits, orde
 
 **Learn:** A translated app feels native only when dates, numbers, search and layout direction are right too, and a clipped label looks broken.
 
-- **LANG-1** The app follows the device language and falls back to English. Settings offers "System default" and each language in its own name, and a change applies without a restart. Those names are never translated (amended 2026-09-21): someone who has opened the app in a language they can't read still has to find their own, and "Deutsch" is findable where a translated "German" is not. The list is built from one place, so a new language is a message file and a line.
+- **LANG-1** The app follows the device language and falls back to English. Settings offers "System default" and each language in its own name, and a change applies without a restart. Those names are never translated (amended 2026-09-21): someone who has opened the app in a language they can't read still has to find their own, and "Deutsch" is findable where a translated "German" is not. The list is built from one place, so a new language is a message file and a line. The choice is a dropdown, closed to the chosen language, not the row of chips the other switchers use (amended 2026-09-21): at twenty languages the chips filled the screen and pushed every setting below them out of sight. A switcher stays chips while its options fit in a glance — Theme's three do.
 - **LANG-2** Every user-facing text comes from the message files, with ICU plurals and placeholders, share text included; file names stay ASCII (SAVE-4). CI fails on a missing message or mismatched placeholders.
 - **LANG-3** Dates and numbers follow the chosen language. Exported and backup files don't (EXP-2, BAK-1).
 - **LANG-4** Search ignores case and accents in every language, including Turkish dotted and dotless i.
@@ -365,6 +365,8 @@ This file defines how QR Scanner + Generator behaves: the defaults, limits, orde
 7. (16 September 2026) Backup and restore ship in v1, before the production application (BAK-1–BAK-7).
 8. (20 September 2026) The launcher mark is the concentric square of a QR code's finder pattern, signal on chassis, over a literal code glyph or viewfinder brackets; the cold-start window is that chassis and that icon, nothing else (ICON-2, ICON-6).
 9. (21 September 2026) Twenty languages, following the portfolio's expense app, rather than the ten LANG-7 first set out. Greek was translated with them and held back: a language ships only when the app can draw it, and the bundled typefaces cover Greek only partly. Their names are never translated (LANG-1). The overflow harness renders all of them; the accessibility harness stays on English and Arabic, since what it checks doesn't vary by language (LANG-6).
+
+10. (21 September 2026) The language switcher is a dropdown, not chips (LANG-1). Driven on the emulator at v0.11.1, the twenty-one chips ran ten rows down the screen and left sound, vibration, copy on scan and the Privacy, Pro and About groups below the fold — a list long enough to hide the settings around it is no longer a switcher. Chips stay wherever the options fit in a glance, so Theme keeps them.
 
 ### Defaults chosen while writing the rules
 
