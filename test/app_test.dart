@@ -76,6 +76,32 @@ void main() {
       );
     },
   );
+
+  group('the units a release build asks AdMob for', () {
+    test('are this publisher\'s own, so a release earns (ADS-1, ADS-9)', () {
+      // The app id in AndroidManifest.xml carries the same publisher.
+      for (final String unit in <String>[
+        bannerAdUnitId,
+        interstitialAdUnitId,
+      ]) {
+        expect(unit, startsWith('ca-app-pub-8287765177319119/'));
+      }
+    });
+
+    test('are never Google\'s test units, which earn nothing and breach '
+        'AdMob\'s terms when real users see them', () {
+      for (final String unit in <String>[
+        bannerAdUnitId,
+        interstitialAdUnitId,
+      ]) {
+        expect(unit, isNot(startsWith('ca-app-pub-3940256099942544/')));
+      }
+    });
+
+    test('are two different units: one banner, one interstitial', () {
+      expect(bannerAdUnitId, isNot(interstitialAdUnitId));
+    });
+  });
 }
 
 /// Makes the device report [locales] as its language list, most wanted first,
