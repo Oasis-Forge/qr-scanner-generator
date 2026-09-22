@@ -100,7 +100,7 @@ v0.10.0 added the app's mark (ICON-1–ICON-7): the concentric square of a QR co
 
 ### Waiting on a person, not on code
 
-- **What the interstitial's ad unit left behind.** The unit was created on 22 September 2026 and `interstitialAdUnitId` in `lib/main.dart` carries it, so ADS-9 is live in a release build. Two things follow from that: one sentence of the store listing is now untrue in twenty languages (the English source is corrected; the nineteen translations and the CSV need rebuilding), and the test account still owns Pro, so cancel that order in Play Console — a Pro owner never sees an ad to check the interstitial with (ADS-7).
+- **What the interstitial's ad unit left behind.** The unit was created on 22 September 2026 and `interstitialAdUnitId` in `lib/main.dart` carries it, so ADS-9 is live in a release build. The listing's ads sentence was rewritten to name the full-screen ad in all twenty languages the same day, and the CSV and per-language text rebuilt, so what remains is uploading the listing again. The test account also still owns Pro, so cancel that order in Play Console — a Pro owner never sees an ad to check the interstitial with (ADS-7).
 - **Play Console, from here on:** every later upload is by hand as well, and each one carries its release notes in twenty languages (`store/play/release-notes/`).
 - **Re-uploading the listing** once the interstitial sentence is retranslated. **Tablet screenshots (7-inch and 10-inch) are still not rendered**, and the app has no large-screen layout to render — no navigation rail, no content width cap — so Play will flag large screens until both are done.
 - **Testers:** assigned to the internal track. The count still has to hold — at least 12 opted in for 14 continuous days.
