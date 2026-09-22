@@ -128,13 +128,13 @@ Future<void> main() async {
 const String bannerAdUnitId = 'ca-app-pub-8287765177319119/9242359295';
 
 /// The AdMob interstitial unit ADS-9 shows after a created code is saved or
-/// shared, in a release build.
+/// shared, in a release build (created 2026-09-22).
 ///
-/// **Empty until one is created in AdMob.** An empty id means no interstitial
-/// at all in release, which is the right way to be incomplete: the alternative
-/// is serving Google's test ad to real users, which earns nothing and breaches
-/// AdMob's own terms. Debug builds always use the test unit below.
-const String interstitialAdUnitId = '';
+/// An empty id here means no interstitial at all in release, which is how
+/// v0.13.0 shipped while the unit was still missing: the alternative is serving
+/// Google's test ad to real users, which earns nothing and breaches AdMob's own
+/// terms. Debug builds always use the test unit below.
+const String interstitialAdUnitId = 'ca-app-pub-8287765177319119/7242117573';
 
 /// Puts the bundled typefaces' licences on Flutter's own licence page, which
 /// Settings opens (SET-7). Both are the SIL Open Font Licence 1.1.

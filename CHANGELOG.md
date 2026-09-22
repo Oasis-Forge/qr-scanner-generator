@@ -4,6 +4,9 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+### Changed
+- The full-screen ad that can follow a code you saved or shared now has an ad unit of its own, so it appears as v0.13.0 described it. It still comes after the confirmation and never instead of it, at most once each time you open the app, and never at all with Remove ads.
+
 ## [0.13.0] - 2026-09-21
 
 ### Changed
