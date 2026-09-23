@@ -52,9 +52,9 @@ dependencies:
   android_intent_plus: 6.1.0
   flutter_custom_tabs: 2.6.0
   barcode: 2.2.9
-  flutter_file_dialog: 3.3.2
+  flutter_file_dialog: 3.3.3
   google_mobile_ads: 9.1.0
-  in_app_purchase: 3.3.0
+  in_app_purchase: 3.3.1
   in_app_purchase_android: 0.5.3
   package_info_plus: 10.2.1
   device_info_plus: 13.2.0
