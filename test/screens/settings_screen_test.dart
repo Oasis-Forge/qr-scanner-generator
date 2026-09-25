@@ -371,23 +371,15 @@ void main() {
     });
 
     group('the ADS-1 banner slot', () {
-      testWidgets('is absent before the install\'s first success (ADS-6)', (
-        WidgetTester tester,
-      ) async {
-        await _pumpSettings(tester, services: _eligibleAdsServices());
-
-        expect(find.byType(AdBannerSlot), findsOneWidget);
-        expect(find.byType(Divider), findsNothing);
-      });
-
       testWidgets(
-        'is present, fixed and non-scrolling, once eligible (ADS-1, ADS-3)',
+        'is present, fixed and non-scrolling, from the install\'s first '
+        'launch, before any success (ADS-1, ADS-3, ADS-6 dropped 26 '
+        'September 2026)',
         (WidgetTester tester) async {
           final SuccessCounts successCounts = SuccessCounts(
             FakeKeyValueStore(),
           );
           await successCounts.load();
-          await successCounts.recordSuccessfulScan();
 
           await _pumpSettings(
             tester,
@@ -511,8 +503,8 @@ class _Harness {
 }
 
 /// [AppServices] with consent already resolved to "no message needed" and no
-/// Pro ownership, so the ADS-1 banner slot is eligible as soon as the install
-/// has its first success. Used only by the banner-slot tests: every other
+/// Pro ownership, so the ADS-1 banner slot is eligible immediately, from the
+/// install's first launch. Used only by the banner-slot tests: every other
 /// test above keeps the default fakes, under which consent stays unresolved
 /// and the slot never shows (ADS-5) — itself already covered.
 AppServices _eligibleAdsServices() => AppServices.fakes().copyWith(

@@ -94,19 +94,14 @@ void main() {
   tearDown(() => counts.dispose());
 
   group('defaults, with nothing stored', () {
-    test('both counts are zero (DATA-8)', () async {
+    test('both counts are zero (DATA-8), and the Pro prompt threshold is not '
+        'reached (PRO-4)', () async {
       await counts.load();
 
       expect(counts.successfulScans, 0);
       expect(counts.successfulCreates, 0);
       expect(counts.totalSuccesses, 0);
       expect(counts.isLoaded, isTrue);
-    });
-
-    test('there has been no first success, so no ad (ADS-6)', () async {
-      await counts.load();
-
-      expect(counts.hasFirstSuccess, isFalse);
       expect(counts.hasReachedProPromptThreshold, isFalse);
     });
 
@@ -191,15 +186,6 @@ void main() {
         expect(store.values.containsKey(SuccessCounts.scansKey), isFalse);
       },
     );
-
-    test('the first success is what unblocks an ad (ADS-6)', () async {
-      await loadAndListen();
-      expect(counts.hasFirstSuccess, isFalse);
-
-      await counts.recordSuccessfulCreate();
-
-      expect(counts.hasFirstSuccess, isTrue);
-    });
 
     test('the Pro prompt waits for the fifth success (PRO-4)', () async {
       await loadAndListen();
@@ -296,7 +282,6 @@ void main() {
       await expectLater(counts.recordSuccessfulScan(), throwsStateError);
 
       expect(counts.successfulScans, 0);
-      expect(counts.hasFirstSuccess, isFalse);
       expect(store.values, isEmpty);
       expect(notifications, 0);
     });

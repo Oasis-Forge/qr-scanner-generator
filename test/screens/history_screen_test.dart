@@ -453,46 +453,34 @@ void main() {
       consent: NoopConsentService(seededStatus: ConsentStatus.notNeeded),
     );
 
-    testWidgets('a banner below the list, outside it, once the first success '
-        'has happened (ADS-1, ADS-3)', (WidgetTester tester) async {
-      await insertScan('https://example.com/banner', at: clock);
-      final NoopAdsService ads = NoopAdsService();
-      await pumpApp(
-        tester,
-        wrap(),
-        settings: settings,
-        services: adsAllowed(ads),
-        successCounts: await countsAt(1),
-      );
+    testWidgets(
+      'a banner below the list, outside it, from the install\'s first '
+      'launch, before any success (ADS-1, ADS-3, ADS-6 dropped 26 September '
+      '2026)',
+      (WidgetTester tester) async {
+        await insertScan('https://example.com/banner', at: clock);
+        final NoopAdsService ads = NoopAdsService();
+        await pumpApp(
+          tester,
+          wrap(),
+          settings: settings,
+          services: adsAllowed(ads),
+          successCounts: await countsAt(0),
+        );
 
-      expect(ads.calls.last, startsWith('loadBanner: history'));
-      final Finder divider = find.byType(Divider);
-      expect(divider, findsOneWidget);
-      expect(
-        find.ancestor(of: divider, matching: find.byType(ListView)),
-        findsNothing,
-      );
-      expect(
-        tester.getTopLeft(divider).dy,
-        greaterThan(tester.getBottomLeft(find.byType(ListView)).dy - 1),
-      );
-    });
-
-    testWidgets('no banner and no ad request before the first success '
-        '(ADS-6)', (WidgetTester tester) async {
-      await insertScan('https://example.com/no-banner', at: clock);
-      final NoopAdsService ads = NoopAdsService();
-      await pumpApp(
-        tester,
-        wrap(),
-        settings: settings,
-        services: adsAllowed(ads),
-        successCounts: await countsAt(0),
-      );
-
-      expect(find.byType(Divider), findsNothing);
-      expect(ads.calls, isEmpty);
-    });
+        expect(ads.calls.last, startsWith('loadBanner: history'));
+        final Finder divider = find.byType(Divider);
+        expect(divider, findsOneWidget);
+        expect(
+          find.ancestor(of: divider, matching: find.byType(ListView)),
+          findsNothing,
+        );
+        expect(
+          tester.getTopLeft(divider).dy,
+          greaterThan(tester.getBottomLeft(find.byType(ListView)).dy - 1),
+        );
+      },
+    );
 
     testWidgets('the Pro prompt sits above the list after the 5th success, '
         'and not while rows are selected (PRO-4)', (WidgetTester tester) async {

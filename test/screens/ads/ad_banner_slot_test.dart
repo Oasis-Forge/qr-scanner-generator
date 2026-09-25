@@ -38,10 +38,10 @@ void main() {
   }
 
   testWidgets(
-    'reserves no space and asks the ad service for nothing before the '
-    "install's first success (ADS-1, ADS-6)",
+    'reserves space and requests a banner from the install\'s first launch, '
+    'before any scan or create (ADS-1, ADS-6 dropped 26 September 2026)',
     (WidgetTester tester) async {
-      final h = harness();
+      final h = harness(reservedHeight: 74);
       await h.successCounts.load();
 
       await pumpApp(
@@ -52,8 +52,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(Divider), findsNothing);
-      expect(h.ads.calls, isEmpty);
+      expect(find.byType(Divider), findsOneWidget);
+      expect(h.ads.requestedSlots, <String>[AdSlots.settings]);
     },
   );
 

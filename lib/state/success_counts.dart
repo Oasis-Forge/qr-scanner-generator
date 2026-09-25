@@ -6,9 +6,9 @@ import '../core/store/key_value_store.dart';
 ///
 /// A successful scan is one that reached a result screen, including Unknown and
 /// a blocked link; a successful create is a created code's first render
-/// (DATA-8). The counts decide when the first ad may show (ADS-6) and when the
-/// Pro prompt is offered (PRO-4), and the review flag keeps the Play review
-/// request to at most once per install (SET-9).
+/// (DATA-8). The counts decide when the Pro prompt is offered (PRO-4), and the
+/// review flag keeps the Play review request to at most once per install
+/// (SET-9).
 ///
 /// Counting goes through [KeyValueStore.increment], which reads and writes in
 /// one transaction, so two successes landing together both count. Like the
@@ -50,10 +50,6 @@ class SuccessCounts extends ChangeNotifier {
   /// Successful scans and creates together, which is what the Pro prompt
   /// counts (PRO-4).
   int get totalSuccesses => _successfulScans + _successfulCreates;
-
-  /// Whether this install has had a success yet. No ad shows before it
-  /// (ADS-6).
-  bool get hasFirstSuccess => totalSuccesses > 0;
 
   /// Whether [totalSuccesses] has reached the Pro prompt's threshold (PRO-4).
   /// Whether the prompt itself has been shown is tracked elsewhere.
