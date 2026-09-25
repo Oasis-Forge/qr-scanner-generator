@@ -8,7 +8,6 @@ import '../../state/ads_state.dart';
 import '../../state/generator_state.dart';
 import '../../state/interstitial_session.dart';
 import '../../state/pro_state.dart';
-import '../../state/success_counts.dart';
 
 /// ADS-9's interstitial, built from the app-wide state before any `await`, so
 /// no [BuildContext] crosses one. Deciding whether it may show at all is
@@ -18,7 +17,6 @@ AdsState _interstitial(BuildContext context) {
   return AdsState(
     ads: services.ads,
     consent: services.consent,
-    successCounts: context.read<SuccessCounts>(),
     proState: context.read<ProState>(),
     interstitialSession: context.read<InterstitialSession>(),
   );

@@ -334,8 +334,6 @@ void main() {
       final InterstitialSession session = InterstitialSession();
       final SuccessCounts counts = SuccessCounts(FakeKeyValueStore());
       await counts.load();
-      // ADS-6 is already met: this install has scanned something before.
-      await counts.recordSuccessfulScan();
       addTearDown(counts.dispose);
       final GeneratorState state = buildState(imageDecoder: decoder);
       seedMatchingCheck(decoder, 'hello');

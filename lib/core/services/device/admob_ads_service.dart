@@ -85,9 +85,9 @@ class AdmobAdsService implements AdsService {
   /// Starts the Mobile Ads SDK once, however often it is called.
   ///
   /// [loadBanner] calls this itself, so the SDK first starts when a banner is
-  /// actually requested: after the first success (ADS-6), with consent
-  /// resolved (ADS-5), and never for a Pro owner (ADS-7). The app's entry
-  /// point does not start it.
+  /// actually requested: on first eligible request, i.e. from the install's
+  /// first launch, with consent resolved (ADS-5), and never for a Pro owner
+  /// (ADS-7). The app's entry point does not start it.
   @override
   Future<void> initialize() =>
       _started ??= MobileAds.instance.initialize().then((_) {});

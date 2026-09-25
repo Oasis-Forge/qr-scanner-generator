@@ -6,10 +6,9 @@ import 'package:flutter/widgets.dart';
 /// rewarded or native ad may ship (ADS-2, amended 2026-09-21), so none of them
 /// can be asked for here. The caller decides where a banner may appear (ADS-1),
 /// holds its height before it loads (ADS-4), requests none until consent is
-/// resolved (ADS-5), none before the first successful scan or create (ADS-6),
-/// and none at all for a Pro owner (ADS-7). The interstitial answers to every
-/// one of those rules too; when it may be shown is ADS-9, and the decision is
-/// `AdsState`'s, not this service's.
+/// resolved (ADS-5), and none at all for a Pro owner (ADS-7). The interstitial
+/// answers to every one of those rules too; when it may be shown is ADS-9, and
+/// the decision is `AdsState`'s, not this service's.
 abstract class AdsService {
   /// Prepares the ad SDK. Requests no ad by itself.
   Future<void> initialize();

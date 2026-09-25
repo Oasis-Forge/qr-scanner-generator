@@ -56,15 +56,16 @@ void main() {
   late InterstitialSession interstitialSession;
   late AdsState adsState;
 
-  /// Builds [adsState] from fresh fakes. [owned] and [afterFirstSuccess] seed
-  /// [proState] and [successCounts] so a test only names the gate it cares
-  /// about; [consent] is built by the caller, since every test exercises a
-  /// different consent state.
+  /// Builds [adsState] from fresh fakes. [owned] seeds [proState] so a test
+  /// only names the gate it cares about; [consent] is built by the caller,
+  /// since every test exercises a different consent state. [successCounts] is
+  /// still built and wired into [proState], since PRO-4's threshold reads it,
+  /// but it no longer gates a banner or the interstitial (ADS-6, dropped 26
+  /// September 2026).
   Future<void> build({
     required ConsentStatus consentStatus,
     bool personalizedAllowed = false,
     bool owned = false,
-    bool afterFirstSuccess = true,
     bool interstitialLoads = false,
   }) async {
     ads = NoopAdsService(interstitialLoads: interstitialLoads);
@@ -75,9 +76,6 @@ void main() {
     await consent.refresh();
     successCounts = SuccessCounts(_FakeKeyValueStore());
     await successCounts.load();
-    if (afterFirstSuccess) {
-      await successCounts.recordSuccessfulScan();
-    }
     proState = ProState(
       billing: NoopBillingService(
         owned: owned ? <String>{ProState.removeAdsProductId} : <String>{},
@@ -91,7 +89,6 @@ void main() {
     adsState = AdsState(
       ads: ads,
       consent: consent,
-      successCounts: successCounts,
       proState: proState,
       interstitialSession: interstitialSession,
     );
@@ -102,7 +99,7 @@ void main() {
     proState.dispose();
   });
 
-  group('isAllowed (ADS-1, ADS-5, ADS-6, ADS-7)', () {
+  group('isAllowed (ADS-1, ADS-5, ADS-7)', () {
     test('a slot outside the three ADS-1 names is never allowed', () async {
       await build(consentStatus: ConsentStatus.notNeeded);
 
@@ -114,17 +111,10 @@ void main() {
       });
     });
 
-    test('not allowed before the install\'s first success (ADS-6)', () async {
-      await build(
-        consentStatus: ConsentStatus.notNeeded,
-        afterFirstSuccess: false,
-      );
-
-      expect(adsState.isAllowed(AdSlots.settings), isFalse);
-    });
-
-    test('allowed once the first success has happened', () async {
+    test('is allowed on a fresh install, before any scan or create '
+        '(ADS-1, ADS-6 dropped 26 September 2026)', () async {
       await build(consentStatus: ConsentStatus.notNeeded);
+      expect(successCounts.totalSuccesses, 0);
 
       expect(adsState.isAllowed(AdSlots.settings), isTrue);
     });
@@ -223,33 +213,28 @@ void main() {
       );
     });
 
-    test('resolves a required consent form before requesting a banner, only '
-        'once ADS-6 is already met (PRIV-1)', () async {
+    test(
+      'resolves a required consent form before requesting a banner (PRIV-1)',
+      () async {
+        await build(consentStatus: ConsentStatus.formRequired);
+
+        await adsState.ensureLoaded(AdSlots.settings, widthDp: 360);
+
+        expect(consent.calls, contains('showFormIfRequired'));
+        expect(ads.requestedSlots, <String>[AdSlots.settings]);
+      },
+    );
+
+    test('shows the consent form on a fresh install, before any scan or create '
+        '(PRIV-1, ADS-6 dropped 26 September 2026)', () async {
       await build(consentStatus: ConsentStatus.formRequired);
+      expect(successCounts.totalSuccesses, 0);
 
       await adsState.ensureLoaded(AdSlots.settings, widthDp: 360);
 
       expect(consent.calls, contains('showFormIfRequired'));
       expect(ads.requestedSlots, <String>[AdSlots.settings]);
     });
-
-    test(
-      'never shows the consent form before the first success (PRIV-1)',
-      () async {
-        await build(
-          consentStatus: ConsentStatus.formRequired,
-          afterFirstSuccess: false,
-        );
-
-        final bool loaded = await adsState.ensureLoaded(
-          AdSlots.settings,
-          widthDp: 360,
-        );
-
-        expect(loaded, isFalse);
-        expect(consent.calls, isNot(contains('showFormIfRequired')));
-      },
-    );
   });
 
   group('the consent form (PRIV-1, ADS-5, ADS-7)', () {
@@ -275,12 +260,7 @@ void main() {
       await build(consentStatus: ConsentStatus.formRequired);
       final _UnansweredConsentService unanswered = _UnansweredConsentService();
       await unanswered.refresh();
-      adsState = AdsState(
-        ads: ads,
-        consent: unanswered,
-        successCounts: successCounts,
-        proState: proState,
-      );
+      adsState = AdsState(ads: ads, consent: unanswered, proState: proState);
 
       final bool loaded = await adsState.ensureLoaded(
         AdSlots.history,
@@ -332,17 +312,17 @@ void main() {
       );
     });
 
-    test('ADS-6: none before the install\'s first success, and none is even '
-        'requested', () async {
+    test('allowed on a fresh install, before any scan or create '
+        '(ADS-6 dropped 26 September 2026)', () async {
       await build(
         consentStatus: ConsentStatus.notNeeded,
         interstitialLoads: true,
-        afterFirstSuccess: false,
       );
+      expect(successCounts.totalSuccesses, 0);
 
-      expect(adsState.interstitialAllowed, isFalse);
-      expect(await adsState.maybeShowInterstitial(), isFalse);
-      expect(ads.calls, isEmpty);
+      expect(adsState.interstitialAllowed, isTrue);
+      expect(await adsState.maybeShowInterstitial(), isTrue);
+      expect(ads.calls, contains('showInterstitial'));
     });
 
     test(

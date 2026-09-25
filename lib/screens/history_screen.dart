@@ -242,8 +242,8 @@ class _HistoryScreenState extends State<HistoryScreen>
             children: <Widget>[
               Expanded(child: _body(l10n, history, selectionMode, selectedIds)),
               // Fixed and non-scrolling, below the list and clear of the
-              // bottom navigation bar (ADS-1, ADS-3). It shows nothing before
-              // the first success, for a Pro owner, or without consent.
+              // bottom navigation bar (ADS-1, ADS-3). It shows nothing for a
+              // Pro owner, or without consent.
               const AdBannerSlot(slot: AdSlots.history),
             ],
           ),

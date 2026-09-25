@@ -7,7 +7,9 @@ enum ConsentStatus {
   notNeeded,
 
   /// A form is required and hasn't been answered. It is shown only when an ad
-  /// screen is about to request an ad (PRIV-1), never on first launch.
+  /// screen is about to request an ad (PRIV-1), which can now be the install's
+  /// first launch if the user's first move is one of ADS-1's three screens
+  /// (ADS-6, dropped 26 September 2026).
   formRequired,
 
   /// The user has answered the form.
@@ -30,8 +32,7 @@ abstract class ConsentService {
   /// Shows the consent form if one is required, and returns the status
   /// afterwards.
   ///
-  /// Called only when an ad screen (ADS-1) is about to request an ad and ADS-6
-  /// is already met (PRIV-1).
+  /// Called only when an ad screen (ADS-1) is about to request an ad (PRIV-1).
   Future<ConsentStatus> showFormIfRequired();
 
   /// Whether an ad may be requested at all this session (ADS-5).

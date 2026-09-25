@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../../services/app_services.dart';
 import '../../state/ads_state.dart';
 import '../../state/pro_state.dart';
-import '../../state/success_counts.dart';
 
 /// A fixed, non-scrolling banner placement for one of [AdSlots.all] (ADS-1).
 ///
@@ -16,21 +15,22 @@ import '../../state/success_counts.dart';
 /// for the three screens ADS-1 names (ADS-3).
 ///
 /// **Decision, since ADS-3/ADS-4 don't say which:** this slot takes space only
-/// while a banner *may* load for it. Before the install's first success
-/// (ADS-6) and for a Pro owner (ADS-7), it renders nothing and reserves
-/// nothing — an empty gap that can never fill, especially one that would
-/// follow a paying Pro owner around forever, is not what "reserve the height"
-/// is asking for; that rule is about not letting a loading, failing or
-/// refreshing *eligible* ad move a control, not about pre-committing space to
-/// an ad that will never be requested at all.
+/// while a banner *may* load for it. For a Pro owner (ADS-7), it renders
+/// nothing and reserves nothing — an empty gap that can never fill, especially
+/// one that would follow a paying Pro owner around forever, is not what
+/// "reserve the height" is asking for; that rule is about not letting a
+/// loading, failing or refreshing *eligible* ad move a control, not about
+/// pre-committing space to an ad that will never be requested at all. For
+/// anyone else, that space is held from the install's first launch (ADS-6,
+/// dropped 26 September 2026).
 ///
 /// The ad's own content may stay left to right even in Arabic; this widget
 /// applies no mirroring inside it (ADS-8).
 ///
 /// Presentational only (`CLAUDE.md`): the decision lives in [AdsState], built
-/// fresh from [AppServices], [SuccessCounts] and [ProState] on every build, so
-/// it always reads the latest count and the latest ownership rather than a
-/// snapshot from when this slot first mounted.
+/// fresh from [AppServices] and [ProState] on every build, so it always reads
+/// the latest ownership rather than a snapshot from when this slot first
+/// mounted.
 class AdBannerSlot extends StatefulWidget {
   const AdBannerSlot({required this.slot, super.key});
 
@@ -83,13 +83,11 @@ class _AdBannerSlotState extends State<AdBannerSlot> {
 
   @override
   Widget build(BuildContext context) {
-    final SuccessCounts successCounts = context.watch<SuccessCounts>();
     final ProState proState = context.watch<ProState>();
     final AppServices services = context.read<AppServices>();
     final AdsState adsState = AdsState(
       ads: services.ads,
       consent: services.consent,
-      successCounts: successCounts,
       proState: proState,
     );
 

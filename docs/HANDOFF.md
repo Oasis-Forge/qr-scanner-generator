@@ -10,7 +10,7 @@ Scan any QR code or barcode and see exactly where it leads before anything opens
 
 Two rules shape most decisions, and every feature keeps them:
 
-- **No ad in the working area.** Never on the camera, a scan result, a generator form or a created code. Banner ads appear only at the bottom of History, Settings and the Create list, and since v0.13.0 one full-screen ad may follow a code that has been saved or shared — after its confirmation, never instead of it, once per run of the app (ADS-9). All of it only after the user's first successful scan or created code.
+- **No ad in the working area.** Never on the camera, a scan result, a generator form or a created code. Banner ads appear only at the bottom of History, Settings and the Create list, from the install's first visit to one of them (ADS-6 was dropped 26 September 2026 — banners no longer wait for a first successful scan or create). Since v0.13.0 one full-screen ad may also follow a code that has been saved or shared — after its confirmation, never instead of it, once per run of the app (ADS-9).
 - **Nothing opens before the user has seen where it leads.** A link is checked on the device and shown in full, with the site's name large, before anything hands it to a browser.
 
 The behaviour is written down, rule by rule with stable IDs, in `docs/PRODUCT_RULES.md`. Code, tests and pull requests cite those IDs (`SCAN-4`, `ADS-1`, `PRO-7`). If a feature has no rule yet, write the rule first — the `/spec` skill does that.

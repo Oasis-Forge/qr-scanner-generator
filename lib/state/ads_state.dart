@@ -4,7 +4,6 @@ import '../core/services/ads_service.dart';
 import '../core/services/consent_service.dart';
 import 'interstitial_session.dart';
 import 'pro_state.dart';
-import 'success_counts.dart';
 
 /// The three placements ADS-1 allows a banner on, and nowhere else.
 ///
@@ -29,32 +28,28 @@ abstract final class AdSlots {
 
 /// Decides, for one of [AdSlots.all], whether a banner may load right now, and
 /// carries the request through an [AdsService] once it may (ADS-1, ADS-5,
-/// ADS-6, ADS-7).
+/// ADS-7).
 ///
-/// Stateless on purpose: every decision is read fresh from [SuccessCounts],
-/// [ProState] and the [ConsentService] each time, so a screen that watches
-/// those two `ChangeNotifier`s (both already provided app-wide) rebuilds this
-/// with them and always decides from the latest count and the latest
-/// ownership, never a snapshot taken when the screen first opened. The screen
-/// itself keeps whatever load has already happened (a loaded banner, a
-/// reserved height) as its own local state, since that is about one screen's
-/// widget tree, not about the decision.
+/// Stateless on purpose: every decision is read fresh from [ProState] and the
+/// [ConsentService] each time, so a screen that watches that `ChangeNotifier`
+/// (already provided app-wide) rebuilds this with it and always decides from
+/// the latest ownership, never a snapshot taken when the screen first opened.
+/// The screen itself keeps whatever load has already happened (a loaded
+/// banner, a reserved height) as its own local state, since that is about one
+/// screen's widget tree, not about the decision.
 class AdsState {
   AdsState({
     required AdsService ads,
     required ConsentService consent,
-    required SuccessCounts successCounts,
     required ProState proState,
     InterstitialSession? interstitialSession,
   }) : _ads = ads,
        _consent = consent,
-       _successCounts = successCounts,
        _proState = proState,
        _session = interstitialSession;
 
   final AdsService _ads;
   final ConsentService _consent;
-  final SuccessCounts _successCounts;
   final ProState _proState;
 
   /// The session's one interstitial (ADS-9), or `null` for a caller that only
@@ -64,11 +59,12 @@ class AdsState {
 
   /// Whether [slot] may show a banner right now.
   ///
-  /// False for anything outside [AdSlots.all] (ADS-1), before the install's
-  /// first successful scan or create (ADS-6), for a Pro owner (ADS-7), and
-  /// while consent for this session doesn't allow requesting ads at all
-  /// (ADS-5). A caller that finds this false shows nothing and reserves no
-  /// height: an ad that will not be requested has no space to hold.
+  /// False for anything outside [AdSlots.all] (ADS-1), for a Pro owner
+  /// (ADS-7), and while consent for this session doesn't allow requesting ads
+  /// at all (ADS-5). A caller that finds this false shows nothing and reserves
+  /// no height: an ad that will not be requested has no space to hold.
+  /// Otherwise true from the install's first launch: nothing here waits for a
+  /// first successful scan or create (ADS-6, dropped 26 September 2026).
   bool isAllowed(String slot) => _isEligible(slot) && _consent.canRequestAds;
 
   /// Whether [slot] is waiting only on the consent form: everything else
@@ -84,12 +80,9 @@ class AdsState {
   /// Reads consent for this session, silently (PRIV-1).
   Future<void> refreshConsent() => _consent.refresh();
 
-  /// Everything but consent: an ADS-1 slot, after the first success, and not
-  /// a Pro owner.
+  /// Everything but consent: an ADS-1 slot and not a Pro owner.
   bool _isEligible(String slot) =>
-      AdSlots.all.contains(slot) &&
-      _successCounts.hasFirstSuccess &&
-      !_proState.isOwned;
+      AdSlots.all.contains(slot) && !_proState.isOwned;
 
   /// The height to reserve for a banner at [widthDp], asked before any load so
   /// a loading, failing or refreshing ad never moves a control (ADS-4).
@@ -104,8 +97,9 @@ class AdsState {
   /// answers [isAllowed].
   ///
   /// The form is reached only here, and only for an eligible slot, which is
-  /// what ties it to "an ad screen (ADS-1) is about to request an ad once
-  /// ADS-6 is met" and keeps it off first launch.
+  /// what ties it to "an ad screen (ADS-1) is about to request an ad" (PRIV-1).
+  /// That can now be the install's first launch, if the user's first move is
+  /// one of ADS-1's three screens (ADS-6, dropped 26 September 2026).
   Future<bool> resolveConsent(String slot) async {
     if (awaitsConsentForm(slot)) {
       await _consent.showFormIfRequired();
@@ -136,10 +130,9 @@ class AdsState {
 
   /// Whether ADS-9's interstitial may be shown at this moment.
   ///
-  /// Everything a banner must satisfy applies unchanged — after the install's
-  /// first success (ADS-6), never for a Pro owner (ADS-7), and only once
-  /// consent for this session already allows ads (ADS-5) — plus the session's
-  /// one not yet spent (ADS-9).
+  /// Everything a banner must satisfy applies unchanged — never for a Pro
+  /// owner (ADS-7), and only once consent for this session already allows
+  /// ads (ADS-5) — plus the session's one not yet spent (ADS-9).
   ///
   /// Unlike a banner, this never shows the consent form. PRIV-1 ties that form
   /// to an ADS-1 screen about to request an ad, and no interstitial is on one;
@@ -148,7 +141,6 @@ class AdsState {
     final InterstitialSession? session = _session;
     return session != null &&
         !session.shown &&
-        _successCounts.hasFirstSuccess &&
         !_proState.isOwned &&
         _consent.canRequestAds;
   }
