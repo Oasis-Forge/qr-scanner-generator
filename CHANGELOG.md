@@ -4,8 +4,11 @@ Notable changes per release, written for users. Versions follow [Semantic Versio
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-09-26
+
 ### Changed
 - Banner ads on History, Settings and the Create screen can now appear from the moment you first open the app, instead of waiting until after your first scan or created code. The camera, results and the code editor stay ad-free, and Remove ads still clears all of them.
+- Where the law requires a consent choice about ads, that question can now come up on your first visit to History, Settings or the Create screen, rather than after your first scan. It is still only asked where it is required, and only when an ad is about to load.
 
 ## [0.13.1] - 2026-09-22
 
